@@ -1,0 +1,65 @@
+{
+  "actualizado": "2026-10-27T00:00:00-06:00",
+  "items": [
+    {
+      "id": "jorge-s",
+      "activo": true,
+      "nombre": "Jorge S.",
+      "texto": "Excelente servicio por parte de Alejandro y su equipo. El seguimiento que nos dio durante todo el proceso de la venta de nuestra propiedad fue muy profesional y siempre muy atentos. Sin duda trabajaría nuevamente con ellos en futuros proyectos. ¡Muchas gracias!",
+      "foto": "uploads/testimonios/jorge-s.webp",
+      "alt": "Jorge S., cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": "https://www.google.com/maps/contrib/117720069094681477549?hl=es-419"
+    },
+    {
+      "id": "gms-consultores",
+      "activo": true,
+      "nombre": "GMS Consultores",
+      "texto": "Excelente atención y seguimiento, da mucha confianza y certeza en el trato, así como soporte en el proceso.",
+      "foto": "uploads/testimonios/gms-consultores.webp",
+      "alt": "GMS Consultores, cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": ""
+    },
+    {
+      "id": "daniel-mancilla",
+      "activo": true,
+      "nombre": "Daniel Mancilla",
+      "texto": "Fuiste muy atenta con nosotros, de principio a fin, gracias por su apoyo Du'an Bienes Raíces, recomendados ampliamente. Saludos",
+      "foto": "uploads/testimonios/daniel-mancilla.webp",
+      "alt": "Daniel Mancilla, cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": ""
+    },
+    {
+      "id": "pedro-valadez",
+      "activo": true,
+      "nombre": "Pedro Valadez",
+      "texto": "Excelente servicio, con gran calidad humana y atención personalizada que siempre hace falta en estos trámites. Muy eficaz.",
+      "foto": "uploads/testimonios/pedro-valadez.webp",
+      "alt": "Pedro Valadez, cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": ""
+    },
+    {
+      "id": "carlos-avila",
+      "activo": true,
+      "nombre": "Carlos Ávila",
+      "texto": "Fueron muy amables y siempre estuvieron atentos a mis necesidades. Excelente servicio y atención, lo recomiendo mucho.",
+      "foto": "uploads/testimonios/carlos-avila.webp",
+      "alt": "Carlos Ávila, cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": ""
+    },
+    {
+      "id": "adriana-morales",
+      "activo": true,
+      "nombre": "Adriana Morales",
+      "texto": "Excelente atención nos apoyaron con todo lo necesario ya que no vivimos en León, trato amable y profesional.",
+      "foto": "uploads/testimonios/adriana-morales.webp",
+      "alt": "Adriana Morales, cliente de Du'an Bienes Raíces",
+      "estrellas": 5,
+      "url_resena": ""
+    }
+  ]
+}

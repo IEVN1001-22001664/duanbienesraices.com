@@ -1,0 +1,501 @@
+{
+  "actualizado": "2026-10-27T00:00:00-06:00",
+  "items": [
+    {
+      "id": "sacromonte-residencial",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Casa en Venta en Sacromonte Residencial",
+      "tipo": "Casa Residencial",
+      "ubicacion": "Fracc. Sacromonte, León, Gto.",
+      "precio": 3900000,
+      "moneda": "MXN",
+      "descripcion": "Casa nueva en venta en zona sur. Cuenta con 2 niveles, 160 m² de terreno, doble acceso controlado, acabados en granito y mármol, y amenidades con alberca.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/8448414-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/sacromonte-residencial-01-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-02-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-03-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-04-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-05-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-06-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-07-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-08-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-09-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-10-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-11-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/sacromonte-residencial-12-card.webp",
+          "full": "uploads/destacados/sacromonte-residencial-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "mayorca-residencial",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Casa Nueva en Venta en Mayorca Residencial",
+      "tipo": "Casa Residencial",
+      "ubicacion": "Mayorca Residencial, León, Gto.",
+      "precio": 4189000,
+      "moneda": "MXN",
+      "descripcion": "Casa a estrenar frente a área verde. 2 niveles, 3 recámaras, acabados en mármol y granito, cochera para 2 autos y patio central.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/8004067-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/mayorca-residencial-01-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-02-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-03-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-04-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-05-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-06-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-07-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-08-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-09-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-10-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-11-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorca-residencial-12-card.webp",
+          "full": "uploads/destacados/mayorca-residencial-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "terreno-blvd-la-luz",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Terreno en Venta Blvd. La Luz Uso Mixto H-8",
+      "tipo": "Terreno Comercial/Industrial",
+      "ubicacion": "Fracc. Sangre de Cristo, León",
+      "precio": 29200000,
+      "moneda": "MXN",
+      "descripcion": "Macrolote de 13,274 m² con uso de suelo H-8 ideal para desarrollo vertical o comercial, acceso directo sobre Blvd. La Luz.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/8069249-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-01-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-02-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-03-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-04-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-05-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-06-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-07-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-08-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-09-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-10-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-11-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/terreno-blvd-la-luz-12-card.webp",
+          "full": "uploads/destacados/terreno-blvd-la-luz-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "el-molino-residencial",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Casa Nueva en Venta Condominios El Molino Residencial",
+      "tipo": "Casa Residencial",
+      "ubicacion": "El Molino Residencial",
+      "precio": 11750000,
+      "moneda": "MXN",
+      "descripcion": "Casa nueva con vista al campo de golf en El Molino Residencial, zona norte de León. Diseño moderno, luminosa y con acabados de lujo.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/7388849-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/el-molino-residencial-01-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-02-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-03-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-04-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-05-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-06-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-07-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-08-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-09-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-10-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-11-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/el-molino-residencial-12-card.webp",
+          "full": "uploads/destacados/el-molino-residencial-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "rancho-san-felipe",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Rancho en Venta 80 ha A pie de carretera",
+      "tipo": "Rancho Agrícola",
+      "ubicacion": "San Felipe, Gto.",
+      "precio": 40000000,
+      "moneda": "MXN",
+      "descripcion": "Rancho en venta con acceso directo sobre la Carretera de San Felipe - Dolores Hidalgo. A solo 10 minutos del Jardín Principal.",
+      "url_tokko": "https://www.duanbienesraices-buscador.com/p/7133928-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/rancho-san-felipe-01-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-02-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-03-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-04-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-05-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-06-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-07-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-08-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-09-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-10-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-11-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/rancho-san-felipe-12-card.webp",
+          "full": "uploads/destacados/rancho-san-felipe-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "bodega-parque-piel",
+      "activo": true,
+      "operacion": "renta",
+      "titulo": "Bodega Industrial en Renta Uso de alta intensidad",
+      "tipo": "Bodega Industrial",
+      "ubicacion": "Parque Piel, León, Gto.",
+      "precio": 55000,
+      "moneda": "MXN",
+      "descripcion": "Bodega Industrial de 1000 m². El terreno mide 20 m de frente por 50 m de fondo. Carril de acceso para tráiler con portón amplio.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/6461365-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/bodega-parque-piel-01-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-02-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-03-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-04-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-05-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-06-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-07-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-08-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-09-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-10-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-11-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/bodega-parque-piel-12-card.webp",
+          "full": "uploads/destacados/bodega-parque-piel-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "lomas-del-refugio",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Casa en Venta en Lomas del Refugio, Zona Norte",
+      "tipo": "Casa Residencial",
+      "ubicacion": "Lomas del Refugio",
+      "precio": 3000000,
+      "moneda": "MXN",
+      "descripcion": "Casa en venta en Fracc. Lomas del Refugio, acceso directo sobre Blvd. Paseo de Los Insurgentes, zona norte. La casa cuenta con 3 medios pisos.",
+      "url_tokko": "https://www.duanbienesraices-buscador.com/p/8637004-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/lomas-del-refugio-01-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-02-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-03-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-04-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-05-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-06-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-07-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-08-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-09-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-10-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-11-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/lomas-del-refugio-12-card.webp",
+          "full": "uploads/destacados/lomas-del-refugio-12-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "mayorazgo-residencial",
+      "activo": true,
+      "operacion": "venta",
+      "titulo": "Casa Nueva en Venta Mayorazgo Residencial",
+      "tipo": "Casa Residencial",
+      "ubicacion": "Mayorazgo del Valle",
+      "precio": 3750000,
+      "moneda": "MXN",
+      "descripcion": "Casa nueva en venta en el Mayorazgo Residencial, Privada Mayorazgo del Valle, acceso sobre Blvd. Timoteo Lozano.",
+      "url_tokko": "http://duanbienesraices-buscador.com/p/7426088-prop",
+      "fotos": [
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-01-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-01-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-02-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-02-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-03-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-03-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-04-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-04-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-05-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-05-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-06-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-06-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-07-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-07-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-08-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-08-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-09-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-09-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-10-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-10-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-11-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-11-full.webp"
+        },
+        {
+          "card": "uploads/destacados/mayorazgo-residencial-12-card.webp",
+          "full": "uploads/destacados/mayorazgo-residencial-12-full.webp"
+        }
+      ]
+    }
+  ]
+}

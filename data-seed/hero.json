@@ -1,0 +1,71 @@
+{
+  "actualizado": "2026-10-27T00:00:00-06:00",
+  "items": [
+    {
+      "id": "intro",
+      "activo": true,
+      "titulo": "",
+      "subtitulo": "",
+      "imagen": "uploads/hero/intro.webp",
+      "video": "uploads/hero/intro.mp4",
+      "alt": "Du'an Bienes Raíces, inmobiliaria en León, Guanajuato",
+      "texto_boton": "",
+      "enlace": ""
+    },
+    {
+      "id": "seguridad-confianza",
+      "activo": true,
+      "titulo": "Seguridad y Confianza en cada operación",
+      "subtitulo": "",
+      "imagen": "uploads/hero/seguridad-confianza.webp",
+      "video": "uploads/hero/seguridad-confianza.mp4",
+      "alt": "Seguridad y Confianza en cada operación",
+      "texto_boton": "",
+      "enlace": ""
+    },
+    {
+      "id": "vender-rentar-tranquilidad",
+      "activo": true,
+      "titulo": "Más cerca de vender o rentar su propiedad con tranquilidad",
+      "subtitulo": "",
+      "imagen": "uploads/hero/vender-rentar-tranquilidad.webp",
+      "video": "uploads/hero/vender-rentar-tranquilidad.mp4",
+      "alt": "Más cerca de vender o rentar su propiedad con tranquilidad",
+      "texto_boton": "",
+      "enlace": ""
+    },
+    {
+      "id": "valor-patrimonio",
+      "activo": true,
+      "titulo": "Protegemos el VALOR de su Patrimonio",
+      "subtitulo": "",
+      "imagen": "uploads/hero/valor-patrimonio.webp",
+      "video": "uploads/hero/valor-patrimonio.mp4",
+      "alt": "Protegemos el VALOR de su Patrimonio",
+      "texto_boton": "",
+      "enlace": ""
+    },
+    {
+      "id": "transparencia",
+      "activo": true,
+      "titulo": "Transparencia total en todo el proceso",
+      "subtitulo": "",
+      "imagen": "uploads/hero/transparencia.webp",
+      "video": "uploads/hero/transparencia.mp4",
+      "alt": "Transparencia total en todo el proceso",
+      "texto_boton": "",
+      "enlace": ""
+    },
+    {
+      "id": "impulsamos-propiedad",
+      "activo": true,
+      "titulo": "Impulsamos su propiedad en el mercado",
+      "subtitulo": "",
+      "imagen": "uploads/hero/impulsamos-propiedad.webp",
+      "video": "uploads/hero/impulsamos-propiedad.mp4",
+      "alt": "Impulsamos su propiedad en el mercado",
+      "texto_boton": "",
+      "enlace": ""
+    }
+  ]
+}
