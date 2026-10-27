@@ -122,30 +122,38 @@
             var ancho = items[0].getBoundingClientRect().width + parseFloat(getComputedStyle(pista).columnGap || 0);
             return Math.round(pista.scrollLeft / ancho);
         }
+        var indice = 0;
+        var marcar = function () {};
         function ir(n) {
             var total = paginas();
-            n = (n + total) % total;
-            pista.scrollTo({ left: items[n].offsetLeft - pista.offsetLeft, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            indice = (n + total) % total;
+            // La pista es position:relative, así que offsetLeft ya es relativo a ella.
+            pista.scrollTo({ left: items[indice].offsetLeft, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            marcar(indice);
         }
 
         var contPuntos = $('[data-puntos]', carrusel);
-        var marcar = function () {};
         function construirPuntos() {
             if (!contPuntos) return;
             contPuntos.innerHTML = '';
             marcar = crearPuntos(contPuntos, paginas(), ir, 'Ir al elemento');
-            marcar(Math.min(indiceActual(), paginas() - 1));
+            indice = Math.min(indiceActual(), paginas() - 1);
+            marcar(indice);
         }
         construirPuntos();
 
         var ant = $('[data-anterior]', carrusel), sig = $('[data-siguiente]', carrusel);
-        if (ant) ant.addEventListener('click', function () { ir(indiceActual() - 1); });
-        if (sig) sig.addEventListener('click', function () { ir(indiceActual() + 1); });
+        if (ant) ant.addEventListener('click', function () { ir(indice - 1); });
+        if (sig) sig.addEventListener('click', function () { ir(indice + 1); });
 
+        // Deslizar con el dedo: sincroniza el índice cuando termina el scroll.
         var espera;
         pista.addEventListener('scroll', function () {
             clearTimeout(espera);
-            espera = setTimeout(function () { marcar(Math.min(indiceActual(), paginas() - 1)); }, 80);
+            espera = setTimeout(function () {
+                indice = Math.min(indiceActual(), paginas() - 1);
+                marcar(indice);
+            }, 150);
         }, { passive: true });
         window.addEventListener('resize', function () { clearTimeout(espera); espera = setTimeout(construirPuntos, 200); });
     });
@@ -163,21 +171,28 @@
         if (izq) izq.hidden = false;
         if (der) der.hidden = false;
 
-        function actual() { return Math.round(pista.scrollLeft / pista.clientWidth); }
+        // El índice se guarda aparte: leer scrollLeft a mitad de la animación daba saltos.
+        var indice = 0;
+        function mostrar() { if (contador) contador.textContent = String(indice + 1); }
         function ir(n) {
-            n = (n + fotos.length) % fotos.length;
-            pista.scrollTo({ left: n * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            indice = (n + fotos.length) % fotos.length;
+            pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            mostrar();
         }
-        if (izq) izq.addEventListener('click', function () { ir(actual() - 1); });
-        if (der) der.addEventListener('click', function () { ir(actual() + 1); });
+        if (izq) izq.addEventListener('click', function () { ir(indice - 1); });
+        if (der) der.addEventListener('click', function () { ir(indice + 1); });
         pista.addEventListener('keydown', function (ev) {
-            if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(actual() - 1); }
-            if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(actual() + 1); }
+            if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(indice - 1); }
+            if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(indice + 1); }
         });
+        // Si el usuario desliza con el dedo, sincroniza el índice cuando el scroll termina.
         var espera;
         pista.addEventListener('scroll', function () {
             clearTimeout(espera);
-            espera = setTimeout(function () { if (contador) contador.textContent = String(actual() + 1); }, 60);
+            espera = setTimeout(function () {
+                indice = Math.round(pista.scrollLeft / pista.clientWidth);
+                mostrar();
+            }, 150);
         }, { passive: true });
     });
 
