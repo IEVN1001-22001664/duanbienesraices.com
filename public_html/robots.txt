@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /includes/
+Disallow: /components/
+
+Sitemap: https://www.duanbienesraices.com/sitemap.xml

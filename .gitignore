@@ -1,0 +1,17 @@
+# --- Contenido editable en producción (NUNCA versionar) ---
+/data/*
+!/data/.gitkeep
+/public_html/uploads/*
+!/public_html/uploads/.htaccess
+
+# --- Credenciales ---
+config.local.php
+
+# --- Sistema / editores ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+*.tmp

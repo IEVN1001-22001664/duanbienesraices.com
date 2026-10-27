@@ -1,0 +1,92 @@
+# =============================================================================
+# Du'an Bienes Raíces — configuración de Apache (SiteGround)
+# =============================================================================
+
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+ErrorDocument 404 /404.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# --- HTTPS y www (dominio canónico: https://www.duanbienesraices.com) --------
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(duanbienesraices\.com)$ [NC]
+RewriteRule ^ https://www.%1%{REQUEST_URI} [R=301,L]
+
+# --- Bloquear archivos sensibles ----------------------------------------------
+RewriteRule (^|/)\.(?!well-known/) - [F,L]
+RewriteRule \.(json|md|log|lock|bak|sql|ini|sh|dist)$ - [F,L,NC]
+RewriteRule ^(includes|components)/ - [F,L]
+
+# --- 301 desde las URLs de Wix --------------------------------------------------
+# Blog: /post/{slug} → /blog/{slug} (articulo.php resuelve los slugs anteriores)
+RewriteRule ^post/(.+)$ /blog/$1 [R=301,L,NE]
+# Ventanas emergentes de servicios y páginas sueltas
+RewriteRule ^copia-de-venta/?$ /servicios/renta [R=301,L]
+RewriteRule ^copia-de-renta/?$ /servicios/venta [R=301,L]
+RewriteRule ^copia-de-renta-1/?$ /servicios/administracion [R=301,L]
+RewriteRule ^bienesraices/?$ / [R=301,L]
+RewriteRule ^(faq|fullscreen-page|tour-virtual-360|popup-.*)/?$ / [R=301,L]
+RewriteRule ^blog/categories/.*$ /blog [R=301,L]
+RewriteRule ^blog/page/.*$ /blog [R=301,L]
+
+# --- Quitar ".php" y diagonal final de las URLs visibles ----------------------
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.php[\s?] [NC]
+RewriteCond %1 !^(api|admin)/
+RewriteRule ^ /%1 [R=301,L,NE]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+RewriteRule ^index$ / [R=301,L]
+
+# --- URLs limpias -----------------------------------------------------------------
+RewriteRule ^blog/?$ blog/index.php [L]
+RewriteRule ^blog/([^/]+)$ blog/articulo.php?slug=$1 [L,QSA,B]
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^(.+)$ $1.php [L]
+</IfModule>
+
+# --- Seguridad --------------------------------------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+</IfModule>
+
+# --- Compresión -------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/xml application/xml text/plain
+</IfModule>
+
+# --- Caché del navegador ----------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType video/mp4 "access plus 1 month"
+</IfModule>
+<IfModule mod_headers.c>
+    # CSS y JS llevan ?v=fecha en la URL, así que pueden ser "immutable".
+    <FilesMatch "\.(css|js|woff2)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+AddType font/woff2 .woff2
+AddType image/webp .webp
