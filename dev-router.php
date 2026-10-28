@@ -11,6 +11,12 @@
 $web = __DIR__ . '/public_html';
 $ruta = rawurldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/');
 
+// Archivos ocultos (.htaccess, .user.ini…): nunca se sirven
+if (preg_match('#/\.#', $ruta)) {
+    http_response_code(403);
+    exit;
+}
+
 // Archivos estáticos reales (css, js, imágenes, videos)
 if ($ruta !== '/' && is_file($web . $ruta) && !str_ends_with($ruta, '.php')) {
     if (preg_match('#^/uploads/.*\.php#i', $ruta) || preg_match('#\.(json|md)$#i', $ruta)) {
@@ -51,6 +57,12 @@ $ejecutar = function (string $archivo, array $get = []) use ($web): void {
 
 if ($ruta === '/') {
     $ejecutar($web . '/index.php');
+} elseif ($ruta === '/admin' || $ruta === '/admin/') {
+    // Panel: Apache resuelve /admin/ con DirectoryIndex
+    if ($ruta === '/admin') {
+        $redirigir('/admin/');
+    }
+    $ejecutar($web . '/admin/index.php');
 } elseif ($ruta === '/blog' || $ruta === '/blog/') {
     $ejecutar($web . '/blog/index.php');
 } elseif (preg_match('#^/blog/([^/]+)$#', $ruta, $m)) {

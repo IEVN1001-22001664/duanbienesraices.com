@@ -1,0 +1,9 @@
+/* Ajustes de la vista previa del panel (dentro del iframe de editar.php). */
+.previa-cuerpo { margin: 0; padding: 1rem; background: var(--gris-claro); min-height: 100vh; }
+.previa-cuerpo--hero, .previa-cuerpo--blog { padding: 0; background: var(--blanco); }
+.previa-una { display: block; max-width: 420px; margin: 0 auto; }
+.previa-cuerpo--videos .previa-una { max-width: 560px; list-style: none; padding: 0; }
+.previa-cuerpo--testimonios .carrusel__pista { overflow: visible; }
+.previa-cuerpo--testimonios .carrusel__pista > li { flex-basis: 100%; }
+.previa-cuerpo--hero .hero__pista { height: 380px; }
+.previa-vacia { font-family: var(--fuente-texto); color: var(--gris); text-align: center; padding: 3rem 1rem; }
