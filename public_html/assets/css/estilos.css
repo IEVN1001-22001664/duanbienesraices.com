@@ -701,3 +701,40 @@ address { font-style: normal; }
 
 /* 404 */
 .error-404__codigo { font-family: var(--fuente-titulos); font-weight: 800; font-size: clamp(5rem, 20vw, 9rem); color: var(--rojo); line-height: 1; margin: 0; }
+
+/* =============================================================================
+   Animación de entrada en celular (réplica de la de Wix)
+   Pantalla blanca → una línea roja se abre hasta cubrirla → aparece el logo →
+   el rojo se cierra en una línea delgada que se desvanece y deja ver la página.
+   Solo < 768 px, con JS, sin "reducir movimiento" y una vez por visita.
+   ============================================================================= */
+.intro-movil { display: none; }
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+    .js:not(.intro-vista) .intro-movil {
+        display: grid; place-items: center;
+        position: fixed; inset: 0; z-index: 1000;
+        background: var(--blanco);
+        animation: intro-sin-fondo 0s linear 1s forwards, intro-fuera 0s linear 3.1s forwards;
+    }
+    .js:not(.intro-vista) body { overflow: hidden; }
+}
+.intro-movil__telon {
+    position: absolute; inset: 0; background: var(--rojo);
+    clip-path: inset(0 54% 0 46%);
+    animation:
+        intro-abre .85s cubic-bezier(.65, 0, .35, 1) .15s both,
+        intro-cierra .35s cubic-bezier(.7, 0, .3, 1) 2.4s forwards,
+        intro-desvanece .25s ease-out 2.85s forwards;
+}
+.intro-movil__logo {
+    position: relative; width: min(27vw, 120px); height: auto;
+    background: var(--blanco); padding: 6px;
+    opacity: 0; transform: scale(.88);
+    animation: intro-logo .4s ease-out 1s forwards, intro-desvanece .15s ease-in 2.35s forwards;
+}
+@keyframes intro-abre    { from { clip-path: inset(0 54% 0 46%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes intro-cierra  { to { clip-path: inset(0 49.5% 0 47.5%); } }
+@keyframes intro-logo    { to { opacity: 1; transform: none; } }
+@keyframes intro-desvanece { to { opacity: 0; } }
+@keyframes intro-sin-fondo { to { background: transparent; } }
+@keyframes intro-fuera   { to { visibility: hidden; } }

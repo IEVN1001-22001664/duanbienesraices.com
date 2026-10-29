@@ -318,4 +318,21 @@
         window.addEventListener('scroll', revisar, { passive: true });
         revisar();
     }
+    // --- Animación de entrada en celular: al terminar se quita y no se repite en la visita ---
+    var intro = $('[data-intro]');
+    if (intro) {
+        var quitar = function () {
+            if (intro.parentNode) intro.parentNode.removeChild(intro);
+            document.documentElement.classList.add('intro-vista');
+        };
+        if (getComputedStyle(intro).display === 'none') {
+            quitar();
+        } else {
+            try { sessionStorage.setItem('duan-intro', '1'); } catch (e) { /* modo privado */ }
+            intro.addEventListener('animationend', function (ev) {
+                if (ev.animationName === 'intro-fuera') quitar();
+            });
+            setTimeout(quitar, 4000);   // por si el navegador no dispara animationend
+        }
+    }
 })();

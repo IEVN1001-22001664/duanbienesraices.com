@@ -67,11 +67,19 @@ $jsonld = array_merge([jsonld_negocio()], $pagina['jsonld']);
     <link rel="preload" href="<?= e($pagina['precarga']) ?>" as="image" fetchpriority="high">
 <?php endif; ?>
     <link rel="stylesheet" href="<?= e(asset('css/estilos.css')) ?>">
-    <script>document.documentElement.classList.add('js');</script>
+    <script>
+        document.documentElement.classList.add('js');
+        // La animación de entrada en celular se muestra una sola vez por visita
+        try { if (sessionStorage.getItem('duan-intro')) document.documentElement.classList.add('intro-vista'); } catch (e) {}
+    </script>
 
 <?php foreach ($jsonld as $bloque): ?>
     <script type="application/ld+json"><?= json_encode($bloque, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) ?></script>
 <?php endforeach; ?>
 </head>
 <body class="<?= e($pagina['clase_body']) ?>">
+<div class="intro-movil" aria-hidden="true" data-intro>
+    <span class="intro-movil__telon"></span>
+    <img class="intro-movil__logo" src="<?= e(asset('img/logo-duan-bienes-raices.webp')) ?>" alt="" width="400" height="576" decoding="async">
+</div>
 <a class="saltar" href="#contenido">Saltar al contenido</a>
