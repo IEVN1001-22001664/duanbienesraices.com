@@ -22,13 +22,20 @@
 // define('ADMIN_USUARIO', 'editor');
 // define('ADMIN_HASH', '');
 
-// --- Correo SMTP de SiteGround (Fase 3) ---
+// --- Correo de los formularios (Fase 3) ---
+// La cuenta mkt@ envía y los mensajes llegan a info@. El host y el puerto salen
+// de la sección «Email > Accounts > Mail Configuration» de SiteGround.
+// Puerto 465 = SSL; 587 = STARTTLS. En local, si faltan, el correo se guarda en data/correos-dev/.
 // define('SMTP_HOST', 'mail.duanbienesraices.com');
 // define('SMTP_PUERTO', 465);
-// define('SMTP_USUARIO', 'web@duanbienesraices.com');
+// define('SMTP_USUARIO', 'mkt@duanbienesraices.com');
 // define('SMTP_CLAVE', '');
 // define('SMTP_DESTINO', 'info@duanbienesraices.com');
 
-// --- Anti-spam (Fase 3) ---
+// --- Anti-spam: Cloudflare Turnstile (Fase 3) ---
+// Claves en dash.cloudflare.com > Turnstile, con el dominio www.duanbienesraices.com.
+// En local se pueden usar las claves públicas de prueba (siempre aprueban):
+//   site key 1x00000000000000000000AA · secret 1x0000000000000000000000000000000AA
+// En producción, sin claves, los formularios rechazan los envíos.
 // define('TURNSTILE_SITE_KEY', '');
 // define('TURNSTILE_SECRET', '');

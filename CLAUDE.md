@@ -16,7 +16,7 @@ Documentación técnica más detallada en `docs/README.md` (estructura, JSON y p
 ## Comandos
 
 PHP 8.3 instalado con winget: `C:/Users/ADMIN/AppData/Local/Microsoft/WinGet/Packages/PHP.PHP.8.3_Microsoft.Winget.Source_8wekyb3d8bbwe/php.exe`.
-Tiene `php.ini` con mbstring, gd, fileinfo, openssl y curl.
+Tiene `php.ini` con mbstring, gd, fileinfo, openssl y curl, y `curl.cainfo`/`openssl.cafile` apuntando al `ca-bundle.crt` de Git (sin eso PHP no puede verificar Turnstile en local; respaldo en `php.ini.antes-cacert`).
 
 ```bash
 # Servidor local (los -d hacen falta para subir fotos/videos en el panel)
@@ -37,11 +37,12 @@ public_html/                 raíz web
   servicios/{renta,venta,administracion}.php   → includes/plantilla-servicio.php
   blog/index.php, blog/articulo.php (/blog/{slug}; slug_anterior de Wix → 301)
   sitemap.php (/sitemap.xml), robots.txt, .htaccess
-  includes/   config.php (constantes del negocio, MENU, SERVICIOS, rutas), funciones.php, head/header/footer, whatsapp.php
+  includes/   config.php (constantes del negocio, MENU, SERVICIOS, opciones de formularios, rutas), funciones.php, formularios.php, head/header/footer, whatsapp.php
+  includes/vendor/phpmailer/   PHPMailer 6.9.3 (solo Exception, PHPMailer y SMTP)
   includes/admin/   núcleo del panel (ver abajo)
-  components/ card-destacado, slide-hero, testimonio, video, card-blog, calculadora-gastos, cta-asesoria
+  components/ card-destacado, slide-hero, testimonio, video, card-blog, calculadora-gastos, cta-asesoria, envio-formulario
   admin/      páginas del panel
-  api/        (vacío; Fase 3: enviar.php)
+  api/        enviar.php (formularios de Contacto y Ofrezca su propiedad)
   assets/     css/estilos.css, css/admin*.css, js/main.js, js/admin.js, img/ (iconos.svg sprite), fonts/ (Montserrat, Nunito Sans woff2)
   uploads/    imágenes y videos del contenido editable (NO versionado; .htaccess impide ejecutar código)
 data/        JSON vivos, fuera de la web (NO versionado): hero, destacados, testimonios, videos .json + blog/*.json + backups/ + seguridad/
@@ -60,7 +61,7 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
   - Galerías y carruseles con scroll-snap; cada uno guarda su propio índice.
   - El video del hero solo se carga a ≥768 px y sin reducir movimiento.
   - El mapa se carga al hacer clic.
-  - Los formularios tienen `data-pendiente` y muestran un aviso de WhatsApp hasta la Fase 3.
+  - Los formularios se envían por `fetch` a `api/enviar.php`; el script de Turnstile se carga solo cuando el formulario está por verse.
   - Animación de entrada en celular.
 - **Marca:** `--rojo #e21c21`, `--rojo-oscuro #b40000`, `--carbon #282d35`, `--carbon-2 #424a56`. Títulos en Montserrat y texto en Nunito Sans; reemplazan a Avenir, que tenía licencia.
 
@@ -113,17 +114,19 @@ Decisiones del panel:
 
 ## Pendientes
 
-### Fase 3 — formularios y lanzamiento (siguiente paso)
+### Fase 3 — formularios y lanzamiento (en curso)
 
-- **`public_html/api/enviar.php` con PHPMailer local** en `assets/vendor/` o en `includes/`, usando el SMTP de SiteGround.
-  - Las constantes `SMTP_*` y `TURNSTILE_*` ya están en `config.local.example.php`.
-  - Agregar honeypot, Cloudflare Turnstile o reCAPTCHA (preguntar cuál) y mensaje de éxito o error.
-  - Quitar `data-pendiente` de los formularios.
-- **Campos de los formularios:**
-  - `contacto.php`: nombre, email, telefono, asunto, mensaje.
-  - `ofrezca-su-propiedad.php`: nombre, email, whatsapp, operacion, tipo_propiedad, descripcion.
-  - Los dos traen el campo oculto `formulario` y el honeypot `sitio_web`.
-- **Datos que hay que pedir al usuario:** la cuenta SMTP y el correo de destino.
+**Hecho (2 nov 2026):** `api/enviar.php` + `includes/formularios.php`.
+- Envía mkt@duanbienesraices.com (cuenta SMTP) → recibe info@duanbienesraices.com; el correo del visitante va como Reply-To.
+- Anti-spam: honeypot `sitio_web`, Cloudflare Turnstile (`appearance: interaction-only`) y máximo 5 envíos por IP cada 30 min (`data/seguridad/envios-formularios.json`, guarda solo el hash de la IP).
+- Responde JSON con `X-Requested-With: fetch`; sin JS redirige con 303 a la página con `?envio=ok|error#formulario`.
+- Sin `SMTP_*` en `MODO_DEV` el correo se guarda en `data/correos-dev/`; en producción falla y lo registra en el log. Sin claves de Turnstile, en producción se rechazan los envíos.
+- `config.local.php` local usa las claves públicas de prueba de Turnstile (siempre aprueban).
+- Probado: validación, honeypot, Origin ajeno, límite por IP, Turnstile real con claves de prueba y el flujo en el navegador.
+
+**Falta:**
+- En el servidor: `SMTP_HOST`, `SMTP_PUERTO`, `SMTP_USUARIO` (mkt@), `SMTP_CLAVE`, `SMTP_DESTINO` (info@) y las claves reales de Turnstile en `config.local.php`. Primero confirmar dónde está alojado el correo `@duanbienesraices.com` (si no es SiteGround, el host SMTP cambia). Hacer un envío real de prueba.
+- Valorar si el aviso de privacidad debe mencionar Cloudflare Turnstile (decisión del cliente; no redactar texto legal sin confirmar).
 - **Documentación:**
   - `docs/deploy.md`: deploy a SiteGround por Git o SFTP, crear `config.local.php` en el servidor y revisar los permisos de escritura de `data/` y `uploads/`.
   - `docs/guia-panel.md`: guía para la persona que edita, sin experiencia técnica.

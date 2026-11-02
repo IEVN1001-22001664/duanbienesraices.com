@@ -563,6 +563,7 @@ address { font-style: normal; }
 .formulario__estado:not(:empty) { margin-top: 1rem; padding: .9rem 1rem; border-radius: var(--radio-chico); background: var(--rojo-suave); }
 .formulario__estado.es-exito { background: #e7f6ec; }
 .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.formulario__turnstile:not(:empty) { margin-bottom: 1rem; }
 
 /* ==========================================================================
    Contacto

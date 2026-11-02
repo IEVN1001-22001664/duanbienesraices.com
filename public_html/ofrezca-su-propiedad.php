@@ -131,7 +131,7 @@ require __DIR__ . '/includes/header.php';
             <p class="texto-suave">La información será tratada de forma confidencial y no será comunicada a terceras partes. Consulte nuestro <a href="/aviso-de-privacidad">aviso de privacidad</a>.</p>
         </div>
 
-        <form class="formulario" action="/api/enviar.php" method="post" data-formulario data-pendiente novalidate>
+        <form class="formulario" id="formulario" action="/api/enviar.php" method="post" data-formulario novalidate>
             <h3 class="formulario__titulo">¡Le ayudamos GRATIS a conocer el VALOR de su propiedad!</h3>
             <p class="formulario__desc">Bríndenos la siguiente información respecto a su inmueble y en breve será contactado.</p>
             <input type="hidden" name="formulario" value="propiedad">
@@ -143,7 +143,7 @@ require __DIR__ . '/includes/header.php';
                     <label for="p-tipo">Tipo de propiedad <span aria-hidden="true">*</span></label>
                     <select id="p-tipo" name="tipo_propiedad" required>
                         <option value="">Elige uno</option>
-                        <?php foreach (['Casa', 'Departamento', 'Terreno', 'Bodega', 'Local', 'Otro'] as $op): ?>
+                        <?php foreach (TIPOS_PROPIEDAD as $op): ?>
                             <option><?= e($op) ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -152,7 +152,7 @@ require __DIR__ . '/includes/header.php';
                     <label for="p-operacion">Tipo de operación <span aria-hidden="true">*</span></label>
                     <select id="p-operacion" name="operacion" required>
                         <option value="">Elige uno</option>
-                        <?php foreach (['Venta', 'Renta', 'Comprar o Rentar'] as $op): ?>
+                        <?php foreach (OPERACIONES as $op): ?>
                             <option><?= e($op) ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -177,8 +177,7 @@ require __DIR__ . '/includes/header.php';
                 </div>
             </div>
             <p class="formulario__requeridos"><span aria-hidden="true">*</span> Campos obligatorios</p>
-            <button class="boton boton--bloque" type="submit">Enviar</button>
-            <div class="formulario__estado" role="status" aria-live="polite"></div>
+            <?php componente('envio-formulario', ['boton' => 'Enviar']); ?>
         </form>
     </div>
 </section>

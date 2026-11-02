@@ -83,6 +83,12 @@ define('MENU', [
     ['clave' => 'contacto',    'texto' => 'Contacto',            'url' => '/contacto'],
 ]);
 
+// --- Formularios (Fase 3) -----------------------------------------------------------
+// Opciones de las listas. Las usan las páginas y api/enviar.php para validar.
+define('ASUNTOS_CONTACTO', ['Comprar una propiedad', 'Rentar una propiedad', 'Vender mi propiedad', 'Rentar mi propiedad', 'Administración de mi propiedad', 'Otro']);
+define('TIPOS_PROPIEDAD', ['Casa', 'Departamento', 'Terreno', 'Bodega', 'Local', 'Otro']);
+define('OPERACIONES', ['Venta', 'Renta', 'Comprar o Rentar']);
+
 // Servicios: no están en el menú principal (igual que en Wix); se enlazan desde
 // las tarjetas del inicio y el footer.
 define('SERVICIOS', [

@@ -56,7 +56,7 @@ require __DIR__ . '/includes/header.php';
             </ul>
         </div>
 
-        <form class="formulario" action="/api/enviar.php" method="post" data-formulario data-pendiente novalidate>
+        <form class="formulario" id="formulario" action="/api/enviar.php" method="post" data-formulario novalidate>
             <h2 class="formulario__titulo">Envíenos un mensaje</h2>
             <input type="hidden" name="formulario" value="contacto">
             <div class="hp" aria-hidden="true"><label for="c-web">No llenar</label><input id="c-web" type="text" name="sitio_web" tabindex="-1" autocomplete="off"></div>
@@ -77,12 +77,9 @@ require __DIR__ . '/includes/header.php';
             <div class="campo">
                 <label for="c-asunto">Me interesa</label>
                 <select id="c-asunto" name="asunto">
-                    <option>Comprar una propiedad</option>
-                    <option>Rentar una propiedad</option>
-                    <option>Vender mi propiedad</option>
-                    <option>Rentar mi propiedad</option>
-                    <option>Administración de mi propiedad</option>
-                    <option>Otro</option>
+                    <?php foreach (ASUNTOS_CONTACTO as $op): ?>
+                        <option><?= e($op) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="campo">
@@ -90,8 +87,7 @@ require __DIR__ . '/includes/header.php';
                 <textarea id="c-mensaje" name="mensaje" rows="5" required></textarea>
             </div>
             <p class="formulario__requeridos"><span aria-hidden="true">*</span> Campos obligatorios. Al enviar acepta nuestro <a href="/aviso-de-privacidad">aviso de privacidad</a>.</p>
-            <button class="boton boton--bloque" type="submit">Enviar mensaje</button>
-            <div class="formulario__estado" role="status" aria-live="polite"></div>
+            <?php componente('envio-formulario', ['boton' => 'Enviar mensaje']); ?>
         </form>
     </div>
 </section>

@@ -278,19 +278,54 @@
     });
 
     /* ---------------------------------------------------------------
-       Formularios: validación en el navegador.
-       Mientras no exista api/enviar.php (Fase 3) se muestra un aviso con WhatsApp.
+       Formularios: validación en el navegador y envío a api/enviar.php.
+       El script de Cloudflare Turnstile se carga solo cuando el formulario
+       está por verse, para no frenar la carga de la página.
        --------------------------------------------------------------- */
+    var cargarTurnstile = function () {
+        if (cargarTurnstile.hecho) return;
+        cargarTurnstile.hecho = true;
+        window.duanTurnstile = function () {
+            $$('[data-turnstile]').forEach(function (caja) {
+                caja.dataset.widget = window.turnstile.render(caja, {
+                    sitekey: caja.getAttribute('data-turnstile'),
+                    language: 'es',
+                    appearance: 'interaction-only'
+                });
+            });
+        };
+        var s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=duanTurnstile';
+        s.async = true;
+        document.head.appendChild(s);
+    };
+    if ($('[data-turnstile]')) {
+        if ('IntersectionObserver' in window) {
+            var vigia = new IntersectionObserver(function (entradas) {
+                if (entradas.some(function (en) { return en.isIntersecting; })) {
+                    vigia.disconnect();
+                    cargarTurnstile();
+                }
+            }, { rootMargin: '400px' });
+            $$('[data-formulario]').forEach(function (f) { vigia.observe(f); });
+        } else {
+            cargarTurnstile();
+        }
+    }
+
     $$('[data-formulario]').forEach(function (form) {
         var estado = $('.formulario__estado', form);
+        var boton = $('button[type="submit"]', form);
+        var caja = $('[data-turnstile]', form);
+        form.addEventListener('focusin', cargarTurnstile);
         form.addEventListener('submit', function (ev) {
+            ev.preventDefault();
             var invalidos = $$('input, select, textarea', form).filter(function (c) {
                 var ok = c.checkValidity();
                 c.setAttribute('aria-invalid', ok ? 'false' : 'true');
                 return !ok;
             });
             if (invalidos.length) {
-                ev.preventDefault();
                 estado.className = 'formulario__estado';
                 estado.textContent = 'Revise los campos marcados: ' + invalidos.map(function (c) {
                     var l = form.querySelector('label[for="' + c.id + '"]');
@@ -299,13 +334,36 @@
                 invalidos[0].focus();
                 return;
             }
-            if (form.hasAttribute('data-pendiente')) {
-                ev.preventDefault();
+            if (!window.fetch) { form.submit(); return; }
+
+            var textoBoton = boton.textContent;
+            boton.disabled = true;
+            boton.textContent = 'Enviando…';
+            estado.className = 'formulario__estado';
+            estado.textContent = '';
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'X-Requested-With': 'fetch' },
+                credentials: 'same-origin'
+            }).then(function (r) {
+                return r.json();
+            }).then(function (res) {
+                estado.className = 'formulario__estado' + (res.ok ? ' es-exito' : '');
+                estado.textContent = res.mensaje;
+                if (res.ok) form.reset();
+            }).catch(function () {
                 estado.className = 'formulario__estado';
-                estado.innerHTML = 'El envío en línea estará disponible muy pronto. Mientras tanto, escríbanos por ' +
+                estado.innerHTML = 'No pudimos enviar su mensaje. Escríbanos por ' +
                     '<a href="https://api.whatsapp.com/send?phone=524775514226" target="_blank" rel="noopener">WhatsApp</a> ' +
                     'o al correo <a href="mailto:info@duanbienesraices.com">info@duanbienesraices.com</a>.';
-            }
+            }).then(function () {
+                boton.disabled = false;
+                boton.textContent = textoBoton;
+                // Cada token de Turnstile sirve una sola vez
+                if (caja && caja.dataset.widget && window.turnstile) window.turnstile.reset(caja.dataset.widget);
+            });
         });
     });
 
