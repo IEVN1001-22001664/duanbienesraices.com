@@ -41,8 +41,6 @@ defined('URL_TOKKO') || define('URL_TOKKO', 'https://www.duanbienesraices-buscad
 define('URL_TOKKO_PROPIEDADES', URL_TOKKO . '/Propiedades');
 
 // --- Contacto ----------------------------------------------------------------
-define('TELEFONO', '(477) 688 6298');
-define('TELEFONO_E164', '+524776886298');
 define('WHATSAPP_NUMERO', '524775514226');
 define('WHATSAPP_VISIBLE', '477 551 4226');
 define('WHATSAPP_MENSAJE', '¡Hola! Vengo de su página web, tengo interés de...');

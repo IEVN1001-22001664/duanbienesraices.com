@@ -38,7 +38,6 @@
         <div class="pie__columna">
             <h2 class="pie__titulo">Contacto</h2>
             <ul class="pie__contacto">
-                <li><?= icono('telefono') ?><a href="tel:<?= e(TELEFONO_E164) ?>"><?= e(TELEFONO) ?></a></li>
                 <li><?= icono('whatsapp') ?><a href="<?= e(whatsapp_url()) ?>" target="_blank" rel="noopener"><?= e(WHATSAPP_VISIBLE) ?></a></li>
                 <li><?= icono('correo') ?><a href="mailto:<?= e(EMAIL_CONTACTO) ?>"><?= e(EMAIL_CONTACTO) ?></a></li>
                 <li><?= icono('ubicacion') ?><a href="<?= e(URL_MAPS_OFICINA) ?>" target="_blank" rel="noopener"><?= e(DIRECCION['calle'] . ', ' . DIRECCION['colonia'] . ', ' . DIRECCION['ciudad'] . ', Gto.') ?></a></li>

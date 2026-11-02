@@ -513,7 +513,7 @@ function jsonld_negocio(): array
         'url'       => URL_SITIO . '/',
         'logo'      => url_absoluta('/assets/img/logo-duan-bienes-raices.webp'),
         'image'     => url_absoluta('/assets/img/og-default.jpg'),
-        'telephone' => TELEFONO_E164,
+        'telephone' => '+' . WHATSAPP_NUMERO,
         'email'     => EMAIL_CONTACTO,
         'foundingDate' => '2013',
         'address'   => [

@@ -52,11 +52,11 @@ Usted puede limitar el uso y divulgación de su información personal a través 
 
 - Presentando su solicitud personalmente en nuestro domicilio, dirigida al departamento de atención a clientes, encargado de la privacidad en esta oficina.
 - Enviando correo electrónico a la siguiente dirección: [info@duanbienesraices.com](mailto:info@duanbienesraices.com).
-- Llamando al número telefónico 477 688 6298 o 477 551 4226.
+- Llamando al número telefónico 477 551 4226.
 
 ## ¿Cómo acceder, rectificar, cancelar u oponerse al tratamiento de sus datos personales?
 
-El ejercicio de los derechos de acceso, rectificación, cancelación y oposición, o la revocación del consentimiento, podrán efectuarse presentando solicitud por escrito en nuestro domicilio dirigida a la persona o departamento de privacidad, vía correo electrónico a [info@duanbienesraices.com](mailto:info@duanbienesraices.com) o llamando al número 477 688 6298 o 477 551 4226, en el entendido de que, una vez plasmados en un instrumento notarial, no podrá ejercer sobre ellos ninguno de los referidos derechos, pudiendo hacerlo solamente respecto de los que se conservan en la base de datos de la empresa.
+El ejercicio de los derechos de acceso, rectificación, cancelación y oposición, o la revocación del consentimiento, podrán efectuarse presentando solicitud por escrito en nuestro domicilio dirigida a la persona o departamento de privacidad, vía correo electrónico a [info@duanbienesraices.com](mailto:info@duanbienesraices.com) o llamando al número 477 551 4226, en el entendido de que, una vez plasmados en un instrumento notarial, no podrá ejercer sobre ellos ninguno de los referidos derechos, pudiendo hacerlo solamente respecto de los que se conservan en la base de datos de la empresa.
 
 ## ¿Cómo conocer los cambios al presente aviso de privacidad?
 
@@ -72,7 +72,7 @@ Si usted tiene alguna duda sobre el presente aviso de privacidad, puede dirigirl
 
 - La dirección electrónica: [info@duanbienesraices.com](mailto:info@duanbienesraices.com)
 - La dirección de correo postal dirigida al departamento de atención a clientes.
-- Los teléfonos 477 688 6298 o 477 551 4226.
+- El teléfono 477 551 4226.
 
 Asimismo, ponemos a su entera disposición copias del presente aviso de privacidad en nuestro domicilio y en nuestra página de internet www.duanbienesraices.com, sección “Aviso de Privacidad”.
 

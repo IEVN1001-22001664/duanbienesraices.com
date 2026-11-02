@@ -6,7 +6,7 @@ require __DIR__ . '/includes/config.php';
 
 $pagina = [
     'titulo'      => "Contacto | Du'an Bienes Raíces, León, Guanajuato",
-    'descripcion' => 'Con gusto atenderemos su llamada. Teléfono (477) 688 6298, WhatsApp 477 551 4226 o escríbanos a info@duanbienesraices.com.',
+    'descripcion' => 'Con gusto le atendemos. Escríbanos por WhatsApp al 477 551 4226 o a info@duanbienesraices.com.',
     'ruta'        => '/contacto',
     'activo'      => 'contacto',
     'imagen'      => '/assets/img/contacto-ubicacion.webp',
@@ -31,10 +31,6 @@ require __DIR__ . '/includes/header.php';
         <div class="contacto__datos">
             <h2 class="titulo-seccion titulo-seccion--izq">Estamos para ayudarle</h2>
             <ul class="datos-contacto">
-                <li>
-                    <span class="datos-contacto__icono"><?= icono('telefono') ?></span>
-                    <div><strong>Teléfono</strong><a href="tel:<?= e(TELEFONO_E164) ?>"><?= e(TELEFONO) ?></a></div>
-                </li>
                 <li>
                     <span class="datos-contacto__icono datos-contacto__icono--wa"><?= icono('whatsapp') ?></span>
                     <div><strong>WhatsApp</strong><a href="<?= e(whatsapp_url()) ?>" target="_blank" rel="noopener"><?= e(WHATSAPP_VISIBLE) ?></a></div>

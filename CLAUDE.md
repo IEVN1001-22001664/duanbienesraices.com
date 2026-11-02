@@ -108,7 +108,7 @@ Decisiones del panel:
 
 - **Fase 1** (maquetado y SEO) y **Fase 2** (panel) terminadas y subidas a `main`. Último commit: `f1e98d3`.
 - El panel pasó 56 pruebas de extremo a extremo y la revisión en el navegador a 375 y 1280 px.
-- **Sin commit:** `public_html/includes/footer.php` quita la línea del teléfono (477) 688 6298 del pie. Lo cambió el usuario y no lo confirmó. Preguntar si se sube o se descarta; no incluirlo en otros commits.
+- **Teléfono fijo retirado:** el (477) 688 6298 ya no se publica (pie, Contacto, aviso de privacidad ni datos para Google). El único número es el WhatsApp 477 551 4226, que también se usa como `telephone` en los datos para Google.
 - Fuera del repo se entregaron un PDF de la maqueta de Inicio y una maqueta editable en Figma (https://www.figma.com/design/nIUU1M1w4JMsLv48ow0lg6).
 
 ## Pendientes
