@@ -10,7 +10,7 @@ Documentación técnica más detallada en `docs/README.md` (estructura, JSON y p
 - **Stack fijo:** PHP 8 sin frameworks ni CMS, HTML semántico, CSS propio y JS vanilla, sin build ni npm. Las librerías van locales en `assets/vendor/`. **Preguntar antes** de cambiar el stack o la estructura.
 - **No inventar datos de negocio** (teléfonos, cifras, testimonios, horarios). Si falta algo, dejar `<!-- TODO: contenido real — … -->`.
 - Priorizar el rendimiento: WebP, `loading="lazy"`, CSS y JS mínimos, `font-display: swap`.
-- Commits atómicos con mensajes en español y `Co-Authored-By`. Hacer **push solo cuando el usuario lo pide**.
+- Commits atómicos con mensajes en español y `Co-Authored-By`. Los **cambios pequeños se confirman y se suben (commit + push a `main`) sin preguntar**; solo los cambios muy grandes o complicados se consultan antes de subirlos.
 - Todo lo que viene de un JSON se imprime con `e()`.
 
 ## Comandos
