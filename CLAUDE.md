@@ -128,7 +128,7 @@ Decisiones del panel:
 
 **Falta:**
 - En el servidor: `SMTP_*` y las claves reales de Turnstile en `config.local.php`. El correo `@duanbienesraices.com` está en **Google Workspace** (contratado desde Wix): `smtp.gmail.com`, puerto 465, usuario mkt@ y una contraseña de aplicación (requiere verificación en 2 pasos). Hacer un envío real de prueba.
-- **Dominio y cuentas (3 nov 2026):** `duanbienesraices.com` se compró en Wix (registrador Network Solutions, vence 17 oct 2027). Workspace se paga directo a Google y lo administra el jefe. `duanbienesraices-buscador.com` (Tucows, vence 14 oct 2027) también es del jefe. El plan Premium de Wix se va a cancelar: el dominio no debe cancelarse ni vencer. Respaldo de la zona en `docs/dns-respaldo-wix.md`.
+- **Dominio y cuentas (3 nov 2026):** `duanbienesraices.com` se compró en Wix (registrador Network Solutions, vence 17 oct 2027). Workspace se paga directo a Google y lo administra el jefe. `duanbienesraices-buscador.com` (Tucows, vence 14 oct 2027) también es del jefe. El dominio se queda en Wix y se renueva; sacarlo de Wix se verá después del lanzamiento. Solo se cancela el plan Premium, que termina **antes del 18 nov 2026**: es la fecha límite para tener el sitio en SiteGround y el DNS cambiado. Respaldo de la zona en `docs/dns-respaldo-wix.md`.
 - Al mover el DNS de Wix a SiteGround: recrear los MX de Google, el SPF (`include:_spf.google.com`), el DKIM de Workspace y los TXT de verificación. Confirmar que la suscripción de Workspace (cobrada por Wix) siga activa al dejar Wix.
 - Valorar si el aviso de privacidad debe mencionar Cloudflare Turnstile (decisión del cliente; no redactar texto legal sin confirmar).
 - **Documentación:**
