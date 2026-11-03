@@ -127,7 +127,8 @@ Decisiones del panel:
 - Probado: validación, honeypot, Origin ajeno, límite por IP, Turnstile real con claves de prueba y el flujo en el navegador.
 
 **Falta:**
-- En el servidor: `SMTP_HOST`, `SMTP_PUERTO`, `SMTP_USUARIO` (mkt@), `SMTP_CLAVE`, `SMTP_DESTINO` (info@) y las claves reales de Turnstile en `config.local.php`. Primero confirmar dónde está alojado el correo `@duanbienesraices.com` (si no es SiteGround, el host SMTP cambia). Hacer un envío real de prueba.
+- En el servidor: `SMTP_*` y las claves reales de Turnstile en `config.local.php`. El correo `@duanbienesraices.com` está en **Google Workspace** (contratado desde Wix): `smtp.gmail.com`, puerto 465, usuario mkt@ y una contraseña de aplicación (requiere verificación en 2 pasos). Hacer un envío real de prueba.
+- Al mover el DNS de Wix a SiteGround: recrear los MX de Google, el SPF (`include:_spf.google.com`), el DKIM de Workspace y los TXT de verificación. Confirmar que la suscripción de Workspace (cobrada por Wix) siga activa al dejar Wix.
 - Valorar si el aviso de privacidad debe mencionar Cloudflare Turnstile (decisión del cliente; no redactar texto legal sin confirmar).
 - **Documentación:**
   - `docs/deploy.md`: deploy a SiteGround por Git o SFTP, crear `config.local.php` en el servidor y revisar los permisos de escritura de `data/` y `uploads/`.

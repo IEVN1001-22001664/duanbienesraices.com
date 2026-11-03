@@ -23,10 +23,12 @@
 // define('ADMIN_HASH', '');
 
 // --- Correo de los formularios (Fase 3) ---
-// La cuenta mkt@ envía y los mensajes llegan a info@. El host y el puerto salen
-// de la sección «Email > Accounts > Mail Configuration» de SiteGround.
+// La cuenta mkt@ envía y los mensajes llegan a info@. El correo está en Google Workspace.
+// SMTP_CLAVE es una «contraseña de aplicación» de mkt@ (no su contraseña normal):
+// requiere la verificación en 2 pasos activa en esa cuenta y se crea en
+// myaccount.google.com > Seguridad > Contraseñas de aplicaciones (16 letras, sin espacios).
 // Puerto 465 = SSL; 587 = STARTTLS. En local, si faltan, el correo se guarda en data/correos-dev/.
-// define('SMTP_HOST', 'mail.duanbienesraices.com');
+// define('SMTP_HOST', 'smtp.gmail.com');
 // define('SMTP_PUERTO', 465);
 // define('SMTP_USUARIO', 'mkt@duanbienesraices.com');
 // define('SMTP_CLAVE', '');
