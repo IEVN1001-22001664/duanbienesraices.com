@@ -8,7 +8,7 @@ require __DIR__ . '/includes/config.php';
 
 $pagina = [
     'titulo'      => "Nosotros | Du'an Bienes Raíces, inmobiliaria en León desde 2013",
-    'descripcion' => 'Somos una empresa con más de 10 años de experiencia en el sector. Profesionalismo y credibilidad nos respaldan.',
+    'descripcion' => 'Somos una empresa con más de 13 años de experiencia en el sector. Profesionalismo y credibilidad nos respaldan.',
     'ruta'        => '/empresa',
     'activo'      => 'nosotros',
     'imagen'      => '/assets/img/nosotros-hero.webp',
