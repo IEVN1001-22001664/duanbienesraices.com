@@ -43,6 +43,19 @@ $mapa301 = [
 if (isset($mapa301[$ruta])) {
     $redirigir($mapa301[$ruta]);
 }
+if (preg_match('#^/(faq|fullscreen-page|tour-virtual-360|popup-.*)/?$#', $ruta)) {
+    $redirigir('/');
+}
+if (preg_match('#^/blog/(categories|page)/#', $ruta)) {
+    $redirigir('/blog');
+}
+// Quitar ".php" (salvo api/ y admin/) y la diagonal final, igual que .htaccess
+if (preg_match('#^/(?!api/|admin/)(.+)\.php$#', $ruta, $m)) {
+    $redirigir($m[1] === 'index' ? '/' : '/' . $m[1]);
+}
+if (strlen($ruta) > 1 && str_ends_with($ruta, '/') && !is_dir($web . $ruta)) {
+    $redirigir(rtrim($ruta, '/'));
+}
 if (preg_match('#^/(includes|components)/#', $ruta)) {
     http_response_code(403);
     exit;
