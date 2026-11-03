@@ -105,7 +105,7 @@ Puede tardar hasta unas horas en propagarse (TTL de 1 h).
 
 - `http://duanbienesraices.com`, `https://duanbienesraices.com` y `es.duanbienesraices.com` → 301 a `https://www.duanbienesraices.com/`.
 - `/post/_hola` → artículo nuevo; `/faq` → inicio.
-- 403 en `/includes/config.php`, `/assets/../.htaccess` y en cualquier `.php` dentro de `/uploads/`. `data/` y `config.local.php` están fuera de `public_html/`, así que ni siquiera tienen URL.
+- 403 en `/includes/config.php`, `/.htaccess` y en cualquier `.php` dentro de `/uploads/`. `data/` y `config.local.php` están fuera de `public_html/`, así que ni siquiera tienen URL.
 - No aparece `noindex` en el código fuente de las páginas (si aparece, quedó `MODO_DEV` activo).
 - Search Console: enviar `https://www.duanbienesraices.com/sitemap.xml`.
 - Hasta entonces, no cancelar ni borrar el sitio de Wix.
