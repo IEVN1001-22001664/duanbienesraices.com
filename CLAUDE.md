@@ -144,10 +144,9 @@ Decisiones del panel:
 ### Contenido real que falta (marcado con TODO; no inventar)
 
 - **`empresa.php`:**
-  - Foto del Arq. Alejandro Jaqués Martínez.
+  - Foto del Arq. Alejandro Jáquez Martínez.
   - Mensaje del fundador.
   - Una cifra adicional.
-  - Confirmar si el apellido es "Jaqués" (como en la especificación) o "Jáquez" (como en el blog).
 - **`contacto.php`:** horario de atención.
 - **`ofrezca-su-propiedad.php`:** en Wix había un widget que no se pudo leer; confirmar si se necesita.
 - **`testimonios.json`:** 5 de 6 no tienen `url_resena` individual; por ahora enlazan al perfil general de Google.

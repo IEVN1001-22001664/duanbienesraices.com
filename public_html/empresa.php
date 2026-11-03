@@ -37,7 +37,7 @@ require __DIR__ . '/includes/header.php';
 <section class="seccion fundador" aria-labelledby="titulo-fundador">
     <div class="contenedor fundador__grid">
         <figure class="fundador__foto">
-            <!-- TODO: contenido real — foto del Arq. Alejandro Jaqués Martínez (vertical, mín. 800 px de ancho) -->
+            <!-- TODO: contenido real — foto del Arq. Alejandro Jáquez Martínez (vertical, mín. 800 px de ancho) -->
             <div class="marcador-foto" role="img" aria-label="Foto del fundador pendiente">
                 <img src="/assets/img/logo-duan-bienes-raices.webp" alt="" width="400" height="576" loading="lazy">
             </div>
@@ -49,7 +49,7 @@ require __DIR__ . '/includes/header.php';
             <p>Du’an Bienes Raíces inicia sus operaciones en la ciudad de León, Guanajuato, en el año 2013, al ver la necesidad del mercado de encontrar inmobiliarias y asesores que garanticen a sus clientes confiabilidad y honestidad en todas las operaciones que realizan. A través de estos años nos hemos especializado y mejorado para ofrecer un excelente servicio.</p>
             <p>Apoyamos a nuestros clientes en el proceso de venta y renta a través de asesoría jurídica, estableciendo el valor del inmueble a un precio de mercado adecuado y llevando a cabo una excelente promoción. Contamos con una amplia cartera de clientes interesados y prospectos que buscan comprar o rentar inmuebles.</p>
             <p class="fundador__firma">
-                <strong>Arq. Alejandro Jaqués Martínez</strong>
+                <strong>Arq. Alejandro Jáquez Martínez</strong>
                 <span>Fundador y Director</span>
             </p>
         </div>
