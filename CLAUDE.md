@@ -93,7 +93,7 @@ Decisiones del panel:
 
 ## Decisiones tomadas en la Fase 1 (no revertir sin preguntar)
 
-- **Fuera de alcance:** la sección Propiedades vive en Tokko. Su URL está en la constante `URL_TOKKO` (`https://www.duanbienesraices-buscador.com`); para cambiarla a un subdominio basta con modificar esa constante.
+- **Fuera de alcance:** la sección Propiedades vive en Tokko. Su URL está en la constante `URL_TOKKO`: `https://propiedades.duanbienesraices.com`, alias en Tokko de `duanbienesraices-buscador.com` (los dos dominios muestran el mismo sitio, sin redirección entre ellos).
 - **Páginas y archivos agregados:** carpeta `uploads-seed/`, `plantilla-servicio.php`, página `/aviso-de-privacidad`, componentes de calculadora y CTA, y `dev-router.php`.
 - **Menú:** los Servicios no están en el menú principal, igual que en Wix; se enlazan desde las tarjetas del inicio y el footer.
 - **Destacados:** galerías de hasta 12 fotos; el precio se guarda como número y se muestra con `formato_precio()`.

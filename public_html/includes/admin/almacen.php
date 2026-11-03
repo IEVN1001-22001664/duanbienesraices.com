@@ -44,7 +44,7 @@ const SECCIONES_ADMIN = [
             'descripcion' => ['tipo' => 'area', 'etiqueta' => 'Descripción corta', 'max' => 400, 'filas' => 4,
                             'ayuda' => 'Dos o tres líneas con lo más atractivo de la propiedad.'],
             'url_tokko' => ['tipo' => 'url', 'etiqueta' => 'Liga a la ficha en Tokko', 'req' => true,
-                            'ayuda' => 'Copia la dirección de la ficha. Ej.: https://www.duanbienesraices-buscador.com/p/8448414-prop'],
+                            'ayuda' => 'Copia la dirección de la ficha. Ej.: https://propiedades.duanbienesraices.com/p/8448414-prop'],
             'fotos'     => ['tipo' => 'fotos', 'etiqueta' => 'Fotos', 'req' => true, 'max' => 12,
                             'tamanos' => ['card' => [720, 540, 'recortar'], 'full' => [1400, 1050, 'ajustar']],
                             'ayuda' => 'Hasta 12 fotos. La primera es la portada. Arrástralas para cambiar el orden.'],

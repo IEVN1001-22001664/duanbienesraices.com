@@ -35,9 +35,9 @@ define('NOMBRE_SITIO', "Du'an Bienes Raíces");
 define('SLOGAN', 'Su Patrimonio en Buenas Manos');
 
 // --- Tokko Broker (sección Propiedades) --------------------------------------
-// El listado y las fichas viven en Tokko. Si más adelante se usa un subdominio
-// (p. ej. https://propiedades.duanbienesraices.com) solo se cambia aquí.
-defined('URL_TOKKO') || define('URL_TOKKO', 'https://www.duanbienesraices-buscador.com');
+// El listado y las fichas viven en Tokko, servidos en el subdominio propio
+// (alias en Tokko de duanbienesraices-buscador.com). Si cambia, solo se toca aquí.
+defined('URL_TOKKO') || define('URL_TOKKO', 'https://propiedades.duanbienesraices.com');
 define('URL_TOKKO_PROPIEDADES', URL_TOKKO . '/Propiedades');
 
 // --- Contacto ----------------------------------------------------------------
