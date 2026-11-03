@@ -57,12 +57,14 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
   - Las reglas de validación están en `ESQUEMAS` (`funciones.php`), compartidas entre el sitio y el panel.
 - **Blog:** el contenido es Markdown y lo convierte `markdown()`, un renderer propio y seguro que escapa todo. Los shortcodes `[[calculadora-gastos]]` y `[[cta-asesoria]]` van solos en su línea.
 - **main.js:**
-  - Videos de YouTube con lite embed.
+  - Videos de YouTube: la tarjeta solo muestra la miniatura; al hacer clic se abre un `<dialog>` grande (a todo lo ancho en celular) y el iframe se borra al cerrar.
   - Galerías y carruseles con scroll-snap; cada uno guarda su propio índice.
   - El video del hero solo se carga a ≥768 px y sin reducir movimiento.
   - El mapa se carga al hacer clic.
   - Los formularios se envían por `fetch` a `api/enviar.php`; el script de Turnstile se carga solo cuando el formulario está por verse.
   - Animación de entrada en celular.
+- **Estilos generales:** los párrafos dentro de `<main>` van justificados (`:where(main) p`); los bloques centrados se excluyen en la regla de al lado. Etiquetas de destacados rectas y pegadas al borde derecho; Renta en `--azul #1565c0`. El botón flotante de WhatsApp es solo el ícono.
+- **Pilares de blindaje:** viven en Tengo una propiedad, debajo de «¿Cómo lo hacemos?», con un triángulo SVG de 3 piezas y «Resultados» al centro (ya no están en Nosotros).
 - **Marca:** `--rojo #e21c21`, `--rojo-oscuro #b40000`, `--carbon #282d35`, `--carbon-2 #424a56`. Títulos en Montserrat y texto en Nunito Sans; reemplazan a Avenir, que tenía licencia.
 
 ### Panel /admin (Fase 2)

@@ -197,23 +197,40 @@
     });
 
     /* ---------------------------------------------------------------
-       YouTube "lite embed": el iframe se crea al hacer clic
+       YouTube: la tarjeta solo muestra la miniatura; al hacer clic el video
+       se abre en un modal grande (a todo lo ancho en celular). El iframe se
+       crea al abrir y se elimina al cerrar para detener la reproducción.
        --------------------------------------------------------------- */
+    var modalVideo = null;
+    var abrirVideo = function (id, titulo) {
+        if (!modalVideo) {
+            modalVideo = document.createElement('dialog');
+            modalVideo.className = 'video-modal';
+            modalVideo.innerHTML = '<button class="video-modal__cerrar" type="button" aria-label="Cerrar video">&times;</button>' +
+                '<div class="video-modal__marco"></div>';
+            document.body.appendChild(modalVideo);
+            $('.video-modal__cerrar', modalVideo).addEventListener('click', function () { modalVideo.close(); });
+            // Clic fuera del video (en el fondo oscuro) cierra
+            modalVideo.addEventListener('click', function (ev) { if (ev.target === modalVideo) modalVideo.close(); });
+            modalVideo.addEventListener('close', function () { $('.video-modal__marco', modalVideo).innerHTML = ''; });
+        }
+        var iframe = document.createElement('iframe');
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
+        iframe.title = titulo || 'Video de YouTube';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        $('.video-modal__marco', modalVideo).appendChild(iframe);
+        modalVideo.setAttribute('aria-label', iframe.title);
+        modalVideo.showModal();
+    };
     $$('[data-youtube]').forEach(function (marco) {
         var enlace = $('.video__play', marco);
         if (!enlace) return;
         enlace.addEventListener('click', function (ev) {
-            ev.preventDefault();
             var id = marco.getAttribute('data-youtube');
-            if (!/^[\w-]{11}$/.test(id)) return;
-            var iframe = document.createElement('iframe');
-            iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
-            iframe.title = marco.getAttribute('data-titulo') || 'Video de YouTube';
-            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-            iframe.allowFullscreen = true;
-            marco.innerHTML = '';
-            marco.appendChild(iframe);
-            iframe.focus();
+            if (!/^[\w-]{11}$/.test(id) || typeof HTMLDialogElement !== 'function') return; // sin <dialog>: abre YouTube
+            ev.preventDefault();
+            abrirVideo(id, marco.getAttribute('data-titulo'));
         });
     });
 

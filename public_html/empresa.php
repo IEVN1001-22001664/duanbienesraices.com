@@ -1,7 +1,8 @@
 <?php
 /**
  * Nosotros (/empresa). Contenido fijo en código.
- * Estructura: hero → mensaje del fundador → pilares de blindaje → misión/visión/valores → cifras + CTA.
+ * Estructura: hero → mensaje del fundador → misión/visión/valores → cifras + CTA.
+ * Los pilares de blindaje viven en Tengo una propiedad (ofrezca-su-propiedad.php).
  */
 require __DIR__ . '/includes/config.php';
 
@@ -12,15 +13,6 @@ $pagina = [
     'activo'      => 'nosotros',
     'imagen'      => '/assets/img/nosotros-hero.webp',
     'precarga'    => '/assets/img/nosotros-hero.webp',
-];
-
-$pilares = [
-    ['icono' => 'balanza', 'titulo' => 'Certeza Jurídica',
-     'texto' => 'Revisamos la documentación de su propiedad para confirmar que todo esté legalmente en regla y, si hace falta, le orientamos en el trámite necesario. Así cada operación llega segura hasta la firma ante notario.'],
-    ['icono' => 'escudo', 'titulo' => 'Valuación Real',
-     'texto' => 'Fijamos el precio con base en un estudio comparativo de mercado (opinión de valor) o un avalúo comercial. Un precio adecuado desde el inicio protege el valor de su patrimonio.'],
-    ['icono' => 'megafono', 'titulo' => 'Marketing Inmobiliario de Alto Nivel',
-     'texto' => 'Fotografía profesional, tomas aéreas con dron, tour virtual 360° y video recorrido, con campañas en redes sociales y en los mejores portales inmobiliarios para llegar al cliente ideal.'],
 ];
 
 $valores = [
@@ -60,23 +52,6 @@ require __DIR__ . '/includes/header.php';
                 <strong>Arq. Alejandro Jaqués Martínez</strong>
                 <span>Fundador y Director</span>
             </p>
-        </div>
-    </div>
-</section>
-
-<section class="seccion seccion--oscura pilares" aria-labelledby="titulo-pilares">
-    <div class="contenedor">
-        <h2 class="titulo-seccion titulo-seccion--claro" id="titulo-pilares">Pilares de blindaje</h2>
-        <p class="subtitulo-seccion subtitulo-seccion--claro">Tres compromisos que protegen cada operación que nos confía.</p>
-        <div class="pilares__grid">
-            <?php foreach ($pilares as $i => $p): ?>
-                <article class="pilar">
-                    <span class="pilar__numero" aria-hidden="true">0<?= $i + 1 ?></span>
-                    <span class="pilar__icono"><?= icono($p['icono']) ?></span>
-                    <h3 class="pilar__titulo"><?= e($p['titulo']) ?></h3>
-                    <p><?= e($p['texto']) ?></p>
-                </article>
-            <?php endforeach; ?>
         </div>
     </div>
 </section>

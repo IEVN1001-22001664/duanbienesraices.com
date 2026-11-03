@@ -13,6 +13,16 @@ $pagina = [
     'imagen'      => '/assets/img/fondo-inventario.webp',
 ];
 
+// Pilares de blindaje: colores del gráfico triangular (arriba, abajo izq., abajo der.)
+$pilares = [
+    ['icono' => 'balanza', 'titulo' => 'Certeza Jurídica',
+     'texto' => 'Revisamos la documentación de su propiedad para confirmar que todo esté legalmente en regla y, si hace falta, le orientamos en el trámite necesario. Así cada operación llega segura hasta la firma ante notario.'],
+    ['icono' => 'escudo', 'titulo' => 'Valuación Real',
+     'texto' => 'Fijamos el precio con base en un estudio comparativo de mercado (opinión de valor) o un avalúo comercial. Un precio adecuado desde el inicio protege el valor de su patrimonio.'],
+    ['icono' => 'megafono', 'titulo' => 'Marketing Inmobiliario de Alto Nivel',
+     'texto' => 'Fotografía profesional, tomas aéreas con dron, tour virtual 360° y video recorrido, con campañas en redes sociales y en los mejores portales inmobiliarios para llegar al cliente ideal.'],
+];
+
 $equipos = [
     ['img' => 'equipo-camara-profesional.webp', 'w' => 500, 'h' => 445, 'titulo' => 'Cámara profesional', 'texto' => 'Para fotos y videos de alta calidad', 'alt' => 'Cámara profesional Canon EOS'],
     ['img' => 'equipo-dron.webp',               'w' => 500, 'h' => 286, 'titulo' => 'Dron profesional',   'texto' => 'Para fotos y videos aéreos', 'alt' => 'Dron profesional Mavic Air'],
@@ -29,7 +39,7 @@ require __DIR__ . '/includes/header.php';
     <div class="contenedor portada__texto">
         <p class="portada__antetitulo">Tengo una propiedad</p>
         <h1 class="portada__titulo">¡Resultados comprobados!</h1>
-        <p class="portada__lead">Más de 10 años de experiencia nos respaldan.</p>
+        <p class="portada__lead">Más de 13 años de experiencia nos respaldan.</p>
         <a class="boton boton--grande" href="#valuacion">Quiero una valoración gratuita</a>
     </div>
 </section>
@@ -53,6 +63,46 @@ require __DIR__ . '/includes/header.php';
                 <li><?= icono('ubicacion') ?><div><strong>Terrenos</strong><span>Comerciales, campestres, ranchos</span></div></li>
                 <li><?= icono('edificio') ?><div><strong>Comercial</strong><span>Locales, bodegas</span></div></li>
             </ul>
+        </div>
+    </div>
+</section>
+
+<section class="seccion seccion--oscura pilares" aria-labelledby="titulo-pilares">
+    <div class="contenedor">
+        <h2 class="titulo-seccion titulo-seccion--claro" id="titulo-pilares">Pilares de blindaje</h2>
+        <p class="subtitulo-seccion subtitulo-seccion--claro">Tres compromisos que protegen cada operación que nos confía.</p>
+        <div class="pilares__diagrama">
+            <!-- Triángulo de 3 piezas; en el centro, los resultados que dan los tres pilares juntos -->
+            <figure class="pilares__grafico">
+                <svg viewBox="0 0 600 520" role="img" aria-labelledby="pilares-grafico-titulo">
+                    <title id="pilares-grafico-titulo">Los tres pilares, <?= e(implode(', ', array_column($pilares, 'titulo'))) ?>, dan como fruto los resultados</title>
+                    <g style="stroke: var(--carbon)" stroke-width="14" stroke-linejoin="round">
+                        <polygon class="pilares__pieza pilares__pieza--1" points="300,20 435,260 300,340 165,260"/>
+                        <polygon class="pilares__pieza pilares__pieza--2" points="165,260 300,340 300,500 30,500"/>
+                        <polygon class="pilares__pieza pilares__pieza--3" points="435,260 570,500 300,500 300,340"/>
+                    </g>
+                    <?php
+                    // Posición del ícono y del número dentro de cada pieza
+                    $marcas = [[300, 105, 300, 222], [148, 370, 148, 462], [452, 370, 452, 462]];
+                    foreach ($pilares as $i => $p):
+                        [$ix, $iy, $nx, $ny] = $marcas[$i];
+                    ?>
+                        <use href="<?= e(asset('img/iconos.svg')) ?>#<?= e($p['icono']) ?>" x="<?= $ix - 30 ?>" y="<?= $iy - 30 ?>" width="60" height="60" color="#fff"/>
+                        <text class="pilares__num" x="<?= $nx ?>" y="<?= $ny ?>" text-anchor="middle">0<?= $i + 1 ?></text>
+                    <?php endforeach; ?>
+                    <circle cx="300" cy="340" r="96" style="fill: var(--carbon)"/>
+                    <circle cx="300" cy="340" r="84" fill="#fff"/>
+                    <circle cx="300" cy="340" r="72" fill="none" style="stroke: var(--rojo)" stroke-width="3" stroke-dasharray="10 7"/>
+                    <text class="pilares__centro" x="300" y="349" text-anchor="middle">Resultados</text>
+                </svg>
+            </figure>
+            <?php foreach ($pilares as $i => $p): ?>
+                <article class="pilar pilar--<?= $i + 1 ?>">
+                    <span class="pilar__numero" aria-hidden="true">0<?= $i + 1 ?></span>
+                    <h3 class="pilar__titulo"><?= e($p['titulo']) ?></h3>
+                    <p><?= e($p['texto']) ?></p>
+                </article>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
