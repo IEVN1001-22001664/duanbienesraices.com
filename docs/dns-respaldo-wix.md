@@ -38,9 +38,11 @@ El certificado SSL de SiteGround debe cubrir también `es.` y `en.`, o la redire
 | `sel1._domainkey` | CNAME | `sel1._domainkey.duanbienesraices.com.s021.ascendbywix.com` | Igual que `s1` |
 | `sg` | CNAME | `sg.duanbienesraices.com.s021.ascendbywix.com` | Envíos de Wix (Ascend). Igual que `s1` |
 
-## Lo que no existe hoy y conviene agregar
+## Agregados el 3 nov 2026 (copiar tal cual si se cambia de DNS)
 
-- **SPF** (no hay ninguno): TXT en `@` → `v=spf1 include:_spf.google.com ~all`.
-- **DKIM de Google** (no hay `google._domainkey`): se genera en admin.google.com → Apps → Google Workspace → Gmail → Autenticar correo; se publica el TXT que da Google y luego se pulsa «Iniciar autenticación».
+| Nombre | Tipo | Valor |
+|---|---|---|
+| `@` | TXT | `v=spf1 include:_spf.google.com ~all` (SPF) |
+| `google._domainkey` | TXT | `v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4wGQQfLOaX3oHDaJi0RmF5k995pCqp0hz9aeYCVmXUUi59Y9EYLn03FlM/JPayjQSMqflbzvEs/BstM8X6mKij3uK/5VUzJ5T5VZXDskfLrnQob5m2+33eMNG/SRAyGrFWXxasHy9RaQu3Q90p3jK/jFG/bgINjJJdWsIPbBz+yXxA6d1/StFfUyzyqr9kmV9F9j4LgLFK+cfrO+7e/yXHfabE7IutWNgWCjUbCBherq4pm31DAgu5AAind5aWcg0zlmSjxuBVX/oilDNVyqaLvnZiwZGVTplRLknw8lJ/XYEYG8C5fBm8gYgDBYffX9GdaJZl8LGXYZkFJJsqOuzwIDAQAB` (DKIM de Google Workspace, 2048 bits) |
 
-Sin SPF ni DKIM, los avisos de los formularios (enviados por `smtp.gmail.com`) tienen más probabilidad de caer en spam.
+El DKIM se generó en admin.google.com → Apps → Google Workspace → Gmail → Autenticar correo; después de publicarlo se pulsa «Iniciar autenticación».
