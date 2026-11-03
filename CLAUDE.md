@@ -132,7 +132,7 @@ Decisiones del panel:
 - Al mover el DNS de Wix a SiteGround: recrear los MX de Google, el SPF (`include:_spf.google.com`), el DKIM de Workspace y los TXT de verificación. Confirmar que la suscripción de Workspace (cobrada por Wix) siga activa al dejar Wix.
 - Valorar si el aviso de privacidad debe mencionar Cloudflare Turnstile (decisión del cliente; no redactar texto legal sin confirmar).
 - **Documentación:**
-  - `docs/deploy.md`: deploy a SiteGround por Git o SFTP, crear `config.local.php` en el servidor y revisar los permisos de escritura de `data/` y `uploads/`.
+  - `docs/deploy.md`: hecho (3 nov 2026).
   - `docs/guia-panel.md`: guía para la persona que edita, sin experiencia técnica.
 - **Checklist de lanzamiento:**
   - DNS y registros MX, para no tumbar el correo `@duanbienesraices.com`.
