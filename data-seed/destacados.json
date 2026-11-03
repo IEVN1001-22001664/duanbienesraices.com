@@ -375,7 +375,7 @@
     },
     {
       "id": "lomas-del-refugio",
-      "activo": true,
+      "activo": false,
       "operacion": "venta",
       "titulo": "Casa en Venta en Lomas del Refugio, Zona Norte",
       "tipo": "Casa Residencial",
@@ -437,7 +437,7 @@
     },
     {
       "id": "mayorazgo-residencial",
-      "activo": true,
+      "activo": false,
       "operacion": "venta",
       "titulo": "Casa Nueva en Venta Mayorazgo Residencial",
       "tipo": "Casa Residencial",
