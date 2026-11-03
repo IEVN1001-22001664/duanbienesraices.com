@@ -11,9 +11,10 @@ ErrorDocument 404 /404.php
 RewriteEngine On
 
 # --- HTTPS y www (dominio canónico: https://www.duanbienesraices.com) --------
+# es. y en. eran los subdominios de idioma de Wix; también van al dominio canónico.
 RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} !^www\. [NC]
-RewriteCond %{HTTP_HOST} ^(?:www\.)?(duanbienesraices\.com)$ [NC]
+RewriteCond %{HTTP_HOST} ^(?:(?:www|es|en)\.)?(duanbienesraices\.com)$ [NC]
 RewriteRule ^ https://www.%1%{REQUEST_URI} [R=301,L]
 
 # --- Bloquear archivos sensibles ----------------------------------------------
