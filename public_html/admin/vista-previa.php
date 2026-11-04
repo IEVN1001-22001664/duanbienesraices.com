@@ -60,7 +60,7 @@ foreach ($relleno as $campo => $valor) {
         if (empty($item['foto'])): ?>
             <p class="previa-vacia">Sube una foto para ver la tarjeta.</p>
         <?php else: ?>
-            <ul class="resultados__pista previa-una"><?php componente('card-resultado', ['item' => $item]); ?></ul>
+            <ul class="resultados__grupo previa-una"><?php componente('card-resultado', ['item' => $item]); ?></ul>
         <?php endif;
         break;
 

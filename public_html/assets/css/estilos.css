@@ -540,33 +540,29 @@ html:not(.js) .menu-boton { display: none; }
     .fundador__foto img { aspect-ratio: auto; min-height: 100%; }
 }
 
-/* Resultados comprobados (Tengo una propiedad): carrusel a todo lo ancho, 1 fila en celular y 2 en escritorio */
+/* Resultados comprobados (Tengo una propiedad): cinta infinita que se desplaza sola hacia la izquierda.
+   1 fila en celular y 2 en escritorio; de borde a borde de la pantalla. */
 .resultados { background: var(--carbon); color: var(--blanco); padding-block: var(--espacio-seccion) calc(var(--espacio-seccion) - 1.5rem); overflow: hidden; }
-.resultados__cabecera { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.75rem; }
+.resultados__cabecera { margin-bottom: 1.75rem; }
 .resultados__antetitulo {
     font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .2em;
     text-transform: uppercase; color: #ff6266; margin-bottom: .5rem;
 }
 .resultados__titulo { color: var(--blanco); font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.15; margin: 0; }
-.resultados__flechas { display: none; gap: .6rem; flex-shrink: 0; }
-.resultados__flecha {
-    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
-    background: transparent; color: var(--blanco); border: 2px solid rgba(255, 255, 255, .35); cursor: pointer;
-    transition: background .2s, border-color .2s, opacity .2s;
-}
-.resultados__flecha:hover:not(:disabled) { background: var(--rojo); border-color: var(--rojo); }
-.resultados__flecha:disabled { opacity: .3; cursor: default; }
-.resultados__flecha:focus-visible { outline: none; box-shadow: var(--foco); }
+.resultados__ventana { overflow: hidden; }
+/* La pista lleva dos copias iguales de la lista; al recorrer -50 % (una copia exacta) vuelve al inicio sin salto. */
 .resultados__pista {
     --hueco: .75rem;
-    /* Sin margen a los lados: la cinta va de borde a borde de la pantalla, como si no tuviera principio ni fin */
-    display: grid; grid-auto-flow: column; grid-template-rows: auto; grid-auto-columns: 80%; gap: var(--hueco);
-    list-style: none; margin: 0; padding: .25rem 0 1.5rem;
-    overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+    --columna: max(260px, 75vw);
+    --segundos: 6s;                       /* tiempo por tarjeta: a mayor número, más despacio */
+    display: flex; width: max-content; padding-block: .25rem 1.5rem;
+    animation: resultados-cinta calc(var(--total, 10) * var(--segundos)) linear infinite;
 }
-.resultados__pista::-webkit-scrollbar { display: none; }
-.resultados__pista:focus-visible { outline: 3px solid var(--rojo); outline-offset: 4px; }
-.resultado { scroll-snap-align: start; }
+.resultados__grupo {
+    display: grid; grid-auto-flow: column; grid-template-rows: auto; grid-auto-columns: var(--columna);
+    gap: var(--hueco); list-style: none; margin: 0; padding: 0 var(--hueco) 0 0;
+}
+@keyframes resultados-cinta { to { transform: translateX(-50%); } }
 .resultado__tarjeta {
     position: relative; margin: 0; aspect-ratio: 1; overflow: hidden; border-radius: var(--radio-chico);
     container-type: inline-size; background: var(--carbon-2); box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
@@ -591,16 +587,18 @@ html:not(.js) .menu-boton { display: none; }
 }
 .resultado__pie strong { font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(.95rem, 6cqi, 1.1rem); line-height: 1.25; color: var(--blanco); text-shadow: 0 1px 6px rgba(0, 0, 0, .3); }
 .resultado__pie span { font-size: .9rem; color: rgba(255, 255, 255, .88); }
-@media (min-width: 600px) { .resultados__pista { grid-auto-columns: calc((100% - var(--hueco)) / 2.2); } }
-@media (min-width: 768px) {
-    .resultados__flechas { display: flex; }
-    .resultados__flechas[hidden] { display: none; }
-    .resultados__pista { grid-auto-columns: clamp(220px, 27vw, 300px); }
-}
+@media (min-width: 600px) { .resultados__pista { --columna: 40vw; } }
+@media (min-width: 768px) { .resultados__pista { --columna: clamp(220px, 27vw, 300px); --segundos: 5s; } }
 @media (min-width: 1024px) {
-    .resultados__pista { grid-template-rows: repeat(2, auto); grid-auto-columns: clamp(240px, 21vw, 320px); --hueco: 1rem; }
+    .resultados__pista { --columna: clamp(240px, 21vw, 320px); --hueco: 1rem; --segundos: 3.5s; }
+    .resultados__grupo { grid-template-rows: repeat(2, auto); }
 }
-@media (prefers-reduced-motion: reduce) { .resultado__tarjeta img { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+    .resultado__tarjeta img { transition: none; }
+    .resultados__ventana { overflow-x: auto; }
+    .resultados__pista { animation: none; }
+    .resultados__grupo[aria-hidden] { display: none; }
+}
 
 /* Pilares de blindaje (Tengo una propiedad): triángulo de 3 piezas con "Resultados" al centro */
 .pilares { --pilar-1: var(--rojo); --pilar-2: var(--rojo-oscuro); --pilar-3: #6b7482; }

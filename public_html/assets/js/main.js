@@ -173,27 +173,19 @@
     });
 
     /* ---------------------------------------------------------------
-       Resultados comprobados: flechas que avanzan una "pantalla" del carrusel
+       Resultados comprobados: la cinta se mueve sola con CSS. Como las fotos
+       entran por la derecha ya transformadas, el lazy nativo llega tarde; cuando
+       la sección está por verse se piden todas de una vez.
        --------------------------------------------------------------- */
-    $$('[data-resultados]').forEach(function (seccion) {
-        var pista = $('.resultados__pista', seccion);
-        var flechas = $('.resultados__flechas', seccion);
-        var ant = $('[data-anterior]', seccion), sig = $('[data-siguiente]', seccion);
-        if (!pista || !flechas) return;
-        function actualizar() {
-            var max = pista.scrollWidth - pista.clientWidth;
-            flechas.hidden = max < 4;
-            ant.disabled = pista.scrollLeft < 4;
-            sig.disabled = pista.scrollLeft > max - 4;
-        }
-        function mover(dir) {
-            pista.scrollBy({ left: dir * pista.clientWidth * 0.8, behavior: reducirMovimiento ? 'auto' : 'smooth' });
-        }
-        ant.addEventListener('click', function () { mover(-1); });
-        sig.addEventListener('click', function () { mover(1); });
-        pista.addEventListener('scroll', actualizar, { passive: true });
-        window.addEventListener('resize', actualizar);
-        actualizar();
+    $$('.resultados__pista').forEach(function (pista) {
+        var cargar = function () {
+            $$('img[loading="lazy"]', pista).forEach(function (img) { img.loading = 'eager'; });
+        };
+        if (!('IntersectionObserver' in window)) { cargar(); return; }
+        var obs = new IntersectionObserver(function (entradas) {
+            if (entradas[0].isIntersecting) { cargar(); obs.disconnect(); }
+        }, { rootMargin: '600px 0px' });
+        obs.observe(pista);
     });
 
     /* ---------------------------------------------------------------

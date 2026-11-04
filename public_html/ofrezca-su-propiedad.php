@@ -47,22 +47,23 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <?php if ($resultados): ?>
-<section class="resultados" aria-labelledby="titulo-resultados" data-resultados>
+<section class="resultados" aria-labelledby="titulo-resultados">
     <div class="contenedor resultados__cabecera">
-        <div>
-            <p class="resultados__antetitulo">Resultados comprobados</p>
-            <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
-        </div>
-        <div class="resultados__flechas" hidden>
-            <button class="resultados__flecha" type="button" data-anterior aria-label="Ver resultados anteriores"><?= icono('flecha-izq') ?></button>
-            <button class="resultados__flecha" type="button" data-siguiente aria-label="Ver más resultados"><?= icono('flecha-der') ?></button>
+        <p class="resultados__antetitulo">Resultados comprobados</p>
+        <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
+    </div>
+    <?php // Cinta infinita: la lista se pinta dos veces y la animación recorre exactamente una copia, así el salto no se nota. ?>
+    <div class="resultados__ventana">
+        <div class="resultados__pista" style="--total: <?= count($resultados) ?>">
+            <?php for ($copia = 0; $copia < 2; $copia++): ?>
+                <ul class="resultados__grupo"<?= $copia ? ' aria-hidden="true"' : ' aria-label="Propiedades vendidas y rentadas"' ?>>
+                    <?php foreach ($resultados as $item) {
+                        componente('card-resultado', ['item' => $item]);
+                    } ?>
+                </ul>
+            <?php endfor; ?>
         </div>
     </div>
-    <ul class="resultados__pista" tabindex="0" aria-label="Propiedades vendidas y rentadas">
-        <?php foreach ($resultados as $item) {
-            componente('card-resultado', ['item' => $item]);
-        } ?>
-    </ul>
 </section>
 <?php endif; ?>
 
