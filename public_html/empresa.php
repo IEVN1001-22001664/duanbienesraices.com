@@ -35,23 +35,22 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <section class="seccion fundador" aria-labelledby="titulo-fundador">
-    <div class="contenedor fundador__grid">
-        <figure class="fundador__foto">
-            <!-- TODO: contenido real — foto del Arq. Alejandro Jáquez Martínez (vertical, mín. 800 px de ancho) -->
-            <div class="marcador-foto" role="img" aria-label="Foto del fundador pendiente">
-                <img src="/assets/img/logo-duan-bienes-raices.webp" alt="" width="400" height="576" loading="lazy">
+    <div class="contenedor">
+        <div class="fundador__tarjeta">
+            <figure class="fundador__foto">
+                <img src="/assets/img/fundador-alejandro-jaquez.webp" alt="Arq. Alejandro Jáquez Martínez, director y fundador de Du'an Bienes Raíces" width="900" height="1194" loading="lazy">
+                <figcaption class="fundador__etiqueta">Fundador</figcaption>
+            </figure>
+            <div class="fundador__texto">
+                <p class="fundador__antetitulo">Carta del fundador</p>
+                <h2 class="fundador__cita" id="titulo-fundador">“Un patrimonio no es un número en un contrato. Es la historia de una familia.”</h2>
+                <p>Fundé Du’an Bienes Raíces en 2013, en León, después de años de diseñar y supervisar obra como arquitecto. Ese oficio me enseñó algo que pocos asesores toman en cuenta: una propiedad no vale solo por su ubicación o sus metros cuadrados, vale por cómo fue construida y qué tan bien se cuidó.</p>
+                <p>Por eso en cada operación reviso personalmente la certeza legal del inmueble, superviso la valuación con criterios reales de mercado y me aseguro de que la promoción muestre la propiedad tal como es: bien hecha.</p>
+                <p class="fundador__firma">
+                    <strong>Arq. Alejandro Jáquez Martínez</strong>
+                    <span>Director y fundador</span>
+                </p>
             </div>
-        </figure>
-        <div class="fundador__texto">
-            <p class="antetitulo">Mensaje del fundador</p>
-            <h2 class="titulo-seccion titulo-seccion--izq" id="titulo-fundador">Su patrimonio, en buenas manos</h2>
-            <!-- TODO: contenido real — mensaje del fundador redactado por él (2 a 3 párrafos). -->
-            <p>Du’an Bienes Raíces inicia sus operaciones en la ciudad de León, Guanajuato, en el año 2013, al ver la necesidad del mercado de encontrar inmobiliarias y asesores que garanticen a sus clientes confiabilidad y honestidad en todas las operaciones que realizan. A través de estos años nos hemos especializado y mejorado para ofrecer un excelente servicio.</p>
-            <p>Apoyamos a nuestros clientes en el proceso de venta y renta a través de asesoría jurídica, estableciendo el valor del inmueble a un precio de mercado adecuado y llevando a cabo una excelente promoción. Contamos con una amplia cartera de clientes interesados y prospectos que buscan comprar o rentar inmuebles.</p>
-            <p class="fundador__firma">
-                <strong>Arq. Alejandro Jáquez Martínez</strong>
-                <span>Fundador y Director</span>
-            </p>
         </div>
     </div>
 </section>

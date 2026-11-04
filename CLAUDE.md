@@ -144,10 +144,7 @@ Decisiones del panel:
 
 ### Contenido real que falta (marcado con TODO; no inventar)
 
-- **`empresa.php`:**
-  - Foto del Arq. Alejandro Jáquez Martínez.
-  - Mensaje del fundador.
-  - Una cifra adicional.
+- **`empresa.php`:** una cifra adicional (la foto y la carta del fundador ya están, 4 nov 2026).
 - **`contacto.php`:** horario de atención.
 - **`ofrezca-su-propiedad.php`:** en Wix había un widget que no se pudo leer; confirmar si se necesita.
 - **`testimonios.json`:** 5 de 6 no tienen `url_resena` individual; por ahora enlazan al perfil general de Google.

@@ -507,17 +507,38 @@ html:not(.js) .menu-boton { display: none; }
 /* ==========================================================================
    Nosotros
    ========================================================================== */
-.fundador__grid { display: grid; gap: 2.5rem; align-items: center; }
-.fundador__foto { margin: 0; }
-.marcador-foto {
-    aspect-ratio: 4 / 5; border-radius: var(--radio); background: var(--gris-claro);
-    display: grid; place-items: center; border: 2px dashed var(--borde);
+/* Carta del fundador: foto sobre negro a la izquierda y texto sobre gris carbón a la derecha */
+.fundador__tarjeta {
+    display: grid; border-radius: var(--radio); overflow: hidden;
+    background: #4a4b4f; color: #e6e7ea; box-shadow: var(--sombra-fuerte);
 }
-.marcador-foto img { width: 40%; opacity: .5; }
-.fundador__firma { display: flex; flex-direction: column; border-left: 4px solid var(--rojo); padding-left: 1rem; margin-top: 1.5rem; }
-.fundador__firma strong { font-family: var(--fuente-titulos); font-size: 1.15rem; }
-.fundador__firma span { color: var(--gris); }
-@media (min-width: 860px) { .fundador__grid { grid-template-columns: 1fr 1.5fr; gap: 4rem; } }
+.fundador__foto { position: relative; margin: 0; background: #000; }
+.fundador__foto img { display: block; width: 100%; height: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center top; }
+.fundador__etiqueta {
+    position: absolute; top: 1.25rem; left: 0; padding: .55rem 1.4rem;
+    background: var(--rojo); color: var(--blanco);
+    font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase;
+}
+.fundador__texto { padding: clamp(2rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 4rem); align-self: center; }
+.fundador__antetitulo {
+    font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .2em;
+    text-transform: uppercase; color: #ff6266; margin-bottom: 1rem; /* rojo aclarado para que se lea sobre el gris */
+}
+.fundador__cita {
+    font-family: var(--fuente-titulos); font-style: italic; font-weight: 700; color: var(--blanco);
+    font-size: clamp(1.35rem, 2.6vw, 1.9rem); line-height: 1.35; margin-bottom: 1.5rem;
+}
+.fundador__texto p:not([class]) { font-style: italic; font-size: clamp(1rem, 1.4vw, 1.12rem); line-height: 1.75; color: #e6e7ea; text-align: left; }
+.fundador__firma {
+    display: flex; flex-direction: column; gap: .2rem;
+    border-top: 1px solid rgba(255, 255, 255, .22); padding-top: 1.75rem; margin-top: 2.25rem;
+}
+.fundador__firma strong { font-family: var(--fuente-titulos); font-weight: 700; font-size: 1.15rem; color: var(--blanco); }
+.fundador__firma span { font-family: var(--fuente-titulos); font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: #c3c6cc; }
+@media (min-width: 860px) {
+    .fundador__tarjeta { grid-template-columns: 41fr 59fr; }
+    .fundador__foto img { aspect-ratio: auto; min-height: 100%; }
+}
 
 /* Pilares de blindaje (Tengo una propiedad): triángulo de 3 piezas con "Resultados" al centro */
 .pilares { --pilar-1: var(--rojo); --pilar-2: var(--rojo-oscuro); --pilar-3: #6b7482; }
