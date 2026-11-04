@@ -1,7 +1,8 @@
 <?php
 /**
- * Encabezado: logo + slogan, menú tipo pestañas y redes sociales.
- * Usa $pagina['activo'] para marcar la pestaña actual.
+ * Encabezado fijo de una sola barra: marca a la izquierda, menú centrado y redes a la derecha.
+ * En celular el menú (con las redes) se despliega debajo de la barra.
+ * Usa $pagina['activo'] para marcar la sección actual.
  */
 $activo = $pagina['activo'] ?? '';
 ?>
@@ -12,6 +13,29 @@ $activo = $pagina['activo'] ?? '';
             <img class="marca__slogan" src="/assets/img/slogan-su-patrimonio-en-buenas-manos.webp" alt="<?= e('“' . SLOGAN . '”') ?>" width="900" height="152">
         </a>
 
+        <nav class="navegacion" id="menu-principal" aria-label="Principal">
+            <ul class="menu">
+                <?php foreach (MENU as $item):
+                    $esActivo = $item['clave'] === $activo;
+                    $externo = !empty($item['externo']);
+                ?>
+                    <li>
+                        <a class="menu__enlace<?= $esActivo ? ' es-activa' : '' ?>" href="<?= e($item['url']) ?>"
+                            <?= $esActivo ? 'aria-current="page"' : '' ?>
+                            <?= $externo ? 'target="_blank" rel="noopener"' : '' ?>>
+                            <?= e($item['texto']) ?>
+                            <?php if ($externo): ?><?= icono('externo', 'icono icono--mini') ?><span class="sr-only"> (abre en otra pestaña)</span><?php endif; ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <ul class="redes redes--menu" aria-label="Redes sociales">
+                <?php foreach (REDES as $red => $url): ?>
+                    <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e(ucfirst($red)) ?>"><?= icono($red) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        </nav>
+
         <ul class="redes redes--encabezado" aria-label="Redes sociales">
             <?php foreach (REDES as $red => $url): ?>
                 <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e(ucfirst($red)) ?>"><?= icono($red) ?></a></li>
@@ -21,26 +45,8 @@ $activo = $pagina['activo'] ?? '';
         <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-principal">
             <span class="menu-boton__abrir"><?= icono('menu') ?></span>
             <span class="menu-boton__cerrar"><?= icono('cerrar') ?></span>
-            <span class="menu-boton__texto">Menú</span>
+            <span class="sr-only">Menú</span>
         </button>
     </div>
-
-    <nav class="navegacion" id="menu-principal" aria-label="Principal">
-        <ul class="pestanas contenedor">
-            <?php foreach (MENU as $item):
-                $esActivo = $item['clave'] === $activo;
-                $externo = !empty($item['externo']);
-            ?>
-                <li>
-                    <a class="pestana<?= $esActivo ? ' es-activa' : '' ?>" href="<?= e($item['url']) ?>"
-                        <?= $esActivo ? 'aria-current="page"' : '' ?>
-                        <?= $externo ? 'target="_blank" rel="noopener"' : '' ?>>
-                        <?= e($item['texto']) ?>
-                        <?php if ($externo): ?><?= icono('externo', 'icono icono--mini') ?><span class="sr-only"> (abre en otra pestaña)</span><?php endif; ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
 </header>
 <main id="contenido">

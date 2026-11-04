@@ -26,6 +26,20 @@
                 botonMenu.focus();
             }
         });
+        // Cierra el panel al tocar fuera de él
+        document.addEventListener('click', function (ev) {
+            if (nav.classList.contains('es-abierta') && !nav.contains(ev.target) && !botonMenu.contains(ev.target)) {
+                botonMenu.click();
+            }
+        });
+    }
+
+    /* Sombra del encabezado fijo al bajar */
+    var encabezado = $('.encabezado');
+    if (encabezado) {
+        var marcarDesplazado = function () { encabezado.classList.toggle('es-desplazado', window.scrollY > 8); };
+        window.addEventListener('scroll', marcarDesplazado, { passive: true });
+        marcarDesplazado();
     }
 
     /* ---------------------------------------------------------------

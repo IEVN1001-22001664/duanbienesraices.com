@@ -63,6 +63,7 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
   - El mapa se carga al hacer clic.
   - Los formularios se envían por `fetch` a `api/enviar.php`; el script de Turnstile se carga solo cuando el formulario está por verse.
   - Animación de entrada en celular.
+- **Encabezado:** una sola barra fija (`sticky`) con fondo translúcido; a ≥1024 px es una rejilla `1fr auto 1fr` para que el menú quede centrado en la página, con un subrayado rojo en la sección activa; en celular el menú y las redes se abren como panel debajo de la barra. Las clases `.pestana` solo quedan para la sub-navegación de servicios.
 - **Estilos generales:** los párrafos dentro de `<main>` van justificados (`:where(main) p`); los bloques centrados se excluyen en la regla de al lado. Etiquetas de destacados rectas y pegadas al borde derecho; Renta en `--azul #1565c0`. El botón flotante de WhatsApp es solo el ícono.
 - **Pilares de blindaje:** viven en Tengo una propiedad, debajo de «¿Cómo lo hacemos?», con un triángulo SVG de 3 piezas y «Resultados» al centro (ya no están en Nosotros).
 - **Marca:** `--rojo #e21c21`, `--rojo-oscuro #b40000`, `--carbon #282d35`, `--carbon-2 #424a56`. Títulos en Montserrat y texto en Nunito Sans; reemplazan a Avenir, que tenía licencia.
