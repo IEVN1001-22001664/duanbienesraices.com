@@ -5,6 +5,8 @@
  */
 require __DIR__ . '/includes/config.php';
 
+$resultados = obtener_seccion('resultados');
+
 $pagina = [
     'titulo'      => "Tengo una Propiedad: vendemos o rentamos su inmueble | Du'an Bienes Raíces",
     'descripcion' => 'Le apoyamos en todo el proceso de la renta o venta de su propiedad. Solicite una valoración personalizada, gratuita y sin compromiso.',
@@ -43,7 +45,26 @@ require __DIR__ . '/includes/header.php';
         <a class="boton boton--grande" href="#valuacion">Quiero una valoración gratuita</a>
     </div>
 </section>
-<!-- TODO: contenido real — en Wix aquí había un widget que no se pudo leer (posiblemente feed de Instagram o reseñas). Confirmar si se requiere. -->
+
+<?php if ($resultados): ?>
+<section class="resultados" aria-labelledby="titulo-resultados" data-resultados>
+    <div class="contenedor resultados__cabecera">
+        <div>
+            <p class="resultados__antetitulo">Resultados comprobados</p>
+            <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
+        </div>
+        <div class="resultados__flechas" hidden>
+            <button class="resultados__flecha" type="button" data-anterior aria-label="Ver resultados anteriores"><?= icono('flecha-izq') ?></button>
+            <button class="resultados__flecha" type="button" data-siguiente aria-label="Ver más resultados"><?= icono('flecha-der') ?></button>
+        </div>
+    </div>
+    <ul class="resultados__pista" tabindex="0" aria-label="Propiedades vendidas y rentadas">
+        <?php foreach ($resultados as $item) {
+            componente('card-resultado', ['item' => $item]);
+        } ?>
+    </ul>
+</section>
+<?php endif; ?>
 
 <section class="seccion como" aria-labelledby="titulo-como">
     <div class="contenedor como__grid">

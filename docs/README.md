@@ -15,7 +15,7 @@ public_html/        → lo público (raíz web)
   servicios/        → renta, venta, administracion
 data/               → JSON vivos de producción (NO se versiona, fuera de la web)
 data-seed/          → copia inicial de los JSON (versionada)
-uploads-seed/       → imágenes iniciales de destacados, hero, testimonios y blog (versionada)
+uploads-seed/       → imágenes iniciales de destacados, hero, testimonios, resultados y blog (versionada)
 dev-router.php      → solo para el servidor local de PHP
 config.local.example.php → plantilla de credenciales
 ```
@@ -56,6 +56,7 @@ define('URL_SITIO', 'http://localhost:8000');
 | `hero.json` | `slide-hero.php` | imagen (póster) + video opcional; el video solo se carga en pantallas ≥768 px |
 | `destacados.json` | `card-destacado.php` | `precio` numérico; fotos en 2 tamaños (`card`, `full`); máx. 12 |
 | `testimonios.json` | `testimonio.php` | `url_resena` vacía → enlaza al perfil general de Google |
+| `resultados.json` | `card-resultado.php` | `estado` = `vendido` o `rentado`; la cinta diagonal la pone el CSS (cubre la que traen las fotos de Wix) |
 | `videos.json` | `video.php` | solo el ID de YouTube (11 caracteres) |
 | `blog/*.json` | `card-blog.php`, `articulo.php` | `contenido` en Markdown; `[[calculadora-gastos]]` y `[[cta-asesoria]]` insertan componentes |
 

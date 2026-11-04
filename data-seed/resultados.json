@@ -1,0 +1,165 @@
+{
+    "actualizado": "2026-11-04T19:22:35+00:00",
+    "items": [
+        {
+            "id": "casa-en-venta-el-mayorazgo-residencial-privada-corralejo",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta El Mayorazgo Residencial",
+            "subtitulo": "Privada Corralejo",
+            "foto": "uploads/resultados/casa-en-venta-el-mayorazgo-residencial-privada-corralejo.webp"
+        },
+        {
+            "id": "casa-en-venta-hacienda-valbuena",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta Hacienda Valbuena",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-venta-hacienda-valbuena.webp"
+        },
+        {
+            "id": "casa-en-renta-el-cielo-residencial",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Casa en Renta El Cielo Residencial",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-renta-el-cielo-residencial.webp"
+        },
+        {
+            "id": "casa-en-venta-3-cantos",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta 3 Cantos",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-venta-3-cantos.webp"
+        },
+        {
+            "id": "casa-en-venta-sta-gertrudis-casa-estilo-rustico-campestre",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta Sta. Gertrudis",
+            "subtitulo": "Casa estilo rústico campestre",
+            "foto": "uploads/resultados/casa-en-venta-sta-gertrudis-casa-estilo-rustico-campestre.webp"
+        },
+        {
+            "id": "casa-en-venta-fracc-portafontana-casa-de-1-piso",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta Fracc. Portafontana",
+            "subtitulo": "Casa de 1 piso",
+            "foto": "uploads/resultados/casa-en-venta-fracc-portafontana-casa-de-1-piso.webp"
+        },
+        {
+            "id": "casa-en-venta-el-mayorazgo-residencial-privada-la-gavia",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta El Mayorazgo Residencial",
+            "subtitulo": "Privada La Gavia",
+            "foto": "uploads/resultados/casa-en-venta-el-mayorazgo-residencial-privada-la-gavia.webp"
+        },
+        {
+            "id": "venta-terreno-campestre-fracc-potreros-del-sur",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Venta terreno Campestre, Fracc. Potreros del Sur",
+            "subtitulo": "",
+            "foto": "uploads/resultados/venta-terreno-campestre-fracc-potreros-del-sur.webp"
+        },
+        {
+            "id": "casa-en-venta-jardines-del-campestre",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta Jardines del Campestre",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-venta-jardines-del-campestre.webp"
+        },
+        {
+            "id": "casa-en-venta-el-mayorazgo-residencial-privada-corralejo-2",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta El Mayorazgo Residencial",
+            "subtitulo": "Privada Corralejo",
+            "foto": "uploads/resultados/casa-en-venta-el-mayorazgo-residencial-privada-corralejo-2.webp"
+        },
+        {
+            "id": "casa-en-renta-bvld-paseo-de-los-insurgentes",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Casa en Renta, Bvld. Paseo de los Insurgentes",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-renta-bvld-paseo-de-los-insurgentes.webp"
+        },
+        {
+            "id": "casa-en-venta-el-mayorazgo-residencial-casa-de-1-piso",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta El Mayorazgo Residencial",
+            "subtitulo": "Casa de 1 piso",
+            "foto": "uploads/resultados/casa-en-venta-el-mayorazgo-residencial-casa-de-1-piso.webp"
+        },
+        {
+            "id": "bodega-en-renta",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Bodega en Renta",
+            "subtitulo": "",
+            "foto": "uploads/resultados/bodega-en-renta.webp"
+        },
+        {
+            "id": "terreno-comercial-en-venta",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Terreno Comercial en Venta",
+            "subtitulo": "",
+            "foto": "uploads/resultados/terreno-comercial-en-venta.webp"
+        },
+        {
+            "id": "casa-comercial-en-renta",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Casa Comercial en Renta",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-comercial-en-renta.webp"
+        },
+        {
+            "id": "casa-en-venta-en-cordillera-residencial",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Casa en Venta en Cordillera Residencial",
+            "subtitulo": "",
+            "foto": "uploads/resultados/casa-en-venta-en-cordillera-residencial.webp"
+        },
+        {
+            "id": "departamento-en-venta-en-fracc-hidalgo-del-valle",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Departamento en Venta en Fracc. Hidalgo del Valle",
+            "subtitulo": "",
+            "foto": "uploads/resultados/departamento-en-venta-en-fracc-hidalgo-del-valle.webp"
+        },
+        {
+            "id": "casa-en-renta-en-el-mayorazgo-residencial-privada-santo-domingo",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Casa en Renta en El Mayorazgo Residencial",
+            "subtitulo": "Privada Santo Domingo",
+            "foto": "uploads/resultados/casa-en-renta-en-el-mayorazgo-residencial-privada-santo-domingo.webp"
+        },
+        {
+            "id": "local-en-renta-en-plaza-leon",
+            "activo": true,
+            "estado": "rentado",
+            "titulo": "Local en Renta en Plaza León",
+            "subtitulo": "",
+            "foto": "uploads/resultados/local-en-renta-en-plaza-leon.webp"
+        },
+        {
+            "id": "terreno-campestre-en-venta",
+            "activo": true,
+            "estado": "vendido",
+            "titulo": "Terreno Campestre en Venta",
+            "subtitulo": "",
+            "foto": "uploads/resultados/terreno-campestre-en-venta.webp"
+        }
+    ]
+}

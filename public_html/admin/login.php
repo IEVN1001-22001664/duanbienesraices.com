@@ -29,7 +29,7 @@ admin_cabecera('Iniciar sesión');
 ?>
 <section class="acceso">
     <h1>Panel de contenido</h1>
-    <p>Entra para editar las propiedades destacadas, el slider, los testimonios, los videos y el blog.</p>
+    <p>Entra para editar las propiedades destacadas, el slider, los testimonios, los resultados, los videos y el blog.</p>
 
     <?php if (!panel_configurado()): ?>
         <p class="aviso aviso--error" role="alert">

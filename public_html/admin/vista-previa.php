@@ -16,6 +16,7 @@ $relleno = match ($s) {
     'destacados'  => ['titulo' => 'Título de la propiedad', 'operacion' => 'venta', 'precio' => null, 'url_tokko' => '#', 'fotos' => []],
     'testimonios' => ['nombre' => 'Nombre del cliente', 'texto' => 'Texto del testimonio…'],
     'videos'      => ['youtube_id' => '', 'titulo' => ''],
+    'resultados'  => ['titulo' => 'Título del resultado', 'estado' => 'vendido'],
     'blog'        => ['titulo' => 'Título del artículo', 'fecha' => date('Y-m-d'), 'contenido' => ''],
     default       => [],
 };
@@ -54,6 +55,14 @@ foreach ($relleno as $campo => $valor) {
     case 'testimonios': ?>
         <div class="carrusel"><ul class="carrusel__pista previa-una"><?php componente('testimonio', ['item' => $item]); ?></ul></div>
         <?php break;
+
+    case 'resultados':
+        if (empty($item['foto'])): ?>
+            <p class="previa-vacia">Sube una foto para ver la tarjeta.</p>
+        <?php else: ?>
+            <ul class="resultados__pista previa-una"><?php componente('card-resultado', ['item' => $item]); ?></ul>
+        <?php endif;
+        break;
 
     case 'videos':
         if (empty($item['youtube_id'])): ?>

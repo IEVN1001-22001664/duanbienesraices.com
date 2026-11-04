@@ -148,6 +148,10 @@ const ESQUEMAS = [
         'req'   => ['id', 'nombre', 'texto'],
         'tipos' => ['foto' => 'ruta?', 'url_resena' => 'url?'],
     ],
+    'resultados' => [
+        'req'   => ['id', 'estado', 'titulo', 'foto'],
+        'tipos' => ['estado' => 'estado', 'foto' => 'ruta'],
+    ],
     'videos' => [
         'req'   => ['id', 'youtube_id'],
         'tipos' => ['youtube_id' => 'youtube'],
@@ -186,6 +190,7 @@ function validar_item(array $item, string $esquema): array
             'ruta'      => is_string($valor) && !str_contains($valor, '..') && preg_match('#^/?[\w\-./]+$#', $valor),
             'lista'     => is_array($valor) && array_is_list($valor),
             'operacion' => in_array($valor, ['venta', 'renta'], true),
+            'estado'    => in_array($valor, ['vendido', 'rentado'], true),
             'youtube'   => is_string($valor) && preg_match('/^[\w-]{11}$/', $valor),
             'slug'      => is_string($valor) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $valor),
             'fecha'     => is_string($valor) && strtotime($valor) !== false,
@@ -223,7 +228,7 @@ function leer_json(string $archivo, array $porDefecto = []): array
 }
 
 /**
- * Devuelve los elementos activos y válidos de una sección (hero, destacados, testimonios, videos).
+ * Devuelve los elementos activos y válidos de una sección (hero, destacados, testimonios, resultados, videos).
  * El orden es el del arreglo en el JSON (el panel lo reordena con drag & drop).
  */
 function obtener_seccion(string $seccion): array

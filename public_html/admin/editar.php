@@ -17,6 +17,7 @@ $esNuevo = $id === '';
 $nuevo = ['activo' => true] + match ($s) {
     'destacados'  => ['operacion' => 'venta', 'moneda' => 'MXN', 'fotos' => []],
     'testimonios' => ['estrellas' => 5],
+    'resultados'  => ['estado' => 'vendido'],
     'blog'        => ['fecha' => date('Y-m-d')],
     default       => [],
 };

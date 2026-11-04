@@ -40,12 +40,12 @@ public_html/                 raíz web
   includes/   config.php (constantes del negocio, MENU, SERVICIOS, opciones de formularios, rutas), funciones.php, formularios.php, head/header/footer, whatsapp.php
   includes/vendor/phpmailer/   PHPMailer 6.9.3 (solo Exception, PHPMailer y SMTP)
   includes/admin/   núcleo del panel (ver abajo)
-  components/ card-destacado, slide-hero, testimonio, video, card-blog, calculadora-gastos, cta-asesoria, envio-formulario
+  components/ card-destacado, card-resultado, slide-hero, testimonio, video, card-blog, calculadora-gastos, cta-asesoria, envio-formulario
   admin/      páginas del panel
   api/        enviar.php (formularios de Contacto y Ofrezca su propiedad)
   assets/     css/estilos.css, css/admin*.css, js/main.js, js/admin.js, img/ (iconos.svg sprite), fonts/ (Montserrat, Nunito Sans woff2)
   uploads/    imágenes y videos del contenido editable (NO versionado; .htaccess impide ejecutar código)
-data/        JSON vivos, fuera de la web (NO versionado): hero, destacados, testimonios, videos .json + blog/*.json + backups/ + seguridad/
+data/        JSON vivos, fuera de la web (NO versionado): hero, destacados, testimonios, resultados, videos .json + blog/*.json + backups/ + seguridad/
 data-seed/   copia inicial versionada de data/
 uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesan ~28 MB)
 ```
@@ -65,6 +65,7 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
   - Animación de entrada en celular.
 - **Encabezado:** una sola barra fija (`sticky`) con fondo translúcido; a ≥1024 px es una rejilla `1fr auto 1fr` para que el menú quede centrado en la página, con un subrayado rojo en la sección activa; en celular el menú y las redes se abren como panel debajo de la barra. Las clases `.pestana` solo quedan para la sub-navegación de servicios.
 - **Estilos generales:** los párrafos dentro de `<main>` van justificados (`:where(main) p`); los bloques centrados se excluyen en la regla de al lado. Etiquetas de destacados rectas y pegadas al borde derecho; Renta en `--azul #1565c0`. El botón flotante de WhatsApp es solo el ícono.
+- **Resultados comprobados** (4 nov 2026): carrusel de propiedades vendidas y rentadas en Tengo una propiedad, justo después de la portada; editable en el panel (sección `resultados`). 1 fila en celular y 2 a ≥1024 px, a todo lo ancho. Las 20 fotos iniciales vienen de la galería de Wix y ya traen la cinta impresa; la cinta CSS (`clip-path` del 15 al 30,5 % del lado) la tapa exacta, así que no hay que mover esas medidas.
 - **Pilares de blindaje:** viven en Tengo una propiedad, debajo de «¿Cómo lo hacemos?», con un triángulo SVG de 3 piezas y «Resultados» al centro (ya no están en Nosotros).
 - **Marca:** `--rojo #e21c21`, `--rojo-oscuro #b40000`, `--carbon #282d35`, `--carbon-2 #424a56`. Títulos en Montserrat y texto en Nunito Sans; reemplazan a Avenir, que tenía licencia.
 
@@ -146,7 +147,6 @@ Decisiones del panel:
 
 - **`empresa.php`:** una cifra adicional (la foto y la carta del fundador ya están, 4 nov 2026).
 - **`contacto.php`:** horario de atención.
-- **`ofrezca-su-propiedad.php`:** en Wix había un widget que no se pudo leer; confirmar si se necesita.
 - **`testimonios.json`:** 5 de 6 no tienen `url_resena` individual; por ahora enlazan al perfil general de Google.
 
 ### Opcional

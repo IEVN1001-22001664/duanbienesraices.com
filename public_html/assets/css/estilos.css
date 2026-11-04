@@ -540,6 +540,68 @@ html:not(.js) .menu-boton { display: none; }
     .fundador__foto img { aspect-ratio: auto; min-height: 100%; }
 }
 
+/* Resultados comprobados (Tengo una propiedad): carrusel a todo lo ancho, 1 fila en celular y 2 en escritorio */
+.resultados { background: var(--carbon); color: var(--blanco); padding-block: var(--espacio-seccion) calc(var(--espacio-seccion) - 1.5rem); overflow: hidden; }
+.resultados__cabecera { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.75rem; }
+.resultados__antetitulo {
+    font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .2em;
+    text-transform: uppercase; color: #ff6266; margin-bottom: .5rem;
+}
+.resultados__titulo { color: var(--blanco); font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.15; margin: 0; }
+.resultados__flechas { display: none; gap: .6rem; flex-shrink: 0; }
+.resultados__flecha {
+    display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%;
+    background: transparent; color: var(--blanco); border: 2px solid rgba(255, 255, 255, .35); cursor: pointer;
+    transition: background .2s, border-color .2s, opacity .2s;
+}
+.resultados__flecha:hover:not(:disabled) { background: var(--rojo); border-color: var(--rojo); }
+.resultados__flecha:disabled { opacity: .3; cursor: default; }
+.resultados__flecha:focus-visible { outline: none; box-shadow: var(--foco); }
+.resultados__pista {
+    --hueco: .75rem;
+    --lateral: max(var(--margen), calc((100vw - var(--ancho)) / 2 + var(--margen)));
+    display: grid; grid-auto-flow: column; grid-template-rows: auto; grid-auto-columns: 80%; gap: var(--hueco);
+    list-style: none; margin: 0; padding: .25rem var(--lateral) 1.5rem; scroll-padding-inline: var(--lateral);
+    overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+}
+.resultados__pista::-webkit-scrollbar { display: none; }
+.resultados__pista:focus-visible { outline: 3px solid var(--rojo); outline-offset: 4px; }
+.resultado { scroll-snap-align: start; }
+.resultado__tarjeta {
+    position: relative; margin: 0; aspect-ratio: 1; overflow: hidden; border-radius: var(--radio-chico);
+    container-type: inline-size; background: var(--carbon-2); box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+}
+.resultado__tarjeta img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.resultado__tarjeta:hover img { transform: scale(1.06); }
+/* La cinta cubre exactamente la franja diagonal (16-29 % del lado) que traen las fotos de Wix */
+.resultado__cinta {
+    position: absolute; inset: 0; pointer-events: none;
+    clip-path: polygon(15% 0, 30.5% 0, 0 30.5%, 0 15%); background: var(--rojo);
+}
+.resultado__cinta--rentado { background: var(--azul); }
+.resultado__cinta span {
+    position: absolute; left: 11.4%; top: 11.4%; transform: translate(-50%, -50%) rotate(-45deg);
+    font-family: var(--fuente-titulos); font-weight: 800; font-size: 5.4cqi; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--blanco); white-space: nowrap;
+}
+.resultado__pie {
+    position: absolute; inset: auto 0 0; display: flex; flex-direction: column; align-items: center; gap: .15rem;
+    padding: 3.5rem 1rem 1.1rem; text-align: center;
+    background: linear-gradient(to top, rgba(180, 0, 0, .92) 0%, rgba(226, 28, 33, .6) 45%, rgba(226, 28, 33, 0) 100%);
+}
+.resultado__pie strong { font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(.95rem, 6cqi, 1.1rem); line-height: 1.25; color: var(--blanco); text-shadow: 0 1px 6px rgba(0, 0, 0, .3); }
+.resultado__pie span { font-size: .9rem; color: rgba(255, 255, 255, .88); }
+@media (min-width: 600px) { .resultados__pista { grid-auto-columns: calc((100% - var(--hueco)) / 2.2); } }
+@media (min-width: 768px) {
+    .resultados__flechas { display: flex; }
+    .resultados__flechas[hidden] { display: none; }
+    .resultados__pista { grid-auto-columns: clamp(220px, 27vw, 300px); }
+}
+@media (min-width: 1024px) {
+    .resultados__pista { grid-template-rows: repeat(2, auto); grid-auto-columns: clamp(240px, 21vw, 320px); --hueco: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .resultado__tarjeta img { transition: none; } }
+
 /* Pilares de blindaje (Tengo una propiedad): triángulo de 3 piezas con "Resultados" al centro */
 .pilares { --pilar-1: var(--rojo); --pilar-2: var(--rojo-oscuro); --pilar-3: #6b7482; }
 .pilares__diagrama { display: grid; gap: 1.25rem; grid-template-areas: "grafico" "p1" "p2" "p3"; align-items: center; }
