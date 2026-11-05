@@ -134,7 +134,7 @@ Decisiones del panel:
 - **SPF y DKIM activos (4 nov 2026):** publicados en el DNS de Wix; un correo de prueba dio SPF, DKIM y DMARC en PASS. Si algún día se cambia de DNS, copiarlos de `docs/dns-respaldo-wix.md`.
 - Valorar si el aviso de privacidad debe mencionar Cloudflare Turnstile (decisión del cliente; no redactar texto legal sin confirmar).
 - **Documentación:**
-  - `docs/deploy.md`: hecho (3 nov 2026); adaptado al dominio temporal `emmanuelalejandrom4.sg-host.com` con el que se creó el sitio en SiteGround (5 nov 2026; en `….sg-host.com` el `.htaccess` manda `X-Robots-Tag: noindex`). Despliegue automático con GitHub Actions (`.github/workflows/deploy.yml`, 5 nov 2026): falta cargar los secretos `SG_*` en GitHub.
+  - `docs/deploy.md`: hecho (3 nov 2026); adaptado al dominio temporal `emmanuelalejandrom4.sg-host.com` con el que se creó el sitio en SiteGround (5 nov 2026; en `….sg-host.com` el `.htaccess` manda `X-Robots-Tag: noindex`). Despliegue automático con GitHub Actions (`.github/workflows/deploy.yml`, 5 nov 2026): funcionando desde el 5 nov 2026 (secretos `SG_HOST`, `SG_USUARIO`, `SG_LLAVE` y variable `SG_RUTA`; llave `github-deploy` sin contraseña importada en SiteGround). Acceso SSH desde esta PC: `ssh siteground-duan` (llave `~/.ssh/siteground_duan`). El sitio ya corre en el temporal; en su `config.local.php` faltan `ADMIN_HASH`, `SMTP_CLAVE` y las claves de Turnstile.
   - `docs/guia-panel.md`: guía para la persona que edita, sin experiencia técnica.
 - **Checklist de lanzamiento:**
   - DNS y registros MX, para no tumbar el correo `@duanbienesraices.com`.
