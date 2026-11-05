@@ -42,6 +42,32 @@ La carpeta del sitio en el servidor es `~/www/duanbienesraices.com/`, con `publi
    ```
    `data/`, `public_html/uploads/` y `config.local.php` no están en Git, así que un `pull` nunca pisa lo que se editó en el panel.
 
+### Despliegue automático (GitHub Actions)
+
+Con la opción A ya hecha, cada push a `main` actualiza el servidor solo: `.github/workflows/deploy.yml` entra por SSH y hace `git pull --ff-only`. El resultado de cada despliegue se ve en GitHub → pestaña **Actions** (palomita verde o tache rojo). También se puede lanzar a mano con **Run workflow**.
+
+Configuración, una sola vez:
+
+1. **Llave para GitHub** (no usar la personal). En SiteGround: **Devs → SSH Keys Manager → Generate**, con nombre `github-deploy` y una contraseña. Después, en esa llave, **Actions → Private Key** y copiar todo el texto (de `-----BEGIN` a `-----END … KEY-----`).
+2. En GitHub: **Settings → Secrets and variables → Actions → New repository secret**:
+
+   | Secreto | Valor |
+   |---|---|
+   | `SG_HOST` | Hostname de **SSH Keys Manager → Actions → SSH Credentials** (p. ej. `ssh.duanbienesraices.com` o `gXXX.siteground.biz`) |
+   | `SG_USUARIO` | Username de esa misma pantalla (`u123-…`) |
+   | `SG_LLAVE` | La llave privada completa del paso 1 |
+   | `SG_LLAVE_FRASE` | La contraseña que se le puso a la llave en el paso 1 |
+   | `SG_KNOWN_HOSTS` | *Opcional:* salida de `ssh-keyscan -p 18765 HOST`. Si falta, se lee en cada despliegue |
+
+3. Solo si cambian (pestaña **Variables** de la misma pantalla): `SG_PUERTO` (por defecto `18765`) y `SG_RUTA` (por defecto `www/duanbienesraices.com`, relativa a la carpeta del usuario).
+4. Probar con **Actions → Desplegar en SiteGround → Run workflow**. El último paso debe mostrar el último commit.
+
+Notas:
+- Mientras falten los secretos, la acción no falla: solo avisa que no está configurada y no despliega.
+- Si alguien edita a mano en el servidor un archivo versionado, el `pull` se detiene (tache rojo) en lugar de pisar el cambio. Se arregla entrando por SSH: `git status` y `git checkout -- archivo` (o guardar el cambio en el repo).
+- Contenido nuevo en `data-seed/` o `uploads-seed/` **no** se copia después del primer arranque (lo impide la marca `data/.inicializado`, para no pisar lo editado en el panel). Ese contenido se agrega desde el panel o copiándolo a mano.
+- La llave privada y su contraseña solo van en los secretos de GitHub; nunca en el repo ni en el chat.
+
 ### Opción B — SFTP (FileZilla)
 
 Subir a `~/www/duanbienesraices.com/` las carpetas `public_html/`, `data-seed/` y `uploads-seed/` y el archivo `config.local.example.php`.

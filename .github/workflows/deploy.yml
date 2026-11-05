@@ -1,0 +1,70 @@
+# Despliegue automático a SiteGround.
+# En cada push a main entra al servidor por SSH y hace `git pull --ff-only` en la carpeta del sitio.
+# data/, public_html/uploads/ y config.local.php no están en Git, así que nunca se tocan.
+# Configuración (secretos y variables): docs/deploy.md, sección «Despliegue automático».
+name: Desplegar en SiteGround
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:          # botón «Run workflow» para desplegar a mano
+
+concurrency:
+  group: despliegue-siteground
+  cancel-in-progress: false   # si hay dos pushes seguidos, se despliegan en orden
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SG_HOST: ${{ secrets.SG_HOST }}
+      SG_USUARIO: ${{ secrets.SG_USUARIO }}
+      SG_PUERTO: ${{ vars.SG_PUERTO || '18765' }}
+      SG_RUTA: ${{ vars.SG_RUTA || 'www/duanbienesraices.com' }}
+    steps:
+      - name: Revisar que esté configurado
+        id: config
+        run: |
+          if [ -z "$SG_HOST" ] || [ -z "$SG_USUARIO" ]; then
+            echo "::notice::Faltan los secretos SG_HOST / SG_USUARIO / SG_LLAVE: no se despliega (ver docs/deploy.md)."
+            echo "listo=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "listo=si" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Preparar la llave SSH
+        if: steps.config.outputs.listo == 'si'
+        env:
+          SG_LLAVE: ${{ secrets.SG_LLAVE }}
+          SG_LLAVE_FRASE: ${{ secrets.SG_LLAVE_FRASE }}
+          SG_KNOWN_HOSTS: ${{ secrets.SG_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SG_LLAVE" > ~/.ssh/siteground && chmod 600 ~/.ssh/siteground
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          if [ -n "$SG_LLAVE_FRASE" ]; then
+            # Las llaves que genera SiteGround llevan contraseña: se la damos a ssh-add sin teclado.
+            printf '#!/bin/sh\nprintf "%%s" "$SG_LLAVE_FRASE"\n' > ~/.ssh/frase.sh && chmod 700 ~/.ssh/frase.sh
+            SSH_ASKPASS=~/.ssh/frase.sh SSH_ASKPASS_REQUIRE=force DISPLAY=:0 ssh-add ~/.ssh/siteground < /dev/null
+            rm -f ~/.ssh/frase.sh
+          else
+            ssh-add ~/.ssh/siteground
+          fi
+          rm -f ~/.ssh/siteground
+          # Huella del servidor: la guardada en el secreto si existe; si no, se lee en el momento.
+          if [ -n "$SG_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$SG_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$SG_PUERTO" -H "$SG_HOST" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+
+      - name: Actualizar el sitio
+        if: steps.config.outputs.listo == 'si'
+        run: |
+          ssh -p "$SG_PUERTO" -o BatchMode=yes "$SG_USUARIO@$SG_HOST" \
+            "set -e; cd ~/$SG_RUTA; git fetch --quiet origin main; git pull --ff-only origin main; git log --oneline -1"
