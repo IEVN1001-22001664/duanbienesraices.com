@@ -68,55 +68,92 @@
         var slides = $$('[data-slide]', hero);
         if (!slides.length) return;
         var actual = 0;
-        var intervalo = parseInt(hero.getAttribute('data-auto'), 10) || 0;
+        var intervalo = parseInt(hero.getAttribute('data-auto'), 10) || 7000;
+        var FUNDIDO = 900;                 // igual que la transición de .hero__slide en el CSS
+        var ESPERA_VIDEO = 10000;          // si el video no arranca en este tiempo, se avanza con el intervalo normal
         var temporizador = null;
         var usarVideo = window.matchMedia('(min-width: 768px)').matches && !reducirMovimiento &&
             !(navigator.connection && navigator.connection.saveData);
+        var automatico = !reducirMovimiento && slides.length > 1;
 
-        function sincronizarVideo() {
+        function siguiente() { ir(actual + 1); }
+
+        /* Programa el siguiente cambio. Con video: al terminar (empezando el fundido un poco antes
+           del final para que el video que sale se desvanezca en movimiento). Sin video: el intervalo.
+           Siempre queda un temporizador de respaldo, así el carrusel nunca se queda atorado. */
+        function programar() {
+            clearTimeout(temporizador);
+            if (!automatico) return;
+            var v = $('video', slides[actual]);
+            if (!v || !usarVideo) { temporizador = setTimeout(siguiente, intervalo); return; }
+            if (v.duration && isFinite(v.duration)) {
+                var resta = (v.duration - v.currentTime) * 1000 - FUNDIDO;
+                temporizador = setTimeout(siguiente, Math.max(resta, 1500) + 2000);   // respaldo por si se traba
+            } else {
+                temporizador = setTimeout(siguiente, ESPERA_VIDEO);
+            }
+        }
+
+        function vigilarVideo(v, slide) {
+            if (v.dataset.vigilado) return;
+            v.dataset.vigilado = '1';
+            v.loop = !automatico;          // con una sola diapositiva el video sí se repite
+            v.addEventListener('loadedmetadata', function () { if (slides[actual] === slide) programar(); });
+            v.addEventListener('timeupdate', function () {
+                if (slides[actual] !== slide || !automatico || !v.duration) return;
+                if (v.duration - v.currentTime <= FUNDIDO / 1000) siguiente();
+            });
+            v.addEventListener('ended', function () { if (slides[actual] === slide && automatico) siguiente(); });
+            v.addEventListener('error', function () { if (slides[actual] === slide) { clearTimeout(temporizador); temporizador = setTimeout(siguiente, intervalo); } });
+        }
+
+        function sincronizarVideo(anterior) {
             slides.forEach(function (s, i) {
                 var v = $('video', s);
                 if (!v) return;
                 if (i === actual && usarVideo) {
+                    vigilarVideo(v, s);
                     if (!v.src) { v.src = v.getAttribute('data-src'); }
+                    try { v.currentTime = 0; } catch (e) {}
                     var p = v.play();
                     if (p && p.catch) p.catch(function () {});
+                } else if (i === anterior && !v.paused) {
+                    // El que sale sigue corriendo mientras se desvanece y se pausa al terminar el fundido.
+                    setTimeout(function () { if (slides[actual] !== s) v.pause(); }, FUNDIDO);
                 } else if (!v.paused) {
                     v.pause();
                 }
             });
         }
 
-        var marcar = crearPuntos($('[data-puntos]', hero), slides.length, function (n) { ir(n); reiniciar(); }, 'Ir a la diapositiva');
+        var marcar = crearPuntos($('[data-puntos]', hero), slides.length, function (n) { ir(n); }, 'Ir a la diapositiva');
 
         function ir(n) {
-            slides[actual].classList.remove('es-activa');
-            slides[actual].setAttribute('aria-hidden', 'true');
-            actual = (n + slides.length) % slides.length;
+            var anterior = actual;
+            n = (n + slides.length) % slides.length;
+            if (n === anterior) { programar(); return; }
+            slides[anterior].classList.remove('es-activa');
+            slides[anterior].setAttribute('aria-hidden', 'true');
+            actual = n;
             slides[actual].classList.add('es-activa');
             slides[actual].removeAttribute('aria-hidden');
             marcar(actual);
-            sincronizarVideo();
-        }
-        function reiniciar() {
-            clearInterval(temporizador);
-            if (intervalo && !reducirMovimiento && slides.length > 1) {
-                temporizador = setInterval(function () { ir(actual + 1); }, intervalo);
-            }
+            sincronizarVideo(anterior);
+            programar();
         }
 
         var ant = $('[data-anterior]', hero), sig = $('[data-siguiente]', hero);
-        if (ant) ant.addEventListener('click', function () { ir(actual - 1); reiniciar(); });
-        if (sig) sig.addEventListener('click', function () { ir(actual + 1); reiniciar(); });
-        // Pausa al pasar el mouse o enfocar con teclado (WCAG 2.2.2)
-        hero.addEventListener('mouseenter', function () { clearInterval(temporizador); });
-        hero.addEventListener('mouseleave', reiniciar);
-        hero.addEventListener('focusin', function () { clearInterval(temporizador); });
-        hero.addEventListener('focusout', reiniciar);
+        if (ant) ant.addEventListener('click', function () { ir(actual - 1); });
+        if (sig) sig.addEventListener('click', function () { ir(actual + 1); });
+
+        // Si la pestaña queda en segundo plano, al volver se reprograma para no saltar varias diapositivas.
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') programar(); else clearTimeout(temporizador);
+        });
 
         marcar(0);
-        sincronizarVideo();
-        reiniciar();
+        sincronizarVideo(-1);
+        programar();
     });
 
     /* ---------------------------------------------------------------

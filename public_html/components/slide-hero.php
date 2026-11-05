@@ -13,7 +13,7 @@ $tieneVideo = !empty($item['video']);
     <img class="hero__fondo" src="<?= e(ruta_upload($item['imagen'])) ?>" alt="<?= e($item['alt'] ?? '') ?>"
          width="1920" height="1080" <?= $esPrimera ? 'fetchpriority="high"' : 'loading="lazy"' ?> decoding="async">
     <?php if ($tieneVideo): ?>
-        <video class="hero__video" data-src="<?= e(ruta_upload($item['video'])) ?>" muted loop playsinline preload="none" aria-hidden="true"></video>
+        <video class="hero__video" data-src="<?= e(ruta_upload($item['video'])) ?>" muted playsinline preload="none" aria-hidden="true"></video>
     <?php endif; ?>
 
     <?php if (!empty($item['titulo'])): ?>
