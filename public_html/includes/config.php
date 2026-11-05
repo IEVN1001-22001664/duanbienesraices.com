@@ -32,6 +32,8 @@ defined('URL_SITIO')  || define('URL_SITIO', 'https://www.duanbienesraices.com')
 defined('MODO_DEV')   || define('MODO_DEV', false);
 
 define('NOMBRE_SITIO', "Du'an Bienes Raíces");
+// Inicio del asunto de los correos de los formularios (para distinguirlos en la bandeja de info@)
+define('PREFIJO_ASUNTO', '🔴 Sitio web · ');
 define('SLOGAN', 'Su Patrimonio en Buenas Manos');
 
 // --- Tokko Broker (sección Propiedades) --------------------------------------

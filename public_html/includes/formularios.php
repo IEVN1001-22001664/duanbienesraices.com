@@ -189,7 +189,7 @@ function smtp_activo(): bool
 function enviar_correo(string $formulario, array $datos): bool
 {
     $def = definicion_formularios()[$formulario];
-    $asunto = '[Sitio web] ' . $def['titulo'] . ' — ' . $datos['nombre'];
+    $asunto = PREFIJO_ASUNTO . $def['titulo'] . ' — ' . $datos['nombre'];
 
     $texto = "Nuevo mensaje desde el formulario «{$def['titulo']}» de " . URL_SITIO . "\n\n";
     $html = '<p>Nuevo mensaje desde el formulario <strong>' . e($def['titulo']) . '</strong> de ' . e(URL_SITIO) . '</p>'
