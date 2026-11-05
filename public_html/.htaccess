@@ -64,6 +64,10 @@ RewriteRule ^blog$ blog/index.php [END]
 RewriteRule ^blog/([^/]+)$ blog/articulo.php?slug=$1 [END,QSA,B]
 RewriteRule ^sitemap\.xml$ sitemap.php [END]
 
+# Con DirectorySlash Off, las demás carpetas (/admin, /servicios) necesitan la diagonal a mano.
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+[^/])$ /$1/ [R=301,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{DOCUMENT_ROOT}/$1.php -f
