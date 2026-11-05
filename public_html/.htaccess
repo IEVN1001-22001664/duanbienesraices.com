@@ -16,6 +16,18 @@ RewriteCond %{HTTPS} !=on [OR]
 RewriteCond %{HTTP_HOST} !^www\. [NC]
 RewriteCond %{HTTP_HOST} ^(?:(?:www|es|en)\.)?(duanbienesraices\.com)$ [NC]
 RewriteRule ^ https://www.%1%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# --- Dominio temporal de SiteGround (….sg-host.com): que Google no lo indexe --
+# Se desactiva solo cuando el sitio ya responde en duanbienesraices.com.
+<IfModule mod_headers.c>
+<If "%{HTTP_HOST} =~ /\.sg-host\.com$/">
+    Header always set X-Robots-Tag "noindex, nofollow"
+</If>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
 
 # --- Bloquear archivos sensibles ----------------------------------------------
 RewriteRule (^|/)\.(?!well-known/) - [F,L]

@@ -16,13 +16,15 @@ Tener a la mano, guardados en un lugar seguro (nunca en el repo ni en el chat):
 
 ## 1. Crear el sitio
 
-1. En SiteGround: **Websites → New Website → Existing Domain** → `duanbienesraices.com`. No aceptar el cambio de nameservers ni el correo de SiteGround: el correo sigue en Google Workspace.
-2. **Devs → PHP Manager** → PHP **8.3**.
-3. **Speed → Caching**: dejar la caché dinámica apagada, o excluir `/admin` y `/api`, para que el panel y los formularios no se queden en caché.
+El sitio se creó (5 nov 2026) con el **dominio temporal** `emmanuelalejandrom4.sg-host.com`. Todo (SSH, Git, despliegue automático, pruebas) se hace con él; el dominio real se conecta al final (paso 6).
+
+1. **Devs → PHP Manager** → PHP **8.3**.
+2. **Speed → Caching**: dejar la caché dinámica apagada, o excluir `/admin` y `/api`, para que el panel y los formularios no se queden en caché.
+3. Mientras se use el temporal, el `.htaccess` manda `X-Robots-Tag: noindex` en cualquier `….sg-host.com`, para que Google no lo indexe. No hay que hacer nada para quitarlo.
 
 ## 2. Subir el código
 
-La carpeta del sitio en el servidor es `~/www/duanbienesraices.com/`, con `public_html/` adentro: la misma estructura del repo.
+La carpeta del sitio en el servidor es `~/www/emmanuelalejandrom4.sg-host.com/`, con `public_html/` adentro: la misma estructura del repo. (Verificarla con `ls ~/www` al entrar por SSH; en el resto de la guía, cambiar `duanbienesraices.com` por esa carpeta mientras se use el temporal.)
 
 ### Opción A — Git por SSH (recomendada)
 
@@ -53,13 +55,15 @@ Configuración, una sola vez:
 
    | Secreto | Valor |
    |---|---|
-   | `SG_HOST` | Hostname de **SSH Keys Manager → Actions → SSH Credentials** (p. ej. `ssh.duanbienesraices.com` o `gXXX.siteground.biz`) |
+   | `SG_HOST` | Hostname de **SSH Keys Manager → Actions → SSH Credentials**. Si incluye el dominio temporal (`ssh.emmanuelalejandrom4.sg-host.com`), hay que actualizarlo en el paso 6 |
    | `SG_USUARIO` | Username de esa misma pantalla (`u123-…`) |
    | `SG_LLAVE` | La llave privada completa del paso 1 |
    | `SG_LLAVE_FRASE` | La contraseña que se le puso a la llave en el paso 1 |
    | `SG_KNOWN_HOSTS` | *Opcional:* salida de `ssh-keyscan -p 18765 HOST`. Si falta, se lee en cada despliegue |
 
-3. Solo si cambian (pestaña **Variables** de la misma pantalla): `SG_PUERTO` (por defecto `18765`) y `SG_RUTA` (por defecto `www/duanbienesraices.com`, relativa a la carpeta del usuario).
+3. Pestaña **Variables** de la misma pantalla:
+   - `SG_RUTA` = `www/emmanuelalejandrom4.sg-host.com` **mientras se use el dominio temporal** (relativa a la carpeta del usuario; por defecto es `www/duanbienesraices.com`).
+   - `SG_PUERTO`, solo si SiteGround da otro distinto de `18765`.
 4. Probar con **Actions → Desplegar en SiteGround → Run workflow**. El último paso debe mostrar el último commit.
 
 Notas:
@@ -75,11 +79,14 @@ Subir a `~/www/duanbienesraices.com/` las carpetas `public_html/`, `data-seed/` 
 
 ## 3. Crear `config.local.php` en el servidor
 
-Va en `~/www/duanbienesraices.com/config.local.php`, junto a `public_html/`, **no dentro**. Partir de `config.local.example.php`:
+Va en la carpeta del sitio (hoy `~/www/emmanuelalejandrom4.sg-host.com/config.local.php`), junto a `public_html/`, **no dentro**. Partir de `config.local.example.php`:
 
 ```php
 <?php
-// Producción: SIN MODO_DEV y SIN URL_SITIO (el valor por defecto es https://www.duanbienesraices.com)
+// Producción: SIN MODO_DEV. URL_SITIO solo mientras se prueba en el temporal; se borra en el paso 6
+// (sin ella se usa https://www.duanbienesraices.com).
+define('URL_SITIO', 'https://emmanuelalejandrom4.sg-host.com');
+
 define('ADMIN_USUARIO', 'editor');
 define('ADMIN_HASH', '$2y$…');                       // comillas simples: el hash lleva $
 
@@ -101,15 +108,27 @@ Permisos: `chmod 600 config.local.php`.
 2. Revisar que existan `data/.inicializado` y las imágenes en `public_html/uploads/`.
 3. PHP tiene que poder escribir en `data/` y `public_html/uploads/` (en SiteGround, carpetas `755` y archivos `644` funcionan porque PHP corre con el mismo usuario).
 
-## 5. Probar antes de cambiar el DNS
+## 5. Probar en el dominio temporal
 
-SiteGround da un dominio temporal (`….sg-host.com`) en **Site Tools → Dashboard**.
+En `https://emmanuelalejandrom4.sg-host.com`:
 
-- Agregar ese dominio temporal en el widget de Turnstile (Cloudflare → Turnstile → el widget → Hostnames) mientras se prueba; quitarlo después.
+- Agregar `emmanuelalejandrom4.sg-host.com` en el widget de Turnstile (Cloudflare → Turnstile → el widget → Hostnames) mientras se prueba; quitarlo después del paso 6.
 - Probar: todas las páginas, el blog, el panel (`/admin`: entrar, editar, subir una foto, restaurar) y los dos formularios con un envío real que llegue a info@.
-- Los enlaces y el canonical apuntan a `www.duanbienesraices.com`; es normal mientras se prueba en el dominio temporal.
+- El formulario y el panel revisan que la petición venga del mismo dominio que se está visitando, así que funcionan igual en el temporal.
+- Las 301 de `http`/`www` solo actúan con `duanbienesraices.com`; en el temporal no redirigen, es normal.
 
-## 6. Cambiar el DNS (en Wix)
+## 6. Conectar el dominio real
+
+El dominio **no se transfiere**: sigue registrado en Wix y se renueva ahí. Cancelar el plan Premium de Wix no lo quita. Solo se cambia a dónde apuntan sus registros DNS.
+
+### 6.1 En SiteGround
+
+1. **Websites → (el sitio) → ⋮ → Change Domain** (o «Change Primary Domain»): poner `duanbienesraices.com` y elegir **no** cambiar nameservers ni crear correo.
+2. Entrar por SSH y revisar `ls ~/www`. Si la carpeta pasó a llamarse `duanbienesraices.com`, borrar la variable `SG_RUTA` en GitHub (su valor por defecto ya es ese); si no, dejarla como esté.
+3. Si `SG_HOST` llevaba el dominio temporal, cambiarlo por el que muestre ahora **SSH Keys Manager → SSH Credentials**, y lanzar **Run workflow** para confirmar que el despliegue sigue funcionando.
+4. Quitar la línea `URL_SITIO` de `config.local.php`.
+
+### 6.2 En Wix (DNS)
 
 En Wix → Dominios → Administrar registros DNS, cambiar solo estos (ver `dns-respaldo-wix.md`):
 
