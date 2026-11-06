@@ -16,3 +16,7 @@ desktop.ini
 *.log
 *.tmp
 .claude/
+
+# --- Carpetas que crea SiteGround junto al sitio ---
+/logs/
+/webstats/
