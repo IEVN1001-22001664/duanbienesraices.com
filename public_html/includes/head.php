@@ -61,6 +61,10 @@ $jsonld = array_merge([jsonld_negocio()], $pagina['jsonld']);
     <link rel="icon" href="<?= e(asset('img/favicon.svg')) ?>" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 
+<?php if (gtm_activo()): ?>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',<?= json_encode(GTM_ID) ?>);</script>
+<?php endif; ?>
     <link rel="preload" href="/assets/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/assets/fonts/nunito-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <?php if ($pagina['precarga']): ?>
@@ -78,6 +82,9 @@ $jsonld = array_merge([jsonld_negocio()], $pagina['jsonld']);
 <?php endforeach; ?>
 </head>
 <body class="<?= e($pagina['clase_body']) ?>">
+<?php if (gtm_activo()): ?>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= e(GTM_ID) ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<?php endif; ?>
 <div class="intro-movil" aria-hidden="true" data-intro>
     <span class="intro-movil__telon"></span>
     <img class="intro-movil__logo" src="<?= e(asset('img/logo-duan-bienes-raices.webp')) ?>" alt="" width="400" height="576" decoding="async">

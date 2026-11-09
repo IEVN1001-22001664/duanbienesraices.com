@@ -30,6 +30,9 @@ defined('DIR_UPLOADS_SEED')  || define('DIR_UPLOADS_SEED', RAIZ_PROYECTO . '/upl
 // URL canónica (sin diagonal final). Se usa en canonical, Open Graph y sitemap.
 defined('URL_SITIO')  || define('URL_SITIO', 'https://www.duanbienesraices.com');
 defined('MODO_DEV')   || define('MODO_DEV', false);
+// Google Tag Manager (cuenta «Du'an Bienes Raíces»): GA4 G-PZX0ZV3PB5 y los eventos se configuran en GTM.
+// Solo se carga en duanbienesraices.com (ver gtm_activo()), para que las pruebas no ensucien Analytics.
+defined('GTM_ID')     || define('GTM_ID', 'GTM-TQ649VLQ');
 
 define('NOMBRE_SITIO', "Du'an Bienes Raíces");
 // Inicio del asunto de los correos de los formularios (para distinguirlos en la bandeja de info@)

@@ -436,7 +436,12 @@
             }).then(function (res) {
                 estado.className = 'formulario__estado' + (res.ok ? ' es-exito' : '');
                 estado.textContent = res.mensaje;
-                if (res.ok) form.reset();
+                if (res.ok) {
+                    form.reset();
+                    // Aviso para Google Tag Manager: solo envíos que llegaron bien (activador «Evento personalizado»)
+                    var tipo = form.elements.formulario ? form.elements.formulario.value : '';
+                    (window.dataLayer = window.dataLayer || []).push({ event: 'formulario_enviado', formulario: tipo });
+                }
             }).catch(function () {
                 estado.className = 'formulario__estado';
                 estado.innerHTML = 'No pudimos enviar su mensaje. Escríbanos por ' +

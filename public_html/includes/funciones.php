@@ -48,6 +48,14 @@ function whatsapp_url(string $mensaje = WHATSAPP_MENSAJE): string
 }
 
 /** true si la URL es segura para un href (http/https, ruta interna, ancla, mailto o tel). */
+function gtm_activo(): bool
+{
+    // Solo en el dominio real: ni en localhost ni en el temporal de SiteGround (….sg-host.com).
+    $host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+    return GTM_ID !== '' && !MODO_DEV
+        && ($host === 'duanbienesraices.com' || str_ends_with($host, '.duanbienesraices.com'));
+}
+
 function es_url_segura(string $url): bool
 {
     $url = trim($url);
