@@ -62,12 +62,79 @@
         $$('[data-version]', lista).forEach((i) => { i.value = version; });
     }
 
-    // --- Confirmaciones -------------------------------------------------------------------
-    document.addEventListener('submit', (ev) => {
+    // --- Confirmaciones (modal propio) ------------------------------------------------------
+    // Los formularios con data-confirmar piden confirmación antes de enviarse. Opcionales:
+    // data-confirmar-titulo, -nombre, -imagen, -nota, -boton y -tipo ("peligro" por defecto o "aviso").
+    const ICONOS = {
+        peligro: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zM6 9h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 9zm4 2v8h1.5v-8H10zm3.5 0v8H15v-8h-1.5z"/></svg>',
+        aviso: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 1-7.75 10h2.07A6 6 0 1 0 8 7.76L10 10H4V4l2.35 2.35A7.97 7.97 0 0 1 12 4zm-1 4h2v4.6l3 1.8-1 1.7-4-2.4V8z"/></svg>',
+    };
+    let modal;
+    function crearModal() {
+        modal = document.createElement('dialog');
+        modal.className = 'modal';
+        modal.setAttribute('aria-labelledby', 'modal-titulo');
+        modal.setAttribute('aria-describedby', 'modal-cuerpo');
+        modal.innerHTML = `
+            <form method="dialog" class="modal__caja">
+                <button class="modal__cerrar" value="no" aria-label="Cancelar">×</button>
+                <div class="modal__encabezado">
+                    <span class="modal__icono" data-modal-icono></span>
+                    <h2 class="modal__titulo" id="modal-titulo" data-modal-titulo></h2>
+                </div>
+                <div class="modal__cuerpo" id="modal-cuerpo">
+                    <img class="modal__imagen" alt="" width="96" height="72" data-modal-imagen hidden>
+                    <div>
+                        <p class="modal__nombre" data-modal-nombre></p>
+                        <p class="modal__nota" data-modal-nota></p>
+                    </div>
+                </div>
+                <div class="modal__acciones">
+                    <button class="boton boton--secundario" value="no" data-modal-cancelar>Cancelar</button>
+                    <button class="boton" value="si" data-modal-aceptar></button>
+                </div>
+            </form>`;
+        document.body.append(modal);
+        // Clic fuera de la caja = cancelar
+        modal.addEventListener('click', (ev) => { if (ev.target === modal) modal.close('no'); });
+    }
+    function preguntar(form) {
+        if (!modal) crearModal();
+        const d = form.dataset;
+        const tipo = d.confirmarTipo === 'aviso' ? 'aviso' : 'peligro';
+        modal.dataset.tipo = tipo;
+        $('[data-modal-icono]', modal).innerHTML = ICONOS[tipo];
+        $('[data-modal-titulo]', modal).textContent = d.confirmarTitulo || d.confirmar;
+        $('[data-modal-nombre]', modal).textContent = d.confirmarNombre ? `«${d.confirmarNombre}»` : '';
+        $('[data-modal-nombre]', modal).hidden = !d.confirmarNombre;
+        $('[data-modal-nota]', modal).textContent = d.confirmarNota || (d.confirmarTitulo ? d.confirmar : '');
+        const img = $('[data-modal-imagen]', modal);
+        img.hidden = !d.confirmarImagen;
+        if (d.confirmarImagen) img.src = d.confirmarImagen; else img.removeAttribute('src');
+        const aceptar = $('[data-modal-aceptar]', modal);
+        aceptar.textContent = d.confirmarBoton || 'Aceptar';
+        aceptar.className = 'boton ' + (tipo === 'peligro' ? 'boton--peligro-lleno' : '');
+        return new Promise((resolver) => {
+            modal.returnValue = '';
+            modal.addEventListener('close', () => resolver(modal.returnValue === 'si'), { once: true });
+            modal.showModal();
+            $('[data-modal-cancelar]', modal).focus();   // lo seguro primero: Enter no borra por accidente
+        });
+    }
+    document.addEventListener('submit', async (ev) => {
         const form = ev.target;
-        if (form.dataset.confirmar && !window.confirm(form.dataset.confirmar)) {
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
+        if (!form.dataset.confirmar) return;
+        if (form.dataset.confirmado) { delete form.dataset.confirmado; return; }
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        const quien = ev.submitter;
+        if (typeof HTMLDialogElement !== 'function') {   // navegadores muy viejos
+            if (window.confirm(form.dataset.confirmar)) { form.dataset.confirmado = '1'; form.requestSubmit(quien); }
+            return;
+        }
+        if (await preguntar(form)) {
+            form.dataset.confirmado = '1';
+            form.requestSubmit(quien);
         }
     }, true);
 

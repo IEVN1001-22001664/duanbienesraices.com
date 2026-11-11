@@ -115,7 +115,15 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
                         <a class="boton boton--texto boton--chico" href="/admin/respaldos.php?s=blog&amp;id=<?= e(rawurlencode($id)) ?>">Versiones</a>
                     <?php endif; ?>
 
-                    <form method="post" action="/admin/accion.php" data-confirmar="<?= e('¿Eliminar «' . $nombre . '»? Podrás recuperarlo desde «Restaurar versión anterior».') ?>">
+                    <form method="post" action="/admin/accion.php"
+                          data-confirmar="<?= e('¿Eliminar «' . $nombre . '»?') ?>"
+                          data-confirmar-titulo="<?= e('¿Eliminar ' . (in_array($sec['singular'], ['propiedad', 'diapositiva'], true) ? 'esta ' : 'este ') . $sec['singular'] . '?') ?>"
+                          data-confirmar-nombre="<?= e($nombre) ?>"
+                          data-confirmar-imagen="<?= e((string) miniatura_src_de($s, $item)) ?>"
+                          data-confirmar-nota="<?= e($esBlog
+                              ? 'Dejará de verse en el blog. Podrás recuperarlo desde «Artículos eliminados», al final de esta página.'
+                              : 'Dejará de verse en el sitio. Podrás recuperarlo desde «Restaurar versión anterior».') ?>"
+                          data-confirmar-boton="Eliminar">
                         <?= campo_csrf() ?>
                         <input type="hidden" name="accion" value="eliminar">
                         <input type="hidden" name="s" value="<?= e($s) ?>">

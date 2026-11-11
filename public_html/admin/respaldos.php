@@ -63,7 +63,13 @@ admin_cabecera('Restaurar versión anterior', [
                         </details>
                     <?php endif; ?>
                 </div>
-                <form method="post" action="/admin/accion.php" data-confirmar="¿Restaurar la versión del <?= e(date('d/m/Y H:i', $r['fecha'])) ?>? Lo que hay ahora se guardará como respaldo.">
+                <form method="post" action="/admin/accion.php"
+                      data-confirmar="¿Restaurar la versión del <?= e(date('d/m/Y H:i', $r['fecha'])) ?>?"
+                      data-confirmar-titulo="¿Restaurar esta versión?"
+                      data-confirmar-nombre="<?= e(fecha_es(date('Y-m-d', $r['fecha'])) . ', ' . date('H:i', $r['fecha']) . ' h') ?>"
+                      data-confirmar-nota="Lo que hay ahora se reemplaza por esta versión, pero no se pierde: se guarda como respaldo y puedes volver a él."
+                      data-confirmar-boton="Restaurar"
+                      data-confirmar-tipo="aviso">
                     <?= campo_csrf() ?>
                     <input type="hidden" name="accion" value="restaurar">
                     <input type="hidden" name="s" value="<?= e($s) ?>">

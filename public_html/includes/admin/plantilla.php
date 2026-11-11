@@ -64,17 +64,23 @@ function admin_pie(): void
     <?php
 }
 
-/** Miniatura de un elemento para las listas. */
-function miniatura_de(string $seccion, array $item): string
+/** URL de la miniatura de un elemento (o null si no tiene imagen). */
+function miniatura_src_de(string $seccion, array $item): ?string
 {
     $campo = SECCIONES_ADMIN[$seccion]['campo_miniatura'];
     $valor = $item[$campo] ?? null;
-    $src = match (true) {
+    return match (true) {
         $campo === 'fotos' && is_array($valor) && !empty($valor[0]['card']) => ruta_upload($valor[0]['card']),
         $campo === 'youtube_id' && is_string($valor) && $valor !== '' => 'https://i.ytimg.com/vi/' . rawurlencode($valor) . '/mqdefault.jpg',
         is_string($valor) && $valor !== '' => ruta_upload($valor),
         default => null,
     };
+}
+
+/** Miniatura de un elemento para las listas. */
+function miniatura_de(string $seccion, array $item): string
+{
+    $src = miniatura_src_de($seccion, $item);
     return $src
         ? '<img class="lista__miniatura" src="' . e($src) . '" alt="" loading="lazy" width="96" height="72">'
         : '<span class="lista__miniatura lista__miniatura--vacia" aria-hidden="true">—</span>';
