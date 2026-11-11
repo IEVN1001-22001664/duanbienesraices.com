@@ -1,0 +1,59 @@
+{
+  "actualizado": "2026-11-11T00:00:00-06:00",
+  "items": [
+    {
+      "id": "foto-01",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-01.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 1"
+    },
+    {
+      "id": "foto-02",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-02.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 2"
+    },
+    {
+      "id": "foto-03",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-03.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 3"
+    },
+    {
+      "id": "foto-04",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-04.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 4"
+    },
+    {
+      "id": "foto-05",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-05.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 5"
+    },
+    {
+      "id": "foto-06",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-06.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 6"
+    },
+    {
+      "id": "foto-07",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-07.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 7"
+    },
+    {
+      "id": "foto-08",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-08.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 8"
+    },
+    {
+      "id": "foto-09",
+      "activo": true,
+      "imagen": "uploads/galeria/nosotros-09.webp",
+      "alt": "Propiedad comercializada por Du'an Bienes Raíces, foto 9"
+    }
+  ]
+}

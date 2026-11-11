@@ -164,6 +164,14 @@ const ESQUEMAS = [
         'req'   => ['id', 'youtube_id'],
         'tipos' => ['youtube_id' => 'youtube'],
     ],
+    'fundador' => [
+        'req'   => ['id', 'foto', 'cita', 'mensaje', 'nombre'],
+        'tipos' => ['foto' => 'ruta'],
+    ],
+    'galeria' => [
+        'req'   => ['id', 'imagen', 'alt'],
+        'tipos' => ['imagen' => 'ruta'],
+    ],
     'blog' => [
         'req'   => ['slug', 'titulo', 'fecha', 'contenido'],
         'tipos' => ['slug' => 'slug', 'fecha' => 'fecha', 'portada' => 'ruta?'],
@@ -296,13 +304,48 @@ function obtener_post(string $slug): ?array
 }
 
 /**
+ * Versión de data-seed/ y uploads-seed/. Subirla cuando se agregue una sección nueva a la semilla
+ * (p. ej. 2 = fundador y galería de Nosotros) para que el servidor la copie en el siguiente deploy.
+ */
+const SEMILLA_VERSION = '2';
+
+/**
  * Primer arranque en un servidor nuevo: copia data-seed/ → data/ y uploads-seed/ → uploads/.
  * Solo copia archivos que NO existen, así un deploy jamás pisa lo que editó el cliente.
+ *
+ * En un servidor ya inicializado, al cambiar SEMILLA_VERSION solo se agregan las entradas de
+ * primer nivel que faltan por completo (fundador.json, uploads/galeria/…): lo que el cliente
+ * borró dentro de una sección existente (un artículo, una foto) no reaparece.
  */
 function inicializar_datos(): void
 {
     $marca = DIR_DATA . '/.inicializado';
     if (is_file($marca)) {
+        if (trim((string) @file_get_contents($marca)) === SEMILLA_VERSION) {
+            return;
+        }
+        $copiarNuevos = function (string $origen, string $destino): void {
+            foreach (is_dir($origen) ? (scandir($origen) ?: []) : [] as $nombre) {
+                $o = $origen . '/' . $nombre;
+                $d = $destino . '/' . $nombre;
+                if ($nombre[0] === '.' || file_exists($d)) {
+                    continue;
+                }
+                if (is_file($o)) {
+                    @copy($o, $d);
+                    continue;
+                }
+                @mkdir($d, 0755, true);
+                foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($o, FilesystemIterator::SKIP_DOTS),
+                         RecursiveIteratorIterator::SELF_FIRST) as $sub) {
+                    $ruta = $d . '/' . substr($sub->getPathname(), strlen($o) + 1);
+                    $sub->isDir() ? @mkdir($ruta, 0755, true) : @copy($sub->getPathname(), $ruta);
+                }
+            }
+        };
+        $copiarNuevos(DIR_DATA_SEED, DIR_DATA);
+        $copiarNuevos(DIR_UPLOADS_SEED, DIR_UPLOADS);
+        @file_put_contents($marca, SEMILLA_VERSION);
         return;
     }
     $copiar = function (string $origen, string $destino) use (&$copiar): void {
@@ -329,7 +372,7 @@ function inicializar_datos(): void
     $copiar(DIR_UPLOADS_SEED, DIR_UPLOADS);
     if (is_dir(DIR_DATA)) {
         @mkdir(DIR_DATA . '/backups', 0755, true);
-        @file_put_contents($marca, date('c'));
+        @file_put_contents($marca, SEMILLA_VERSION);
     }
 }
 

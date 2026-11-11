@@ -25,6 +25,9 @@ admin_cabecera('Inicio');
             <p class="seccion-tarjeta__datos">
                 <?php if ($items === null): ?>
                     <span class="texto-error">Archivo dañado: restaura una versión anterior.</span>
+                <?php elseif (!empty($sec['unico'])): ?>
+                    <?= $activos ? 'Visible en el sitio' : 'Oculta en el sitio' ?>
+                    <?php if ($cambio): ?> · Último cambio: <?= e(date('d/m/Y H:i', $cambio)) ?><?php endif; ?>
                 <?php else: ?>
                     <?= $activos ?> visibles de <?= count($items) ?>
                     <?php if ($cambio): ?> · Último cambio: <?= e(date('d/m/Y H:i', $cambio)) ?><?php endif; ?>

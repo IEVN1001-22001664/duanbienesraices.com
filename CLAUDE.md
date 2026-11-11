@@ -84,6 +84,12 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
 | `admin/editar.php` + `vista-previa.php` | Formulario; la vista previa pinta el componente real del sitio en un iframe |
 | `admin/.user.ini` | Límites de subida en SiteGround |
 
+Secciones de Nosotros (11 nov 2026):
+- **`fundador`** (Carta del fundador): sección de **un solo elemento** (`'unico' => true` en `SECCIONES_ADMIN`). `seccion.php` manda directo a `editar.php`, que edita el elemento existente, vuelve a sí mismo al guardar y muestra «Restaurar versión anterior»; `accion.php` no permite eliminar ni reordenar. Campos: foto (900×1194), alt, cita (las comillas se ponen solas), mensaje (texto plano, una línea en blanco separa párrafos), nombre y cargo. Se pinta con `components/fundador.php` (también en la vista previa).
+- **`galeria`** (Galería de Nosotros): lista normal de fotos (1500×1000, recorte) con descripción, para el carrusel del final de Nosotros.
+- Las fotos iniciales pasaron de `assets/img/` a `uploads-seed/fundador/` y `uploads-seed/galeria/`.
+- **Semilla versionada:** `SEMILLA_VERSION` (`funciones.php`) va escrita en `data/.inicializado`. Si cambia, `inicializar_datos()` copia solo las entradas de **primer nivel** que faltan por completo en `data/` y `uploads/` (así llegaron `fundador.json`, `galeria.json` y sus carpetas al servidor) sin resucitar lo que el cliente borró dentro de una sección. Subirla al agregar una sección nueva a la semilla.
+
 Decisiones del panel:
 - **Sin SortableJS ni EasyMDE.** El arrastre con pointer events (funciona en pantallas táctiles), las flechas ▲▼ y el editor Markdown son JS propio.
 - **Elementos nuevos:** aparecen al principio de la lista. El `id` sale del título y no cambia.

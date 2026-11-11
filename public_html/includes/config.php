@@ -69,6 +69,8 @@ define('REDES', [
     'instagram' => 'https://www.instagram.com/duanbienesraices/',
     'youtube'   => 'https://www.youtube.com/channel/UCIA2vHhcntbKeaHo8bRdtHQ',
 ]);
+// Botón «Ver canal completo» de la sección de videos del inicio
+define('URL_CANAL_VIDEOS', 'https://www.youtube.com/@alejandro.jaquez');
 
 // --- Verificaciones de buscadores (se conservan del sitio en Wix) -------------
 define('VERIFICACIONES', [

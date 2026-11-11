@@ -154,8 +154,8 @@ html { scroll-padding-top: calc(var(--alto-encabezado) + .5rem); }
     min-height: var(--alto-encabezado); padding-block: .5rem;
 }
 .marca { display: flex; align-items: center; gap: .7rem; text-decoration: none; margin-right: auto; min-width: 0; }
-.marca__logo { width: 36px; height: auto; }
-.marca__slogan { width: clamp(150px, 42vw, 210px); height: auto; }
+/* Logo horizontal (símbolo + «Du'an Bienes Raíces»), sin eslogan */
+.marca__logo { height: 40px; width: auto; }
 
 .redes { display: flex; gap: .5rem; list-style: none; margin: 0; padding: 0; }
 .redes a {
@@ -209,8 +209,7 @@ html:not(.js) .menu-boton { display: none; }
     /* Tres columnas iguales a los lados: el menú queda centrado respecto a la página */
     .encabezado__barra { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; }
     .marca { margin-right: 0; justify-self: start; }
-    .marca__logo { width: 40px; }
-    .marca__slogan { display: none; }
+    .marca__logo { height: 46px; }
     .menu-boton, .redes--menu { display: none; }
     .js .navegacion, .navegacion {
         display: block; position: static; padding: 0;
@@ -236,9 +235,6 @@ html:not(.js) .menu-boton { display: none; }
     .encabezado__barra { gap: 1rem; }
     .menu__enlace { padding-inline: .7rem; font-size: .92rem; }
     .menu__enlace::after { left: .7rem; right: .7rem; }
-}
-@media (min-width: 1280px) {
-    .marca__slogan { display: block; width: 165px; }
 }
 
 /* Pestañas: solo la sub-navegación de servicios (ver más abajo) */
@@ -338,7 +334,12 @@ html:not(.js) .menu-boton { display: none; }
 .estrellas { display: inline-flex; gap: .15rem; color: #f5a623; margin: 0; }
 .estrellas .icono { width: 1.1rem; height: 1.1rem; }
 .estrellas--grandes .icono { width: 1.75rem; height: 1.75rem; }
-@media (min-width: 860px) { .bienvenida__grid { grid-template-columns: 1.6fr 1fr; gap: 4rem; } }
+/* Logo vertical grande a la izquierda del título (decorativo: el nombre ya está en el título) */
+.bienvenida__logo { width: clamp(110px, 30vw, 150px); height: auto; mix-blend-mode: multiply; /* el PNG trae fondo blanco */ }
+@media (min-width: 860px) {
+    .bienvenida__grid { grid-template-columns: auto 1.6fr 1fr; gap: 3rem; }
+    .bienvenida__logo { width: clamp(150px, 15vw, 210px); }
+}
 
 .servicios {
     padding-block: var(--espacio-seccion); color: var(--blanco);
@@ -456,7 +457,32 @@ html:not(.js) .menu-boton { display: none; }
     .testimonio__tarjeta { grid-template-columns: 42% 1fr; }
     .testimonio__foto { aspect-ratio: auto; height: 100%; }
 }
-@media (min-width: 1080px) { .testimonios .carrusel__pista > li { flex-basis: calc((100% - 1.5rem) / 2); } }
+/* Testimonios: cinta continua muy lenta, de borde a borde */
+.testimonios__ventana {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+.testimonios__pista {
+    --hueco: 1.25rem;
+    --columna: min(82vw, 340px);
+    --segundos: 14s;                      /* tiempo por tarjeta: a mayor número, más despacio */
+    display: flex; width: max-content; padding-block: .5rem 1.5rem;
+    animation: testimonios-cinta calc(var(--total, 6) * var(--segundos)) linear infinite;
+}
+.testimonios__grupo {
+    display: grid; grid-auto-flow: column; grid-auto-columns: var(--columna);
+    gap: var(--hueco); list-style: none; margin: 0; padding: 0 var(--hueco) 0 0;
+}
+.testimonios__grupo > li { display: flex; }
+.testimonios__grupo .testimonio__tarjeta { width: 100%; }
+@keyframes testimonios-cinta { to { transform: translateX(-50%); } }
+@media (min-width: 700px) { .testimonios__pista { --columna: clamp(460px, 44vw, 580px); --segundos: 22s; } }
+@media (prefers-reduced-motion: reduce) {
+    .testimonios__ventana { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+    .testimonios__pista { animation: none; padding-inline: var(--margen); }
+    .testimonios__grupo[aria-hidden] { display: none; }
+}
 
 .carrusel--galeria { margin-top: 3rem; }
 .carrusel--galeria .carrusel__pista > li img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radio); }
@@ -646,6 +672,15 @@ html:not(.js) .menu-boton { display: none; }
 .valores li { display: flex; gap: .75rem; }
 .valores .icono { color: var(--rojo); margin-top: .2em; }
 
+/* Contador grande sobre las tarjetas de cifras (Nosotros) */
+:where(main) .cifra-destacada { display: flex; flex-direction: column; align-items: center; text-align: center; margin: 1.5rem 0 0; }
+.cifra-destacada__num {
+    font-family: var(--fuente-titulos); font-weight: 800; line-height: 1; color: var(--rojo);
+    font-size: clamp(4.5rem, 16vw, 8rem); letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+}
+.cifra-destacada__txt { margin-top: .4rem; font-family: var(--fuente-titulos); font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.45rem); color: var(--carbon); }
+/* Desde tableta la leyenda va en una sola línea; el tamaño baja con el ancho (3vw) para que quepa */
+@media (min-width: 700px) { .cifra-destacada__txt { white-space: nowrap; } }
 .cifras__grid { list-style: none; padding: 0; margin: 2rem 0 3rem; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 .cifra-bloque { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra); padding: 1.75rem 1rem; text-align: center; display: flex; flex-direction: column; }
 .cifra-bloque__num { font-family: var(--fuente-titulos); font-weight: 800; font-size: 2.75rem; color: var(--rojo); line-height: 1.1; }

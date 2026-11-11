@@ -106,6 +106,8 @@ function detalle_de(string $seccion, array $item): string
         'testimonios' => extracto((string) ($item['texto'] ?? ''), 90),
         'resultados'  => ucfirst((string) ($item['estado'] ?? '')) . (!empty($item['subtitulo']) ? ' · ' . $item['subtitulo'] : ''),
         'videos'      => 'youtube.com/watch?v=' . ($item['youtube_id'] ?? ''),
+        'fundador'    => extracto((string) ($item['cita'] ?? ''), 90),
+        'galeria'     => '',
         'blog'        => (!empty($item['fecha']) ? fecha_es((string) $item['fecha']) : 'Sin fecha') . ' · /blog/' . ($item['slug'] ?? ''),
         default       => '',
     };

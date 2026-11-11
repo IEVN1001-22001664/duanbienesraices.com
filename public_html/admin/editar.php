@@ -11,7 +11,19 @@ $s = seccion_solicitada();
 $sec = SECCIONES_ADMIN[$s];
 $esBlog = $s === 'blog';
 $id = (string) ($_GET['id'] ?? '');
+// Sección de un solo elemento: siempre se edita el que existe (solo se crea si el archivo está vacío)
+$esUnico = !empty($sec['unico']);
+if ($esUnico && $id === '') {
+    try {
+        $id = (string) (elementos_de($s)[0]['id'] ?? '');
+    } catch (ErrorPanel) {
+        // Archivo dañado: elemento() de abajo muestra el error y lleva a los respaldos
+    }
+}
 $esNuevo = $id === '';
+// A dónde se vuelve al guardar o cancelar
+$volver = $esUnico ? '/admin/editar.php?s=' . rawurlencode($s) : '/admin/seccion.php?s=' . rawurlencode($s);
+$salir = $esUnico ? '/admin/' : $volver;
 
 // Valores iniciales de un elemento nuevo
 $nuevo = ['activo' => true] + match ($s) {
@@ -26,11 +38,11 @@ try {
     $actual = $esNuevo ? $nuevo : elemento($s, $id);
 } catch (ErrorPanel $ex) {
     avisar($ex->getMessage(), 'error');
-    redirigir('/admin/seccion.php?s=' . rawurlencode($s));
+    redirigir($esUnico ? '/admin/respaldos.php?s=' . rawurlencode($s) : $volver);
 }
 if ($actual === null) {
     avisar('Ese elemento ya no existe.', 'error');
-    redirigir('/admin/seccion.php?s=' . rawurlencode($s));
+    redirigir($esUnico ? '/admin/' : $volver);
 }
 // Destacados de Tokko: no se editan aquí (los datos vienen de Tokko); los nuevos se eligen de la lista de Tokko.
 if ($s === 'destacados' && tokko_activo()) {
@@ -106,19 +118,33 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 });
             }
             limpiar_uploads($s);
-            avisar($esNuevo ? 'Se creó «' . nombre_de($s, $item) . '».' : 'Cambios guardados.');
-            redirigir('/admin/seccion.php?s=' . rawurlencode($s));
+            avisar($esNuevo && !$esUnico ? 'Se creó «' . nombre_de($s, $item) . '».' : 'Cambios guardados.');
+            redirigir($volver);
         } catch (ErrorPanel $ex) {
             $errores['_'] = $ex->getMessage();
         }
     }
 }
 
-$titulo = $esNuevo ? $sec['nuevo'] : 'Editar ' . $sec['singular'];
+$titulo = $esUnico ? $sec['titulo'] : ($esNuevo ? $sec['nuevo'] : 'Editar ' . $sec['singular']);
 $accion = '/admin/editar.php?s=' . rawurlencode($s) . ($esNuevo ? '' : '&id=' . rawurlencode($id));
-admin_cabecera($titulo, [['Inicio', '/admin/'], [$sec['titulo'], '/admin/seccion.php?s=' . rawurlencode($s)], [$titulo, null]]);
+admin_cabecera($titulo, $esUnico
+    ? [['Inicio', '/admin/'], [$titulo, null]]
+    : [['Inicio', '/admin/'], [$sec['titulo'], '/admin/seccion.php?s=' . rawurlencode($s)], [$titulo, null]]);
 ?>
-<h1><?= e($titulo) ?></h1>
+<?php if ($esUnico): ?>
+    <div class="encabezado">
+        <div>
+            <h1><?= e($titulo) ?></h1>
+            <p class="encabezado__texto"><?= e($sec['descripcion']) ?></p>
+        </div>
+        <div class="encabezado__acciones">
+            <a class="boton boton--secundario" href="/admin/respaldos.php?s=<?= e($s) ?>">Restaurar versión anterior</a>
+        </div>
+    </div>
+<?php else: ?>
+    <h1><?= e($titulo) ?></h1>
+<?php endif; ?>
 
 <?php if ($errores): ?>
     <div class="aviso aviso--error" role="alert" tabindex="-1" data-enfocar>
@@ -158,7 +184,7 @@ admin_cabecera($titulo, [['Inicio', '/admin/'], [$sec['titulo'], '/admin/seccion
 
         <div class="edicion__botones">
             <button class="boton boton--grande" type="submit">Guardar</button>
-            <a class="boton boton--secundario boton--grande" href="/admin/seccion.php?s=<?= e(rawurlencode($s)) ?>" data-cancelar>Cancelar</a>
+            <a class="boton boton--secundario boton--grande" href="<?= e($salir) ?>" data-cancelar>Cancelar</a>
             <button class="boton boton--texto" type="submit" formaction="/admin/vista-previa.php" formtarget="vista-previa" formnovalidate data-previa>Actualizar vista previa</button>
         </div>
     </form>

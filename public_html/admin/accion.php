@@ -41,6 +41,9 @@ function posicion(array $items, string $id): int
 
 try {
     $respuesta = ['ok' => true];
+    if (!empty(SECCIONES_ADMIN[$s]['unico']) && in_array($accion, ['eliminar', 'ordenar', 'mover'], true)) {
+        throw new ErrorPanel('Esta sección tiene un solo elemento: no se puede eliminar ni reordenar.');
+    }
 
     switch ($accion) {
         case 'activar':

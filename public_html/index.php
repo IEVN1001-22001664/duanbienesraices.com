@@ -62,6 +62,7 @@ require __DIR__ . '/includes/header.php';
 
 <section class="bienvenida">
     <div class="contenedor bienvenida__grid">
+        <img class="bienvenida__logo" src="/assets/img/logo-duan-bienes-raices.webp" alt="" width="400" height="576" loading="lazy" decoding="async">
         <div class="bienvenida__texto">
             <h2 class="titulo-seccion titulo-seccion--izq">¡Bienvenido a <span class="texto-rojo">Du’an Bienes Raíces!</span></h2>
             <p class="bienvenida__lead">Si está pensando vender o rentar su propiedad, lo acompañamos en todo el proceso: <strong>desde la opinión de valor hasta la firma ante notario.</strong></p>
@@ -116,20 +117,21 @@ require __DIR__ . '/includes/header.php';
     <div class="contenedor">
         <h2 class="titulo-seccion" id="titulo-testimonios">Clientes que han confiado en nosotros</h2>
         <p class="subtitulo-seccion">Testimonios reales de clientes que han vendido, comprado o rentado una propiedad con Du’an Bienes Raíces.</p>
-        <div class="carrusel" data-carrusel aria-roledescription="carrusel" aria-label="Testimonios">
-            <ul class="carrusel__pista">
-                <?php foreach ($testimonios as $item) {
-                    componente('testimonio', ['item' => $item]);
-                } ?>
-            </ul>
-            <?php if (count($testimonios) > 1): ?>
-                <div class="carrusel__controles">
-                    <button class="carrusel__flecha" type="button" data-anterior aria-label="Testimonio anterior"><?= icono('flecha-izq') ?></button>
-                    <div class="puntos" data-puntos></div>
-                    <button class="carrusel__flecha" type="button" data-siguiente aria-label="Testimonio siguiente"><?= icono('flecha-der') ?></button>
-                </div>
-            <?php endif; ?>
+    </div>
+    <?php /* Cinta continua de derecha a izquierda: la lista se pinta 2 veces y la animación
+             CSS recorre -50 %. La copia es «inert» (ni teclado ni lector de pantalla). */ ?>
+    <div class="testimonios__ventana">
+        <div class="testimonios__pista" style="--total: <?= count($testimonios) ?>">
+            <?php foreach ([false, true] as $copia): ?>
+                <ul class="testimonios__grupo"<?= $copia ? ' aria-hidden="true" inert' : ' aria-label="Testimonios"' ?>>
+                    <?php foreach ($testimonios as $item) {
+                        componente('testimonio', ['item' => $item]);
+                    } ?>
+                </ul>
+            <?php endforeach; ?>
         </div>
+    </div>
+    <div class="contenedor">
         <p class="testimonios__google">
             <a class="boton boton--contorno" href="<?= e(URL_RESENAS_GOOGLE) ?>" target="_blank" rel="noopener"><?= icono('google', 'icono') ?> Ver todas las opiniones en Google</a>
         </p>
@@ -147,7 +149,7 @@ require __DIR__ . '/includes/header.php';
             } ?>
         </ul>
         <p class="centrado">
-            <a class="boton boton--contorno" href="<?= e(REDES['youtube']) ?>" target="_blank" rel="noopener"><?= icono('youtube') ?> Ver canal completo</a>
+            <a class="boton boton--contorno" href="<?= e(URL_CANAL_VIDEOS) ?>" target="_blank" rel="noopener"><?= icono('youtube') ?> Ver canal completo</a>
         </p>
     </div>
 </section>

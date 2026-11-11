@@ -1,6 +1,7 @@
 <?php
 /**
- * Nosotros (/empresa). Contenido fijo en código.
+ * Nosotros (/empresa). La carta del fundador y la galería se editan en el panel
+ * (secciones «fundador» y «galeria»); el resto es fijo en código.
  * Estructura: hero → mensaje del fundador → misión/visión/valores → cifras + CTA.
  * Los pilares de blindaje viven en Tengo una propiedad (ofrezca-su-propiedad.php).
  */
@@ -14,6 +15,9 @@ $pagina = [
     'imagen'      => '/assets/img/nosotros-hero.webp',
     'precarga'    => '/assets/img/nosotros-hero.webp',
 ];
+
+$fundador = obtener_seccion('fundador')[0] ?? null;
+$galeria = obtener_seccion('galeria');
 
 $valores = [
     ['Honestidad', 'Ayudar y asegurar a nuestros clientes una venta o renta transparente.'],
@@ -34,26 +38,13 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<?php if ($fundador): ?>
 <section class="seccion fundador" aria-labelledby="titulo-fundador">
     <div class="contenedor">
-        <div class="fundador__tarjeta">
-            <figure class="fundador__foto">
-                <img src="/assets/img/fundador-alejandro-jaquez.webp" alt="Arq. Alejandro Jáquez Martínez, director y fundador de Du'an Bienes Raíces" width="900" height="1194" loading="lazy">
-                <figcaption class="fundador__etiqueta">Fundador</figcaption>
-            </figure>
-            <div class="fundador__texto">
-                <p class="fundador__antetitulo">Carta del fundador</p>
-                <h2 class="fundador__cita" id="titulo-fundador">“Un patrimonio no es un número en un contrato. Es la historia de una familia.”</h2>
-                <p>Fundé Du’an Bienes Raíces en 2013, en León, después de años de diseñar y supervisar obra como arquitecto. Ese oficio me enseñó algo que pocos asesores toman en cuenta: una propiedad no vale solo por su ubicación o sus metros cuadrados, vale por cómo fue construida y qué tan bien se cuidó.</p>
-                <p>Por eso en cada operación reviso personalmente la certeza legal del inmueble, superviso la valuación con criterios reales de mercado y me aseguro de que la promoción muestre la propiedad tal como es: bien hecha.</p>
-                <p class="fundador__firma">
-                    <strong>Arq. Alejandro Jáquez Martínez</strong>
-                    <span>Director y fundador</span>
-                </p>
-            </div>
-        </div>
+        <?php componente('fundador', ['item' => $fundador]); ?>
     </div>
 </section>
+<?php endif; ?>
 
 <section class="seccion mision" aria-labelledby="titulo-mision">
     <div class="contenedor mision__grid">
@@ -73,25 +64,35 @@ require __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <?php if ($galeria): ?>
     <div class="contenedor">
         <div class="carrusel carrusel--galeria" data-carrusel aria-roledescription="carrusel" aria-label="Galería de propiedades">
             <ul class="carrusel__pista">
-                <?php for ($i = 1; $i <= 9; $i++): ?>
-                    <li data-slide><img src="/assets/img/nosotros-galeria-<?= sprintf('%02d', $i) ?>.webp" alt="Propiedad comercializada por Du'an Bienes Raíces, foto <?= $i ?>" width="1400" height="933" loading="lazy" decoding="async"></li>
-                <?php endfor; ?>
+                <?php foreach ($galeria as $foto): ?>
+                    <li data-slide><img src="<?= e(ruta_upload($foto['imagen'])) ?>" alt="<?= e($foto['alt']) ?>" width="1500" height="1000" loading="lazy" decoding="async"></li>
+                <?php endforeach; ?>
             </ul>
-            <div class="carrusel__controles">
-                <button class="carrusel__flecha" type="button" data-anterior aria-label="Foto anterior"><?= icono('flecha-izq') ?></button>
-                <div class="puntos" data-puntos></div>
-                <button class="carrusel__flecha" type="button" data-siguiente aria-label="Foto siguiente"><?= icono('flecha-der') ?></button>
-            </div>
+            <?php if (count($galeria) > 1): ?>
+                <div class="carrusel__controles">
+                    <button class="carrusel__flecha" type="button" data-anterior aria-label="Foto anterior"><?= icono('flecha-izq') ?></button>
+                    <div class="puntos" data-puntos></div>
+                    <button class="carrusel__flecha" type="button" data-siguiente aria-label="Foto siguiente"><?= icono('flecha-der') ?></button>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
+    <?php endif; ?>
 </section>
 
 <section class="seccion seccion--gris cifras" aria-labelledby="titulo-cifras">
     <div class="contenedor">
         <h2 class="titulo-seccion" id="titulo-cifras">Respaldo que se comprueba</h2>
+        <?php /* Contador grande: main.js lo anima de 0 a la cifra al verse; sin JS muestra la cifra final */ ?>
+        <p class="cifra-destacada">
+            <span class="cifra-destacada__num" data-contador="180" data-prefijo="+" aria-hidden="true">+180</span>
+            <span class="sr-only">Más de 180</span>
+            <span class="cifra-destacada__txt">propiedades han pasado por Du'an Bienes Raíces</span>
+        </p>
         <ul class="cifras__grid">
             <li class="cifra-bloque"><span class="cifra-bloque__num">+13</span><span class="cifra-bloque__txt">años de experiencia</span></li>
             <li class="cifra-bloque"><span class="cifra-bloque__num">2013</span><span class="cifra-bloque__txt">inicio de operaciones en León</span></li>

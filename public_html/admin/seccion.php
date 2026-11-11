@@ -8,6 +8,10 @@ requerir_login();
 
 $s = seccion_solicitada();
 $sec = SECCIONES_ADMIN[$s];
+// Secciones de un solo elemento (carta del fundador): no hay lista, se edita directo.
+if (!empty($sec['unico'])) {
+    redirigir('/admin/editar.php?s=' . rawurlencode($s));
+}
 $esBlog = $s === 'blog';
 
 $errorArchivo = null;

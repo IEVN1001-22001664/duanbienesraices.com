@@ -214,7 +214,7 @@
        entran por la derecha ya transformadas, el lazy nativo llega tarde; cuando
        la sección está por verse se piden todas de una vez.
        --------------------------------------------------------------- */
-    $$('.resultados__pista').forEach(function (pista) {
+    $$('.resultados__pista, .testimonios__pista').forEach(function (pista) {
         var cargar = function () {
             $$('img[loading="lazy"]', pista).forEach(function (img) { img.loading = 'eager'; });
         };
@@ -368,6 +368,41 @@
         orden.addEventListener('change', function () {
             if (orden.value === 'recientes') orden.disabled = true;
             orden.form.submit();
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Contadores (Nosotros): suben de 0 a la cifra la primera vez que se
+       ven, en ~1.8 s y frenando al final. Sin JS o con «reducir
+       movimiento» se queda la cifra final que trae el HTML.
+       --------------------------------------------------------------- */
+    var contadores = $$('[data-contador]');
+    if (contadores.length && !reducirMovimiento && 'IntersectionObserver' in window) {
+        var animarContador = function (el) {
+            var meta = Number(el.getAttribute('data-contador')) || 0;
+            var prefijo = el.getAttribute('data-prefijo') || '';
+            var duracion = 1800, inicio = null;
+            var paso = function (t) {
+                if (inicio === null) inicio = t;
+                var avance = Math.min(1, (t - inicio) / duracion);
+                var suave = 1 - Math.pow(1 - avance, 3);      // ease-out cúbico
+                el.textContent = prefijo + Math.round(meta * suave);
+                if (avance < 1) requestAnimationFrame(paso);
+            };
+            requestAnimationFrame(paso);
+        };
+        var vigiaContador = new IntersectionObserver(function (entradas) {
+            entradas.forEach(function (en) {
+                if (en.isIntersecting) {
+                    vigiaContador.unobserve(en.target);
+                    animarContador(en.target);
+                }
+            });
+        }, { threshold: 0.6 });
+        contadores.forEach(function (el) {
+            // El número animado es aria-hidden; los lectores de pantalla leen el texto oculto con la cifra final
+            el.textContent = (el.getAttribute('data-prefijo') || '') + '0';
+            vigiaContador.observe(el);
         });
     }
 

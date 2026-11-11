@@ -9,8 +9,7 @@ $activo = $pagina['activo'] ?? '';
 <header class="encabezado" id="inicio">
     <div class="encabezado__barra contenedor">
         <a class="marca" href="/" aria-label="<?= e(NOMBRE_SITIO) ?> — Inicio">
-            <img class="marca__logo" src="/assets/img/logo-duan-bienes-raices.webp" alt="Logo Du'an Bienes Raíces" width="400" height="576">
-            <img class="marca__slogan" src="/assets/img/slogan-su-patrimonio-en-buenas-manos.webp" alt="<?= e('“' . SLOGAN . '”') ?>" width="900" height="152">
+            <img class="marca__logo" src="/assets/img/logo-duan-horizontal.webp" alt="Du'an Bienes Raíces" width="520" height="185">
         </a>
 
         <nav class="navegacion" id="menu-principal" aria-label="Principal">

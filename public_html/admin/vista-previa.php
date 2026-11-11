@@ -18,6 +18,8 @@ $relleno = match ($s) {
     'videos'      => ['youtube_id' => '', 'titulo' => ''],
     'resultados'  => ['titulo' => 'Título del resultado', 'estado' => 'vendido'],
     'blog'        => ['titulo' => 'Título del artículo', 'fecha' => date('Y-m-d'), 'contenido' => ''],
+    'fundador'    => ['cita' => 'Frase principal', 'mensaje' => 'Mensaje del fundador…', 'nombre' => 'Nombre'],
+    'galeria'     => ['alt' => ''],
     default       => [],
 };
 foreach ($relleno as $campo => $valor) {
@@ -69,6 +71,24 @@ foreach ($relleno as $campo => $valor) {
             <p class="previa-vacia">Pega la liga del video para verlo aquí.</p>
         <?php else: ?>
             <ul class="videos__grid previa-una"><?php componente('video', ['item' => $item]); ?></ul>
+        <?php endif;
+        break;
+
+    case 'fundador':
+        if (empty($item['foto'])): ?>
+            <p class="previa-vacia">Sube una foto para ver la carta.</p>
+        <?php else: ?>
+            <section class="seccion fundador"><div class="contenedor"><?php componente('fundador', ['item' => $item]); ?></div></section>
+        <?php endif;
+        break;
+
+    case 'galeria':
+        if (empty($item['imagen'])): ?>
+            <p class="previa-vacia">Sube una foto para verla aquí.</p>
+        <?php else: ?>
+            <div class="carrusel carrusel--galeria"><ul class="carrusel__pista previa-una">
+                <li><img src="<?= e(ruta_upload($item['imagen'])) ?>" alt="<?= e($item['alt']) ?>" width="1500" height="1000"></li>
+            </ul></div>
         <?php endif;
         break;
 
