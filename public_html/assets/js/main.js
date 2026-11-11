@@ -240,7 +240,10 @@
 
         // El índice se guarda aparte: leer scrollLeft a mitad de la animación daba saltos.
         var indice = 0;
-        function mostrar() { if (contador) contador.textContent = String(indice + 1); }
+        function mostrar() {
+            if (contador) contador.textContent = String(indice + 1);
+            galeria.dispatchEvent(new CustomEvent('galeria:cambio', { detail: indice }));
+        }
         function ir(n) {
             indice = (n + fotos.length) % fotos.length;
             pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
@@ -248,6 +251,8 @@
         }
         if (izq) izq.addEventListener('click', function () { ir(indice - 1); });
         if (der) der.addEventListener('click', function () { ir(indice + 1); });
+        // Las miniaturas de la ficha piden ir a una foto con este evento
+        galeria.addEventListener('galeria:ir', function (ev) { ir(ev.detail); });
         pista.addEventListener('keydown', function (ev) {
             if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(indice - 1); }
             if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(indice + 1); }
@@ -302,6 +307,55 @@
     });
 
     /* ---------------------------------------------------------------
+       Ficha de propiedad: miniaturas que mueven la galería principal
+       --------------------------------------------------------------- */
+    var galeriaFicha = $('[data-ficha-galeria]');
+    var miniaturas = $('[data-miniaturas]');
+    if (galeriaFicha && miniaturas) {
+        var botonesMini = $$('[data-ir]', miniaturas);
+        botonesMini.forEach(function (b) {
+            b.addEventListener('click', function () {
+                galeriaFicha.dispatchEvent(new CustomEvent('galeria:ir', { detail: Number(b.getAttribute('data-ir')) }));
+            });
+        });
+        galeriaFicha.addEventListener('galeria:cambio', function (ev) {
+            botonesMini.forEach(function (b, i) {
+                if (i === ev.detail) {
+                    b.setAttribute('aria-current', 'true');
+                    // Mantiene visible la miniatura activa sin mover la página
+                    miniaturas.scrollTo({ left: b.parentNode.offsetLeft - miniaturas.clientWidth / 2 + b.offsetWidth / 2, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+                } else {
+                    b.removeAttribute('aria-current');
+                }
+            });
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Listado de propiedades: los chips y listas aplican el filtro al
+       cambiar; el texto y el precio esperan al botón «Buscar».
+       --------------------------------------------------------------- */
+    var filtros = $('[data-filtros-propiedades]');
+    if (filtros) {
+        filtros.addEventListener('change', function (ev) {
+            if (ev.target.matches('input[type="radio"], select')) {
+                if (filtros.requestSubmit) filtros.requestSubmit(); else filtros.submit();
+            }
+        });
+        // Los campos vacíos no viajan en la URL
+        filtros.addEventListener('submit', function () {
+            $$('input, select', filtros).forEach(function (c) { if (c.name && c.value === '') c.disabled = true; });
+        });
+    }
+    var orden = $('[data-orden]');
+    if (orden && orden.form) {
+        orden.addEventListener('change', function () {
+            if (orden.value === 'recientes') orden.disabled = true;
+            orden.form.submit();
+        });
+    }
+
+    /* ---------------------------------------------------------------
        Mapa de Google: se carga al hacer clic
        --------------------------------------------------------------- */
     $$('[data-mapa]').forEach(function (marco) {
@@ -310,7 +364,7 @@
         boton.addEventListener('click', function () {
             var iframe = document.createElement('iframe');
             iframe.src = marco.getAttribute('data-mapa');
-            iframe.title = 'Mapa de ubicación de Du\'an Bienes Raíces';
+            iframe.title = marco.getAttribute('data-mapa-titulo') || 'Mapa de ubicación de Du\'an Bienes Raíces';
             iframe.loading = 'lazy';
             iframe.referrerPolicy = 'no-referrer-when-downgrade';
             marco.innerHTML = '';

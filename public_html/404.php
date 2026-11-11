@@ -25,7 +25,7 @@ require __DIR__ . '/includes/header.php';
         <p>Es posible que haya cambiado de dirección al renovar nuestro sitio.</p>
         <div class="cta-linea__botones">
             <a class="boton" href="/">Ir al inicio</a>
-            <a class="boton boton--contorno" href="<?= e(URL_TOKKO_PROPIEDADES) ?>" target="_blank" rel="noopener">Ver propiedades</a>
+            <a class="boton boton--contorno" href="/propiedades">Ver propiedades</a>
         </div>
     </div>
 </section>

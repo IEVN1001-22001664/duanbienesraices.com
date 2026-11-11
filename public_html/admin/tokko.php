@@ -100,7 +100,7 @@ admin_cabecera('Elegir propiedad de Tokko', [['Inicio', '/admin/'], ['Propiedade
                     </p>
                 </div>
                 <div class="lista__acciones">
-                    <a class="boton boton--texto boton--chico" href="<?= e($p['url_tokko']) ?>" target="_blank" rel="noopener">Ver ficha ↗</a>
+                    <a class="boton boton--texto boton--chico" href="<?= e(url_propiedad($p)) ?>" target="_blank" rel="noopener">Ver ficha ↗</a>
                     <?php if ($yaEsta): ?>
                         <span class="etiqueta-panel">Ya está en destacados</span>
                     <?php else: ?>

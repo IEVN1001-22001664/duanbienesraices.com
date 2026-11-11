@@ -190,7 +190,7 @@ require __DIR__ . '/includes/header.php';
 <section class="banda-inventario" style="--fondo: url('/assets/img/fondo-inventario.webp')">
     <div class="contenedor banda-inventario__contenido">
         <p>Consulte aquí nuestro inventario de propiedades que actualmente tenemos a la venta o renta:</p>
-        <a class="boton boton--grande" href="<?= e(URL_TOKKO_PROPIEDADES) ?>" target="_blank" rel="noopener">Ver propiedades <?= icono('externo', 'icono icono--mini') ?></a>
+        <a class="boton boton--grande" href="/propiedades">Ver propiedades</a>
     </div>
 </section>
 

@@ -80,6 +80,10 @@ if ($ruta === '/') {
     $ejecutar($web . '/blog/index.php');
 } elseif (preg_match('#^/blog/([^/]+)$#', $ruta, $m)) {
     $ejecutar($web . '/blog/articulo.php', ['slug' => $m[1]]);
+} elseif ($ruta === '/propiedades' || $ruta === '/propiedades/') {
+    $ejecutar($web . '/propiedades/index.php');
+} elseif (preg_match('#^/propiedades/([^/]+)$#', $ruta, $m)) {
+    $ejecutar($web . '/propiedades/ficha.php', ['slug' => $m[1]]);
 } elseif ($ruta === '/sitemap.xml') {
     $ejecutar($web . '/sitemap.php');
 } elseif (is_file($web . rtrim($ruta, '/') . '.php')) {

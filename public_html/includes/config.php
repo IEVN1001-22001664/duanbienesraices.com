@@ -82,7 +82,7 @@ define('VERIFICACIONES', [
 define('MENU', [
     ['clave' => 'inicio',      'texto' => 'Inicio',              'url' => '/'],
     ['clave' => 'nosotros',    'texto' => 'Nosotros',            'url' => '/empresa'],
-    ['clave' => 'propiedades', 'texto' => 'Propiedades',         'url' => URL_TOKKO_PROPIEDADES, 'externo' => true],
+    ['clave' => 'propiedades', 'texto' => 'Propiedades',         'url' => '/propiedades'],
     ['clave' => 'propietario', 'texto' => 'Tengo una Propiedad', 'url' => '/ofrezca-su-propiedad'],
     ['clave' => 'blog',        'texto' => 'Blog',                'url' => '/blog'],
     ['clave' => 'contacto',    'texto' => 'Contacto',            'url' => '/contacto'],

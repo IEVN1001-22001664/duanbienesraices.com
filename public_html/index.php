@@ -105,7 +105,7 @@ require __DIR__ . '/includes/header.php';
         </div>
         <div class="destacados__cierre">
             <p>Hacemos lo mismo por su propiedad. <a href="/ofrezca-su-propiedad">Contáctenos</a> y la incluimos en nuestras propiedades destacadas.</p>
-            <a class="boton boton--grande" href="<?= e(URL_TOKKO_PROPIEDADES) ?>" target="_blank" rel="noopener">Ver todas las propiedades <?= icono('externo', 'icono icono--mini') ?></a>
+            <a class="boton boton--grande" href="/propiedades">Ver todas las propiedades</a>
         </div>
     </div>
 </section>

@@ -932,3 +932,163 @@ html:not(.js) .menu-boton { display: none; }
 @keyframes intro-desvanece { to { opacity: 0; } }
 @keyframes intro-sin-fondo { to { background: transparent; } }
 @keyframes intro-fuera   { to { visibility: hidden; } }
+
+/* =================================================================
+   Propiedades (/propiedades y /propiedades/{slug}-{id})
+   ================================================================= */
+
+/* --- Filtros del listado --- */
+.filtros-propiedades {
+    background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radio);
+    box-shadow: var(--sombra); padding: clamp(1rem, 3vw, 1.5rem);
+}
+.filtros-propiedades__operacion { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+label.chip { position: relative; cursor: pointer; padding: 0; border: 0; background: none; }
+label.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+label.chip span {
+    display: inline-block; border: 1px solid var(--borde); background: var(--gris-claro); border-radius: 999px;
+    padding: .45rem 1.1rem; font-weight: 700; font-size: .95rem; color: var(--carbon-2); transition: background-color .2s, color .2s;
+}
+label.chip:hover { background: none; }
+label.chip:hover span { border-color: var(--rojo); color: var(--rojo-oscuro); }
+label.chip input:checked + span { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
+label.chip input:focus-visible + span { box-shadow: var(--foco); }
+.filtros-propiedades__campos { display: grid; gap: 0 1rem; grid-template-columns: 1fr 1fr; }
+.filtros-propiedades .campo { margin-bottom: .85rem; min-width: 0; }
+.filtros-propiedades .campo label, .campo__etiqueta { font-weight: 700; font-size: .9rem; }
+.filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .6rem .75rem; }
+.campo--buscar, .campo--precio { grid-column: 1 / -1; }
+.campo__par { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.filtros-propiedades__acciones { display: flex; gap: .75rem; flex-wrap: wrap; }
+.filtros-propiedades__acciones .boton { min-height: 44px; padding-block: .5em; }
+@media (min-width: 760px) {
+    .filtros-propiedades__campos { grid-template-columns: 2fr 1fr 1fr 1fr; }
+    .campo--buscar { grid-column: auto; }
+    .campo--precio { grid-column: span 2; }
+}
+@media (min-width: 1100px) {
+    .filtros-propiedades { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 0 1rem; }
+    .filtros-propiedades__operacion { grid-column: 1 / -1; }
+    .filtros-propiedades__campos { grid-template-columns: 1.6fr 1fr 1fr 1fr 1.5fr; }
+    .campo--precio { grid-column: auto; }
+    .filtros-propiedades__acciones { margin-bottom: .85rem; flex-wrap: nowrap; }
+}
+
+/* --- Barra de resultados y orden --- */
+.propiedades__barra { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .75rem 1.5rem; margin: 2rem 0 1.25rem; }
+.propiedades__conteo { font-size: clamp(1.15rem, 3vw, 1.4rem); margin: 0; }
+.campo--orden { flex-direction: row; align-items: center; gap: .6rem; margin: 0; }
+.campo--orden label { font-weight: 700; font-size: .9rem; white-space: nowrap; }
+.campo--orden select { padding: .5rem .75rem; width: auto; }
+
+/* --- Rejilla y tarjeta --- */
+.propiedades__grid { display: grid; gap: 1.5rem; }
+@media (min-width: 640px) { .propiedades__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .propiedades__grid { grid-template-columns: repeat(3, 1fr); } }
+.propiedad-card { background: var(--blanco); border-radius: var(--radio); overflow: hidden; box-shadow: var(--sombra); transition: box-shadow .25s, transform .25s; }
+.propiedad-card:hover { box-shadow: var(--sombra-fuerte); transform: translateY(-3px); }
+.propiedad-card__enlace { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
+.propiedad-card__enlace:focus-visible { outline: none; box-shadow: var(--foco); border-radius: var(--radio); }
+.propiedad-card__foto { position: relative; aspect-ratio: 4 / 3; background: var(--gris-claro); overflow: hidden; }
+.propiedad-card__foto img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.propiedad-card:hover .propiedad-card__foto img { transform: scale(1.04); }
+.propiedad-card__sin-foto { display: grid; place-items: center; height: 100%; color: var(--gris); }
+.propiedad-card__sin-foto .icono { width: 48px; height: 48px; }
+.propiedad-card__fotos {
+    position: absolute; left: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .3rem;
+    background: rgba(20, 22, 27, .7); color: var(--blanco); font-size: .8rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px;
+}
+.propiedad-card__cuerpo { padding: 1.1rem 1.25rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
+.propiedad-card__precio { font-family: var(--fuente-titulos); font-size: 1.35rem; font-weight: 800; color: var(--rojo-oscuro); margin: 0 0 .3rem; }
+.propiedad-card__titulo { font-size: 1.08rem; font-weight: 800; line-height: 1.3; margin: 0 0 .35rem; transition: color .2s; }
+.propiedad-card:hover .propiedad-card__titulo { color: var(--rojo-oscuro); }
+:where(main) .propiedad-card p { text-align: left; hyphens: manual; }
+.propiedad-card__ubicacion { display: flex; align-items: center; gap: .3rem; color: var(--gris); font-size: .92rem; margin: 0 0 .8rem; }
+.propiedad-card__datos { list-style: none; margin: 0 0 1rem; padding: .75rem 0 0; border-top: 1px solid var(--borde); display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .9rem; color: var(--carbon-2); }
+.propiedad-card__datos li { display: inline-flex; align-items: center; gap: .3rem; }
+.propiedad-card__pie { margin: auto 0 0; display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: var(--gris); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+.icono--mini { width: 1em; height: 1em; flex: none; }
+
+/* --- Paginación y sin resultados --- */
+.paginacion { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: 2.5rem; }
+.paginacion a { min-width: 44px; height: 44px; display: grid; place-items: center; padding: 0 .6rem; border-radius: 999px; border: 2px solid var(--borde); font-weight: 700; color: var(--carbon); text-decoration: none; }
+.paginacion a:hover { border-color: var(--rojo); color: var(--rojo-oscuro); }
+.paginacion a[aria-current="page"] { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
+.paginacion .icono { width: 18px; height: 18px; }
+.paginacion__salto { color: var(--gris); padding: 0 .2rem; }
+.propiedades__vacio { text-align: center; background: var(--gris-claro); border-radius: var(--radio); padding: clamp(2rem, 6vw, 3.5rem) 1.25rem; }
+:where(main) .propiedades__vacio p { text-align: center; }
+.propiedades__vacio-acciones { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
+
+/* --- Ficha --- */
+.ficha { padding: 1.25rem 0 var(--espacio-seccion); }
+.ficha__migas { font-size: .9rem; color: var(--gris); margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+.ficha__migas a { color: var(--carbon-2); }
+.ficha__galeria { border-radius: var(--radio); overflow: hidden; background: #16181c; }
+.ficha__galeria .galeria__pista { aspect-ratio: 4 / 3; max-height: 72vh; }
+.ficha__galeria .galeria__foto img { object-fit: contain; }
+@media (min-width: 900px) {
+    .ficha__galeria .galeria__pista { aspect-ratio: 16 / 9; }
+    .ficha__galeria .galeria__flecha { width: 48px; height: 48px; }
+}
+.ficha__miniaturas { list-style: none; margin: .6rem 0 0; padding: 0 0 .3rem; display: flex; gap: .5rem; overflow-x: auto; scrollbar-width: thin; }
+.ficha__miniaturas li { flex: none; }
+.ficha__miniaturas button { position: relative; display: block; padding: 0; border: 2px solid transparent; border-radius: var(--radio-chico); overflow: hidden; background: var(--gris-claro); cursor: pointer; opacity: .7; transition: opacity .2s, border-color .2s; }
+.ficha__miniaturas button:hover, .ficha__miniaturas button[aria-current="true"] { opacity: 1; border-color: var(--rojo); }
+.ficha__miniaturas img { width: 96px; height: 72px; object-fit: cover; }
+.ficha__miniatura-plano { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(20, 22, 27, .7); color: var(--blanco); font-size: .7rem; font-weight: 700; }
+
+.ficha__grid { display: grid; gap: 2rem; margin-top: 1.75rem; }
+@media (min-width: 960px) {
+    /* El lateral no es sticky: con el formulario es más alto que la pantalla y ocultaría el botón */
+    .ficha__grid { grid-template-columns: minmax(0, 1fr) 360px; gap: 3rem; align-items: start; }
+}
+.ficha__antetitulo { text-transform: uppercase; letter-spacing: .08em; font-size: .82rem; font-weight: 700; color: var(--rojo-oscuro); margin: 0 0 .4rem; }
+.ficha__titulo { font-size: clamp(1.6rem, 4.5vw, 2.3rem); font-weight: 800; line-height: 1.15; margin: 0 0 .5rem; }
+:where(main) .ficha__encabezado p, :where(main) .ficha__lateral p { text-align: left; hyphens: manual; }
+.ficha__ubicacion { display: flex; align-items: center; gap: .4rem; color: var(--gris); margin: 0 0 1rem; }
+.ficha__precios { display: flex; flex-wrap: wrap; gap: .25rem 2rem; }
+.ficha__precio { font-family: var(--fuente-titulos); font-size: clamp(1.5rem, 4vw, 1.9rem); font-weight: 800; color: var(--rojo-oscuro); margin: 0; }
+.ficha__precio span { display: block; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gris); }
+.ficha__datos { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .75rem; }
+.ficha__datos li { display: flex; align-items: center; gap: .6rem; background: var(--gris-claro); border-radius: var(--radio-chico); padding: .8rem .9rem; font-weight: 700; font-size: .95rem; }
+.ficha__datos .icono { width: 26px; height: 26px; color: var(--rojo); flex: none; }
+@media (max-width: 479px) {
+    .ficha__datos li { flex-direction: column; align-items: flex-start; gap: .4rem; }
+}
+.ficha__bloque { margin-top: 2.5rem; }
+.ficha__subtitulo { font-size: 1.3rem; font-weight: 800; margin: 0 0 1rem; padding-bottom: .5rem; border-bottom: 3px solid var(--rojo); display: inline-block; }
+.ficha__descripcion p { margin: 0 0 .9rem; }
+.ficha__tabla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 2rem; margin: 0; }
+.ficha__tabla div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--borde); }
+.ficha__tabla dt { color: var(--gris); }
+.ficha__tabla dd { margin: 0; font-weight: 700; text-align: right; }
+.ficha__grupo { font-size: 1rem; margin: 1.25rem 0 .6rem; color: var(--carbon-2); }
+.ficha__amenidades { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .5rem 1.5rem; }
+.ficha__amenidades li { display: flex; align-items: center; gap: .45rem; }
+.ficha__amenidades .icono { color: var(--verde); }
+.ficha__videos { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .75rem; }
+.ficha__mapa { border-radius: var(--radio); margin-top: .75rem; height: 320px; }
+@media (min-width: 900px) { .ficha__mapa { height: 380px; } }
+/* Círculo de «zona aproximada» sobre el mapa (no bloquea el arrastre) */
+.ficha__mapa::after {
+    content: ""; position: absolute; left: 50%; top: 50%; width: 180px; height: 180px; transform: translate(-50%, -50%);
+    border-radius: 50%; background: rgba(226, 28, 33, .14); border: 2px solid rgba(226, 28, 33, .65); pointer-events: none;
+}
+.ficha__mapa-zona {
+    position: absolute; left: .75rem; bottom: .75rem; z-index: 1; margin: 0; max-width: calc(100% - 1.5rem);
+    display: inline-flex; align-items: center; gap: .35rem; padding: .35rem .75rem; border-radius: 999px;
+    background: rgba(255, 255, 255, .94); box-shadow: var(--sombra); font-size: .85rem; font-weight: 700; color: var(--carbon);
+}
+
+.ficha__contacto { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra-fuerte); border-top: 5px solid var(--rojo); padding: 1.5rem; }
+.ficha__contacto-precio { font-family: var(--fuente-titulos); font-size: 1.6rem; font-weight: 800; color: var(--rojo-oscuro); margin: 0 0 .25rem; }
+.ficha__contacto-texto { color: var(--gris); margin: 0 0 1rem; }
+.formulario--ficha { box-shadow: none; border: 0; border-top: 1px solid var(--borde); border-radius: 0; padding: 1.25rem 0 0; margin-top: 1.5rem; }
+.formulario--ficha .formulario__titulo { font-size: 1.1rem; }
+.formulario--ficha .campo { margin-bottom: .8rem; }
+.formulario--ficha .campo input, .formulario--ficha .campo textarea { padding: .6rem .75rem; }
+.ficha__compartir { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--borde); }
+.ficha__compartir p { font-weight: 700; margin: 0 0 .5rem; }
+.ficha__compartir .compartir a { padding: .4rem .85rem; font-size: .9rem; }
+.propiedades__grid--3 + .centrado { margin-top: 2rem; }

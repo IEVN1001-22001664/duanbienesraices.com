@@ -63,6 +63,10 @@ RewriteRule ^blog/$ /blog [R=301,L]
 RewriteRule ^blog$ blog/index.php [END]
 RewriteRule ^blog/([^/]+)$ blog/articulo.php?slug=$1 [END,QSA,B]
 RewriteRule ^sitemap\.xml$ sitemap.php [END]
+# Propiedades (de Tokko): listado y ficha /propiedades/{slug}-{id}
+RewriteRule ^propiedades/$ /propiedades [R=301,L]
+RewriteRule ^propiedades$ propiedades/index.php [END]
+RewriteRule ^propiedades/([^/]+)$ propiedades/ficha.php?slug=$1 [END,QSA,B]
 
 # Con DirectorySlash Off, las demás carpetas (/admin, /servicios) necesitan la diagonal a mano.
 RewriteCond %{REQUEST_FILENAME} -d

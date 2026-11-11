@@ -37,8 +37,11 @@ $idGaleria = 'galeria-' . preg_replace('/[^a-z0-9-]/', '', strtolower((string) $
         <?php if (!empty($item['descripcion'])): ?>
             <p class="destacado__descripcion"><?= e($item['descripcion']) ?></p>
         <?php endif; ?>
-        <a class="boton boton--contorno destacado__boton" href="<?= e($item['url_tokko']) ?>" target="_blank" rel="noopener">
-            Ver ficha <?= icono('externo', 'icono icono--mini') ?><span class="sr-only"> de <?= e($item['titulo']) ?> (abre en otra pestaña)</span>
+        <?php // Los destacados de Tokko abren la ficha propia; los manuales siguen enlazando a Tokko
+        $ficha = (string) ($item['url_ficha'] ?? '') ?: $item['url_tokko'];
+        $externa = (bool) preg_match('#^https?://#i', $ficha); ?>
+        <a class="boton boton--contorno destacado__boton" href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>>
+            Ver ficha<?php if ($externa): ?> <?= icono('externo', 'icono icono--mini') ?><?php endif; ?><span class="sr-only"> de <?= e($item['titulo']) ?><?= $externa ? ' (abre en otra pestaña)' : '' ?></span>
         </a>
     </div>
 </article>

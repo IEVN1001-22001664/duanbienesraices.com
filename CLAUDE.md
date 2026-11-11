@@ -36,6 +36,7 @@ public_html/                 raíz web
   index.php, empresa.php (Nosotros), ofrezca-su-propiedad.php, contacto.php, aviso-de-privacidad.php, 404.php
   servicios/{renta,venta,administracion}.php   → includes/plantilla-servicio.php
   blog/index.php, blog/articulo.php (/blog/{slug}; slug_anterior de Wix → 301)
+  propiedades/index.php (listado) y propiedades/ficha.php (/propiedades/{slug}-{id}), datos de Tokko
   sitemap.php (/sitemap.xml), robots.txt, .htaccess
   includes/   config.php (constantes del negocio, MENU, SERVICIOS, opciones de formularios, rutas), funciones.php, formularios.php, tokko.php, head/header/footer, whatsapp.php
   includes/vendor/phpmailer/   PHPMailer 6.9.3 (solo Exception, PHPMailer y SMTP)
@@ -97,18 +98,27 @@ Decisiones del panel:
 
 ### Integración con Tokko (11 nov 2026)
 
-Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de la API de Tokko (hecho); **2)** después del lanzamiento, una página propia `/propiedades` (listado, filtros y ficha por propiedad) para dejar de mandar al sitio de Tokko.
+Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de la API de Tokko (hecho); **2)** una página propia `/propiedades` (listado, filtros y ficha por propiedad) para dejar de mandar al sitio de Tokko (hecha el 11 nov 2026, ver abajo).
 - `includes/tokko.php`: `tokko_sincronizar()` baja todas las propiedades (API v1 `property/`, de 50 en 50; 124 activas) y guarda en `data/tokko/propiedades.json` **solo campos públicos** con `tokko_normalizar()` (nunca `internal_data` —dueños, comisiones, notas—, sucursal, asesor ni dirección real). Ese archivo ya trae lo necesario para la futura `/propiedades` (operaciones, recámaras, baños, m², amenidades, fotos, videos).
 - Destacados: el panel solo elige qué propiedades y en qué orden (`admin/tokko.php` con buscador → acción `agregar_tokko`); no se editan. `tokko_actualizar_destacados()` rellena título, tipo, ubicación, precio (`precio_visible` = `web_price`), descripción corta y **solo la foto de portada** (`TOKKO_FOTOS_DESTACADO = 1`; la futura `/propiedades` usará todas) copiada a WebP en `uploads/destacados/tokko-{id}-{hash de la URL}-{card|full}.webp` (si la foto no cambia, no se vuelve a bajar). Si una propiedad deja de estar activa en Tokko, se oculta sola (`tokko_no_disponible`). Los destacados viejos hechos a mano se enlazaron a Tokko por su liga `/p/{id}-prop`; los que no existen en Tokko se quedan como estaban y se pueden seguir editando.
 - Actualización: cada 3 h (`TOKKO_VIGENCIA`), después de mandar la página de inicio a quien la visita (`tokko_refrescar_al_terminar()` + `fastcgi_finish_request`), con candado y un intento cada 15 min si Tokko falla; también con el botón «Actualizar desde Tokko». Solo escribe `destacados.json` (y genera respaldo) si algo cambió.
 - **Título:** se usa `fake_address` («dirección pública»), que es el título que escribe el equipo y el que muestran el panel y el sitio de Tokko; `publication_title` lo genera Tokko («Casa en León») y se guarda como `titulo_tokko`. Si `fake_address` parece una dirección real (C.P. de 5 dígitos o «km»), se usa `publication_title`. El buscador del panel busca en los dos títulos, código, tipo, ubicación y operación.
 - Al agregar desde el panel hay una barra de progreso por etapas estimadas (la petición no informa su avance real).
 - Sin `TOKKO_API_KEY` en `config.local.php` todo funciona como antes (destacados manuales). En el servidor hay que agregar la clave.
-- La ficha («Ver ficha») sigue llevando a `URL_TOKKO/p/{id}-prop` hasta que exista `/propiedades`.
+- «Ver ficha» de los destacados lleva a la ficha propia (`url_ficha`); los destacados manuales que no están en Tokko siguen enlazando a `url_tokko` en otra pestaña.
+- **Fotos:** se usa la versión `image` de Tokko (1200 px); la `original` puede pesar 7 MB y pasar de 50 MP (`IMAGEN_MAX_PIXELES`), y así fallaban algunas portadas.
+
+### Página /propiedades (11 nov 2026)
+
+- **Listado** (`propiedades/index.php`): filtros por GET (operación con chips, texto, tipo, ciudad, recámaras «o más», precio mín./máx.) y orden (recientes, menor y mayor precio); 12 por página (`PROPIEDADES_POR_PAGINA`). Las funciones están al final de `tokko.php` (`filtros_propiedades`, `filtrar_propiedades`, `precio_propiedad`, `datos_clave`…). Sin JS funciona con el botón «Buscar»; con JS los chips y las listas se aplican al cambiar y los campos vacíos no van en la URL. Con filtros u otro orden la página lleva `noindex`. En `index.php` el cierre de la paginación se llama `$urlPagina` porque `header.php` pisa `$url`.
+- **Tarjeta** `components/card-propiedad.php`: portada WebP local (`uploads/propiedades/tokko-{id}-{hash}-card.webp`, la copia `tokko_copiar_portadas()` en cada sincronización y el mapa id → ruta queda en `data/tokko/portadas.json`).
+- **Ficha** (`propiedades/ficha.php`): la URL termina en el id de Tokko; si el título cambió, la URL vieja redirige con 301 y si la propiedad ya no está, 404. Galería con todas las fotos tomadas directo de Tokko (carga diferida) y miniaturas (eventos `galeria:ir` / `galeria:cambio` en `main.js`); datos clave, descripción, características, amenidades, videos/recorridos como enlaces, **mapa de la zona** (iframe de Google Maps con `loading="lazy"`, sin depender de JS, centrado en `zona_geo` = coordenadas de Tokko redondeadas a 2 decimales (~1 km), sin marcador y con un círculo CSS de «zona aproximada»; el punto exacto nunca se guarda; si no hay coordenadas, busca `ubicacion_completa`), WhatsApp con código y liga, formulario de contacto (tipo `contacto`, asunto según la operación y mensaje prellenado; sin JS regresa a `/contacto`), compartir y 3 similares. JSON-LD `RealEstateListing` + `BreadcrumbList`.
+- Rutas en `.htaccess` y `dev-router.php`; el menú, el inicio, 404, Ofrezca su propiedad y el CTA del blog ya apuntan a `/propiedades`; el sitemap incluye el listado y las 124 fichas. `URL_TOKKO_PROPIEDADES` ya no se usa en el sitio.
+- Slugs: `tokko_slug()` corta a 70 caracteres en el último guion.
 
 ## Decisiones tomadas en la Fase 1 (no revertir sin preguntar)
 
-- **Fuera de alcance:** la sección Propiedades vive en Tokko. Su URL está en la constante `URL_TOKKO`: `https://propiedades.duanbienesraices.com`, alias en Tokko de `duanbienesraices-buscador.com` (los dos dominios muestran el mismo sitio, sin redirección entre ellos).
+- **Propiedades:** hasta el 11 nov 2026 la sección vivía en Tokko; ahora es la página propia `/propiedades` con datos de la API (ver arriba). El sitio de Tokko sigue existiendo. Su URL está en la constante `URL_TOKKO`: `https://propiedades.duanbienesraices.com`, alias en Tokko de `duanbienesraices-buscador.com` (los dos dominios muestran el mismo sitio, sin redirección entre ellos).
 - **Páginas y archivos agregados:** carpeta `uploads-seed/`, `plantilla-servicio.php`, página `/aviso-de-privacidad`, componentes de calculadora y CTA, y `dev-router.php`.
 - **Menú:** los Servicios no están en el menú principal, igual que en Wix; se enlazan desde las tarjetas del inicio y el footer.
 - **Destacados:** galerías de hasta 12 fotos; el precio se guarda como número y se muestra con `formato_precio()`. Desde el 11 nov 2026 vienen de Tokko (ver «Integración con Tokko»).

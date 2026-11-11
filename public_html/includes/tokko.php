@@ -23,6 +23,20 @@ const TOKKO_VIGENCIA = 3 * 3600;          // la copia local se renueva cada 3 h
 const TOKKO_ARCHIVO = 'tokko/propiedades.json';
 const TOKKO_FOTOS_DESTACADO = 1;           // en destacados solo la portada (la futura /propiedades usará todas)
 const TOKKO_TAMANOS_DESTACADO = ['card' => [720, 540, 'recortar'], 'full' => [1400, 1050, 'ajustar']];
+const TOKKO_TAMANO_PORTADA = ['card' => [720, 540, 'recortar']];   // portada de cada propiedad en /propiedades
+
+/** Nombres de Tokko (en español de Argentina) → como se dicen en México. */
+const TOKKO_TRADUCCIONES = [
+    'Cloaca' => 'Drenaje', 'Agua Corriente' => 'Agua', 'Pileta' => 'Alberca', 'Pileta Cubierta' => 'Alberca techada',
+    'Piletero' => 'Mantenimiento de alberca', 'Amoblado' => 'Amueblado', 'Quincho' => 'Área de asador', 'Parrilla' => 'Asador',
+    'Living comedor' => 'Sala comedor', 'Baulera' => 'Bodega', 'Dependencia' => 'Cuarto de servicio', 'Encargado' => 'Conserje',
+    'Cochera subterránea' => 'Estacionamiento subterráneo', 'Garagistas' => 'Valet parking', 'Toilette' => 'Medio baño',
+    'Seguridad 24hs' => 'Seguridad 24 h', 'Armarios Empotrados' => 'Clósets', 'SUM' => 'Salón de usos múltiples',
+    'Luminoso' => 'Iluminado', 'Hall' => 'Recibidor', 'Escritorio' => 'Estudio', 'Lavadero' => 'Cuarto de lavado',
+    'Comedor diario' => 'Desayunador', 'Celular' => 'Señal de celular', 'Energia trifasica' => 'Energía trifásica',
+    'Accesibilidad C/ Movilidad Reducida' => 'Accesible para movilidad reducida', 'Aire Acondicionado individual' => 'Aire acondicionado',
+    'Barrio privado' => 'Fraccionamiento privado', 'Una Planta' => 'Una planta',
+];
 
 /** ¿Hay clave de Tokko configurada? */
 function tokko_activo(): bool
@@ -126,6 +140,27 @@ function tokko_sincronizar(): int
     return count($propiedades);
 }
 
+/** "Casa nueva en Venta en León" → "casa-nueva-en-venta-en-leon" (máx. 70 caracteres). */
+function tokko_slug(string $texto): string
+{
+    $texto = mb_strtolower(tokko_texto($texto));
+    $texto = strtr($texto, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n']);
+    $texto = trim((string) preg_replace('/[^a-z0-9]+/', '-', $texto), '-');
+    if (strlen($texto) > 70) {
+        // Corta en el último guion para no dejar palabras a medias
+        $corto = substr($texto, 0, 71);
+        $texto = substr($corto, 0, (int) strrpos($corto, '-')) ?: substr($texto, 0, 70);
+    }
+    $texto = trim($texto, '-');
+    return $texto !== '' ? $texto : 'propiedad';
+}
+
+/** URL de la ficha propia de una propiedad. */
+function url_propiedad(array $prop): string
+{
+    return '/propiedades/' . $prop['slug'];
+}
+
 /** Texto limpio: sin espacios dobles, tabuladores ni saltos de línea. */
 function tokko_texto(mixed $valor): string
 {
@@ -174,7 +209,8 @@ function tokko_normalizar(array $p): ?array
     // Fotos en el orden de Tokko, con la portada primero; los planos van aparte.
     $fotos = [];
     foreach ($p['photos'] ?? [] as $f) {
-        $url = (string) ($f['original'] ?? '') ?: (string) ($f['image'] ?? '');
+        // «image» es la versión de Tokko a 1200 px; la original puede pesar 7 MB y pasar de 50 MP.
+        $url = (string) ($f['image'] ?? '') ?: (string) ($f['original'] ?? '');
         if (!str_starts_with($url, 'https://')) {
             continue;
         }
@@ -200,6 +236,10 @@ function tokko_normalizar(array $p): ?array
         fn($x) => $x !== '' && !in_array(mb_strtolower($x), ['méxico', 'mexico'], true)));
     // "Guanajuato | San Felipe | San Felipe" → sin el nombre repetido
     $partes = array_values(array_filter($partes, fn($x, $i) => $i === 0 || mb_strtolower($x) !== mb_strtolower($partes[$i - 1]), ARRAY_FILTER_USE_BOTH));
+    $lat = (float) ($p['geo_lat'] ?? 0);
+    $lng = (float) ($p['geo_long'] ?? 0);
+    // Solo si parecen coordenadas válidas de México (Tokko a veces deja 0 o vacío)
+    $zonaGeo = ($lat > 14 && $lat < 33 && $lng < -86 && $lng > -119) ? [round($lat, 2), round($lng, 2)] : null;
     $ubicacion = match (true) {
         count($partes) >= 3 => $partes[count($partes) - 1] . ', ' . $partes[count($partes) - 2],
         count($partes) === 2 => $partes[1] . ', ' . $partes[0],
@@ -211,6 +251,24 @@ function tokko_normalizar(array $p): ?array
 
     $numero = fn($v) => is_numeric($v) && (float) $v > 0 ? (float) $v + 0 : null;
 
+    // Amenidades agrupadas como en Tokko: 1 = servicios, 2 = espacios, 3 = adicionales
+    $grupos = [1 => 'servicios', 2 => 'espacios', 3 => 'adicionales'];
+    $amenidades = ['servicios' => [], 'espacios' => [], 'adicionales' => []];
+    foreach ($p['tags'] ?? [] as $t) {
+        $nombre = tokko_texto($t['name'] ?? '');
+        if ($nombre !== '') {
+            $amenidades[$grupos[(int) ($t['type'] ?? 3)] ?? 'adicionales'][] = TOKKO_TRADUCCIONES[$nombre] ?? $nombre;
+        }
+    }
+
+    // Superficies: en esta cuenta «construido» va en total_surface (o roofed_surface) y el terreno en surface
+    $construccion = $numero($p['total_surface'] ?? null) ?? $numero($p['roofed_surface'] ?? null);
+    $terreno = $numero($p['surface'] ?? null);
+    if (in_array($tipo, ['Terreno', 'Campo', 'Quinta'], true)) {
+        $terreno ??= $construccion;
+        $construccion = null;
+    }
+
     return [
         'id'             => $id,
         'codigo'         => tokko_texto($p['reference_code'] ?? ''),
@@ -221,15 +279,25 @@ function tokko_normalizar(array $p): ?array
         'precio_visible' => ($p['web_price'] ?? true) !== false,
         'ubicacion'      => $ubicacion,
         'ubicacion_completa' => implode(', ', array_reverse($partes)),
+        'ciudad'         => count($partes) >= 2 ? $partes[1] : ($partes[0] ?? ''),
+        'zona'           => count($partes) >= 3 ? $partes[count($partes) - 1] : '',
+        // Centro aproximado de la zona: coordenadas redondeadas a 2 decimales (~1 km).
+        // Nunca se guarda el punto exacto de Tokko.
+        'zona_geo'       => $zonaGeo,
+        'slug'           => tokko_slug($titulo) . '-' . $id,
         'descripcion'    => trim(str_replace("\r\n", "\n", (string) ($p['description'] ?? ''))),
         'recamaras'      => $numero($p['suite_amount'] ?? null) ?? $numero($p['room_amount'] ?? null),
         'banos'          => $numero($p['bathroom_amount'] ?? null),
         'medios_banos'   => $numero($p['toilet_amount'] ?? null),
         'estacionamientos' => $numero($p['parking_lot_amount'] ?? null),
-        'construccion_m2'  => $numero($p['roofed_surface'] ?? null),
-        'terreno_m2'       => $numero($p['surface'] ?? null) ?? $numero($p['total_surface'] ?? null),
+        'construccion_m2'  => $construccion,
+        'terreno_m2'       => $terreno,
+        'frente_m'       => $numero($p['front_measure'] ?? null),
+        'fondo_m'        => $numero($p['depth_measure'] ?? null),
+        'plantas'        => $numero($p['floors_amount'] ?? null),
+        'condicion'      => in_array($p['property_condition'] ?? '', ['', '---'], true) ? '' : tokko_texto($p['property_condition']),
         'antiguedad'     => is_numeric($p['age'] ?? null) ? (int) $p['age'] : null,
-        'amenidades'     => array_values(array_filter(array_map(fn($t) => tokko_texto($t['name'] ?? ''), $p['tags'] ?? []))),
+        'amenidades'     => $amenidades,
         'fotos'          => $fotos,
         'videos'         => $videos,
         'destacada_tokko' => !empty($p['is_starred_on_web']),
@@ -294,7 +362,7 @@ function tokko_fotos_destacado(array $prop): array
 }
 
 /** Descarga una foto de Tokko (solo static.tokkobroker.com) y la guarda en los tamaños de destacados. */
-function tokko_descargar_foto(string $url, string $base): array
+function tokko_descargar_foto(string $url, string $base, string $carpeta = 'destacados', array $tamanos = TOKKO_TAMANOS_DESTACADO): array
 {
     if (!preg_match('#^https://static\.tokkobroker\.com/#', $url)) {
         throw new RuntimeException('URL de foto no permitida.');
@@ -334,7 +402,7 @@ function tokko_descargar_foto(string $url, string $base): array
             imagepalettetotruecolor($img);
         }
         try {
-            return guardar_tamanos($img, 'destacados', $base, TOKKO_TAMANOS_DESTACADO);
+            return guardar_tamanos($img, $carpeta, $base, $tamanos);
         } finally {
             imagedestroy($img);
         }
@@ -363,6 +431,7 @@ function tokko_item_destacado(array $prop, array $actual = []): array
         'precio_visible' => $prop['precio_visible'] && $op['precio'] > 0,
         'descripcion'    => tokko_descripcion_corta($prop['descripcion'], $prop['titulo']),
         'url_tokko'      => $prop['url_tokko'],
+        'url_ficha'      => url_propiedad($prop),
         'fotos'          => tokko_fotos_destacado($prop),
     ];
     if (!$item['fotos']) {
@@ -425,6 +494,56 @@ function tokko_actualizar_destacados(): int
     return $cambios;
 }
 
+// =============================================================================
+// Portadas del listado /propiedades
+// =============================================================================
+
+/**
+ * Copia la portada de cada propiedad a uploads/propiedades/ (WebP 720×540) y borra
+ * las de propiedades que ya no están o cuya portada cambió. Solo baja las nuevas.
+ * Devuelve [id => ruta] y lo guarda en data/tokko/portadas.json.
+ */
+function tokko_copiar_portadas(): array
+{
+    $portadas = [];
+    $usadas = [];
+    foreach (tokko_propiedades() as $prop) {
+        $foto = array_values(array_filter($prop['fotos'] ?? [], fn($f) => empty($f['plano'])))[0] ?? null;
+        if (!$foto) {
+            continue;
+        }
+        $base = 'tokko-' . (int) $prop['id'] . '-' . substr(md5((string) $foto['url']), 0, 10);
+        $ruta = 'uploads/propiedades/' . $base . '-card.webp';
+        if (!is_file(RAIZ_WEB . '/' . $ruta)) {
+            try {
+                $ruta = tokko_descargar_foto((string) $foto['url'], $base, 'propiedades', TOKKO_TAMANO_PORTADA)['card'];
+            } catch (Throwable $ex) {
+                error_log('[duan] Tokko: no se pudo copiar la portada de ' . $prop['id'] . ': ' . $ex->getMessage());
+                continue;
+            }
+        }
+        $portadas[(int) $prop['id']] = $ruta;
+        $usadas[basename($ruta)] = true;
+    }
+    foreach (glob(DIR_UPLOADS . '/propiedades/tokko-*.webp') ?: [] as $archivo) {
+        if (!isset($usadas[basename($archivo)])) {
+            @unlink($archivo);
+        }
+    }
+    $json = json_encode($portadas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
+    file_put_contents(DIR_DATA . '/tokko/portadas.json', $json, LOCK_EX);
+    return $portadas;
+}
+
+/** Ruta de la portada local de una propiedad (o null si aún no se copia). */
+function portada_propiedad(array $prop): ?string
+{
+    static $portadas = null;
+    $portadas ??= leer_json('tokko/portadas.json', []);
+    $ruta = $portadas[(int) $prop['id']] ?? null;
+    return is_string($ruta) ? ruta_upload($ruta) : null;
+}
+
 /** Carga las funciones del panel que usa la sincronización (respaldos, imágenes). */
 function tokko_cargar_dependencias(): void
 {
@@ -451,6 +570,7 @@ function tokko_sincronizar_todo(): bool
         @set_time_limit(300);
         tokko_sincronizar();
         tokko_actualizar_destacados();
+        tokko_copiar_portadas();
         return true;
     } finally {
         flock($candado, LOCK_UN);
@@ -486,4 +606,153 @@ function tokko_refrescar_al_terminar(): void
             error_log('[duan] Tokko: sincronización automática fallida: ' . $ex->getMessage());
         }
     });
+}
+
+// =============================================================================
+// Página /propiedades: filtros y datos para mostrar
+// =============================================================================
+
+const PROPIEDADES_POR_PAGINA = 12;
+const RECAMARAS_FILTRO = [1, 2, 3, 4];
+
+/** Lee y limpia los filtros del listado desde $_GET (todo opcional). */
+function filtros_propiedades(array $get): array
+{
+    $texto = fn($k, $max = 80) => mb_substr(tokko_texto(is_string($get[$k] ?? null) ? $get[$k] : ''), 0, $max);
+    $entero = fn($k) => is_numeric($get[$k] ?? null) && (int) $get[$k] > 0 ? (int) $get[$k] : null;
+    $operacion = $texto('operacion');
+    $orden = $texto('orden');
+    return [
+        'q'         => $texto('q'),
+        'operacion' => in_array($operacion, ['venta', 'renta'], true) ? $operacion : '',
+        'tipo'      => $texto('tipo', 40),
+        'ciudad'    => $texto('ciudad', 60),
+        'recamaras' => in_array($entero('recamaras'), RECAMARAS_FILTRO, true) ? $entero('recamaras') : null,
+        'min'       => $entero('min'),
+        'max'       => $entero('max'),
+        'orden'     => in_array($orden, ['recientes', 'precio-asc', 'precio-desc'], true) ? $orden : 'recientes',
+    ];
+}
+
+/** ¿Hay algún filtro aplicado (además del orden)? */
+function hay_filtros(array $f): bool
+{
+    return $f['q'] !== '' || $f['operacion'] !== '' || $f['tipo'] !== '' || $f['ciudad'] !== ''
+        || $f['recamaras'] || $f['min'] || $f['max'];
+}
+
+/** Texto sin acentos y en minúsculas, para buscar. */
+function texto_busqueda(string $t): string
+{
+    return strtr(mb_strtolower($t), ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n']);
+}
+
+/** Operación que se muestra: la elegida en el filtro o la primera de la propiedad. */
+function operacion_principal(array $prop, string $preferida = ''): array
+{
+    foreach ($prop['operaciones'] as $op) {
+        if ($op['tipo'] === $preferida) {
+            return $op;
+        }
+    }
+    return $prop['operaciones'][0];
+}
+
+/** Aplica filtros y orden a la lista de propiedades. */
+function filtrar_propiedades(array $props, array $f): array
+{
+    $palabras = $f['q'] !== '' ? preg_split('/\s+/', texto_busqueda($f['q'])) : [];
+    $props = array_values(array_filter($props, function (array $p) use ($f, $palabras) {
+        if ($f['operacion'] !== '' && !in_array($f['operacion'], array_column($p['operaciones'], 'tipo'), true)) {
+            return false;
+        }
+        if ($f['tipo'] !== '' && $p['tipo'] !== $f['tipo']) {
+            return false;
+        }
+        if ($f['ciudad'] !== '' && $p['ciudad'] !== $f['ciudad']) {
+            return false;
+        }
+        if ($f['recamaras'] && (int) ($p['recamaras'] ?? 0) < $f['recamaras']) {
+            return false;
+        }
+        if ($f['min'] || $f['max']) {
+            $op = operacion_principal($p, $f['operacion']);
+            if (!$p['precio_visible'] || ($f['min'] && $op['precio'] < $f['min']) || ($f['max'] && $op['precio'] > $f['max'])) {
+                return false;
+            }
+        }
+        if ($palabras) {
+            $texto = texto_busqueda(implode(' ', [$p['titulo'], $p['titulo_tokko'] ?? '', $p['codigo'], $p['tipo'], $p['ubicacion_completa']]));
+            foreach ($palabras as $palabra) {
+                if (!str_contains($texto, $palabra)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }));
+    $precio = fn($p) => $p['precio_visible'] ? operacion_principal($p, $f['operacion'])['precio'] : PHP_INT_MAX;
+    usort($props, match ($f['orden']) {
+        'precio-asc'  => fn($a, $b) => $precio($a) <=> $precio($b),
+        'precio-desc' => fn($a, $b) => ($b['precio_visible'] ? $precio($b) : -1) <=> ($a['precio_visible'] ? $precio($a) : -1),
+        default       => fn($a, $b) => strcmp($b['creada'], $a['creada']),
+    });
+    return $props;
+}
+
+/** Valores distintos de un campo (para las listas de filtros), ordenados. */
+function opciones_propiedades(array $props, string $campo): array
+{
+    $valores = array_count_values(array_filter(array_column($props, $campo), fn($v) => is_string($v) && $v !== ''));
+    ksort($valores, SORT_LOCALE_STRING);
+    return $valores;
+}
+
+/** Precio para mostrar, con «/mes» en rentas. */
+function precio_propiedad(array $prop, array $op): string
+{
+    if (!$prop['precio_visible'] || $op['precio'] <= 0) {
+        return 'Precio a consultar';
+    }
+    return formato_precio($op['precio'], $op['moneda']) . ($op['tipo'] === 'renta' ? ' /mes' : '');
+}
+
+/** "195 m²" (sin decimales si no hacen falta). */
+function formato_m2(int|float|null $valor): string
+{
+    if (!$valor) {
+        return '';
+    }
+    return number_format((float) $valor, floor((float) $valor) == (float) $valor ? 0 : 1, '.', ',') . ' m²';
+}
+
+/** Datos principales de una propiedad para las tarjetas y la ficha: [icono, texto]. */
+function datos_clave(array $p, bool $largo = false): array
+{
+    $n = fn($v) => rtrim(rtrim(number_format((float) $v, 1, '.', ''), '0'), '.');
+    $datos = [];
+    if ($p['construccion_m2']) {
+        $datos[] = ['construccion', formato_m2($p['construccion_m2']) . ($largo ? ' de construcción' : ' constr.')];
+    }
+    if ($p['terreno_m2']) {
+        $datos[] = ['terreno', formato_m2($p['terreno_m2']) . ($largo ? ' de terreno' : ' terreno')];
+    }
+    if ($p['recamaras']) {
+        $datos[] = ['cama', $n($p['recamaras']) . ($p['recamaras'] == 1 ? ' recámara' : ' recámaras')];
+    }
+    if ($p['banos']) {
+        $datos[] = ['bano', $n($p['banos']) . ($p['banos'] == 1 ? ' baño' : ' baños')
+            . ($largo && $p['medios_banos'] ? ' y ' . $n($p['medios_banos']) . ($p['medios_banos'] == 1 ? ' medio' : ' medios') : '')];
+    }
+    if ($p['estacionamientos']) {
+        $datos[] = ['auto', $n($p['estacionamientos']) . ($p['estacionamientos'] == 1 ? ' estacionamiento' : ' estacionamientos')];
+    }
+    return $datos;
+}
+
+/** Párrafos de la descripción de Tokko (texto plano; se escapan al imprimir). */
+function parrafos_descripcion(string $texto): array
+{
+    $texto = (string) preg_replace('/(\p{Ll})\.(\p{Lu})/u', '$1. $2', $texto);
+    return array_values(array_filter(array_map('trim', preg_split('/\n\s*\n|\n/u', $texto) ?: []), fn($l) => $l !== ''));
 }

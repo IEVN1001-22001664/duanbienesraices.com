@@ -13,6 +13,7 @@ $fijas = [
     ['/servicios/administracion',  '0.8', 'monthly'],
     ['/ofrezca-su-propiedad',      '0.9', 'monthly'],
     ['/blog',                      '0.7', 'weekly'],
+    ['/propiedades',               '0.9', 'daily'],
     ['/contacto',                  '0.7', 'yearly'],
     ['/aviso-de-privacidad',       '0.2', 'yearly'],
 ];
@@ -33,6 +34,13 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         <loc><?= e(url_absoluta('/blog/' . $post['slug'])) ?></loc>
         <lastmod><?= e(date('Y-m-d', strtotime($post['actualizado'] ?? $post['fecha']))) ?></lastmod>
         <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>
+<?php endforeach; ?>
+<?php foreach (tokko_propiedades() as $prop): ?>
+    <url>
+        <loc><?= e(url_absoluta(url_propiedad($prop))) ?></loc>
+        <changefreq>weekly</changefreq>
         <priority>0.6</priority>
     </url>
 <?php endforeach; ?>
