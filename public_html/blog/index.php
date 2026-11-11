@@ -11,6 +11,8 @@ $pagina = [
     'descripcion' => 'Consejos para comprar, vender y rentar propiedades en León, Guanajuato: créditos, trámites, precios y más, por los asesores de Du\'an Bienes Raíces.',
     'ruta'        => '/blog',
     'activo'      => 'blog',
+    'imagen'      => '/assets/img/blog-hero.webp',
+    'precarga'    => '/assets/img/blog-hero.webp',
     'jsonld'      => [[
         '@context' => 'https://schema.org',
         '@type'    => 'Blog',
@@ -29,10 +31,16 @@ require dirname(__DIR__) . '/includes/head.php';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
+<section class="portada portada--baja" style="--fondo: url('/assets/img/blog-hero.webp'); --fondo-pos: center 28%">
+    <div class="contenedor portada__texto">
+        <p class="portada__antetitulo">Du'an Bienes Raíces</p>
+        <h1 class="portada__titulo">Blog</h1>
+        <p class="portada__lead">Guías y consejos para comprar, vender o rentar con certeza en León, Guanajuato.</p>
+    </div>
+</section>
+
 <section class="seccion blog">
     <div class="contenedor">
-        <h1 class="titulo-seccion">Blog</h1>
-        <p class="subtitulo-seccion">Guías y consejos para comprar, vender o rentar con certeza en León, Guanajuato.</p>
 
         <?php if ($posts): ?>
             <div class="blog__grid">
