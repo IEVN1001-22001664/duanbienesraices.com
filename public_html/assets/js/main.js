@@ -332,6 +332,85 @@
     }
 
     /* ---------------------------------------------------------------
+       Ficha de propiedad: al hacer clic en una foto se abre un visor a
+       pantalla completa con la foto entera. Flechas, teclado y deslizar
+       con el dedo cambian de foto; al cerrar, la galería queda en la
+       misma foto.
+       --------------------------------------------------------------- */
+    if (galeriaFicha && typeof HTMLDialogElement === 'function') {
+        var pistaFicha = $('.galeria__pista', galeriaFicha);
+        var imagenesFicha = $$('.galeria__foto img', galeriaFicha);
+        var indiceFicha = 0, indiceVisor = 0, visor = null;
+        galeriaFicha.classList.add('ficha__galeria--ampliable');
+        galeriaFicha.addEventListener('galeria:cambio', function (ev) { indiceFicha = ev.detail; });
+
+        var pintarVisor = function () {
+            var origen = imagenesFicha[indiceVisor];
+            var img = $('.visor-fotos__img', visor);
+            img.src = origen.currentSrc || origen.src;
+            img.alt = origen.alt;
+            $('.visor-fotos__contador', visor).textContent = (indiceVisor + 1) + ' / ' + imagenesFicha.length;
+        };
+        var moverVisor = function (paso) {
+            indiceVisor = (indiceVisor + paso + imagenesFicha.length) % imagenesFicha.length;
+            pintarVisor();
+        };
+        var abrirVisor = function (n) {
+            if (!visor) {
+                var flechaIzq = $('.galeria__flecha--izq', galeriaFicha);
+                var flechaDer = $('.galeria__flecha--der', galeriaFicha);
+                visor = document.createElement('dialog');
+                visor.className = 'visor-fotos';
+                visor.setAttribute('aria-label', 'Fotos en pantalla completa');
+                visor.innerHTML = '<img class="visor-fotos__img" alt="" referrerpolicy="no-referrer">' +
+                    '<button class="visor-fotos__cerrar" type="button" aria-label="Cerrar">&times;</button>' +
+                    (imagenesFicha.length > 1
+                        ? '<button class="visor-fotos__anterior" type="button" aria-label="Foto anterior">' + (flechaIzq ? flechaIzq.innerHTML : '&lsaquo;') + '</button>' +
+                          '<button class="visor-fotos__siguiente" type="button" aria-label="Foto siguiente">' + (flechaDer ? flechaDer.innerHTML : '&rsaquo;') + '</button>'
+                        : '') +
+                    '<span class="visor-fotos__contador" aria-live="polite"></span>';
+                document.body.appendChild(visor);
+                $('.visor-fotos__cerrar', visor).addEventListener('click', function () { visor.close(); });
+                var ant = $('.visor-fotos__anterior', visor), sig = $('.visor-fotos__siguiente', visor);
+                if (ant) ant.addEventListener('click', function () { moverVisor(-1); });
+                if (sig) sig.addEventListener('click', function () { moverVisor(1); });
+                // Clic en el fondo oscuro (fuera de la foto y de los botones) cierra
+                visor.addEventListener('click', function (ev) { if (ev.target === visor) visor.close(); });
+                visor.addEventListener('keydown', function (ev) {
+                    if (imagenesFicha.length < 2) return;
+                    if (ev.key === 'ArrowLeft') { ev.preventDefault(); moverVisor(-1); }
+                    if (ev.key === 'ArrowRight') { ev.preventDefault(); moverVisor(1); }
+                });
+                // Deslizar con el dedo: más de 50 px en horizontal cambia de foto
+                var xInicio = null;
+                visor.addEventListener('touchstart', function (ev) { xInicio = ev.touches.length === 1 ? ev.touches[0].clientX : null; }, { passive: true });
+                visor.addEventListener('touchend', function (ev) {
+                    if (xInicio === null || imagenesFicha.length < 2) return;
+                    var dx = ev.changedTouches[0].clientX - xInicio;
+                    xInicio = null;
+                    if (Math.abs(dx) > 50) moverVisor(dx < 0 ? 1 : -1);
+                }, { passive: true });
+                visor.addEventListener('close', function () {
+                    document.documentElement.style.overflow = '';
+                    // La galería se queda en la foto que se estaba viendo
+                    if (indiceVisor !== indiceFicha) galeriaFicha.dispatchEvent(new CustomEvent('galeria:ir', { detail: indiceVisor }));
+                });
+            }
+            indiceVisor = n;
+            pintarVisor();
+            document.documentElement.style.overflow = 'hidden';   // la página no se mueve detrás
+            visor.showModal();
+        };
+        imagenesFicha.forEach(function (img, i) {
+            img.addEventListener('click', function () { abrirVisor(i); });
+        });
+        // Con teclado: Enter sobre la galería abre la foto actual
+        if (pistaFicha) pistaFicha.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Enter') { ev.preventDefault(); abrirVisor(indiceFicha); }
+        });
+    }
+
+    /* ---------------------------------------------------------------
        Listado de propiedades: los chips y listas aplican el filtro al
        cambiar; el texto y el precio esperan al botón «Buscar».
        --------------------------------------------------------------- */

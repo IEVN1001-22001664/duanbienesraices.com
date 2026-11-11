@@ -125,7 +125,7 @@ require dirname(__DIR__) . '/includes/header.php';
                 <span class="etiqueta etiqueta--<?= e($op['tipo']) ?>"><?= $op['tipo'] === 'renta' ? 'RENTA' : 'VENTA' ?></span>
                 <ul class="galeria__pista" id="galeria-ficha" tabindex="0" aria-label="<?= e('Fotos de ' . $prop['titulo']) ?>">
                     <?php foreach ($galeria as $i => $foto): ?>
-                        <li class="galeria__foto">
+                        <li class="galeria__foto<?= $foto['plano'] ? ' galeria__foto--plano' : '' ?>">
                             <img src="<?= e($foto['url']) ?>"
                                  alt="<?= e(($foto['plano'] ? 'Plano de ' : '') . $prop['titulo'] . ' — ' . ($i + 1) . ' de ' . count($galeria)) ?>"
                                  width="1200" height="900" decoding="async" referrerpolicy="no-referrer"
