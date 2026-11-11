@@ -21,7 +21,7 @@ declare(strict_types=1);
 const TOKKO_API = 'https://www.tokkobroker.com/api/v1/';
 const TOKKO_VIGENCIA = 3 * 3600;          // la copia local se renueva cada 3 h
 const TOKKO_ARCHIVO = 'tokko/propiedades.json';
-const TOKKO_FOTOS_DESTACADO = 12;
+const TOKKO_FOTOS_DESTACADO = 1;           // en destacados solo la portada (la futura /propiedades usará todas)
 const TOKKO_TAMANOS_DESTACADO = ['card' => [720, 540, 'recortar'], 'full' => [1400, 1050, 'ajustar']];
 
 /** ¿Hay clave de Tokko configurada? */
@@ -139,7 +139,14 @@ function tokko_texto(mixed $valor): string
 function tokko_normalizar(array $p): ?array
 {
     $id = (int) ($p['id'] ?? 0);
-    $titulo = tokko_texto($p['publication_title'] ?? '');
+    // En Tokko el título que el equipo escribe es la «dirección pública» (fake_address); es lo que
+    // muestran el panel y el sitio de Tokko. publication_title lo arma Tokko solo («Casa en León»).
+    // Si en la dirección pública escribieron una dirección real (C.P. o «km»), se usa el automático.
+    $tituloTokko = tokko_texto($p['publication_title'] ?? '');
+    $titulo = tokko_texto($p['fake_address'] ?? '');
+    if ($titulo === '' || preg_match('/\b\d{5}\b|\bkm\b/iu', $titulo)) {
+        $titulo = $tituloTokko;
+    }
     if ($id <= 0 || $titulo === '') {
         return null;
     }
@@ -208,12 +215,12 @@ function tokko_normalizar(array $p): ?array
         'id'             => $id,
         'codigo'         => tokko_texto($p['reference_code'] ?? ''),
         'titulo'         => $titulo,
+        'titulo_tokko'   => $tituloTokko,
         'tipo'           => $tipo,
         'operaciones'    => $operaciones,
         'precio_visible' => ($p['web_price'] ?? true) !== false,
         'ubicacion'      => $ubicacion,
         'ubicacion_completa' => implode(', ', array_reverse($partes)),
-        'direccion_publica'  => tokko_texto($p['fake_address'] ?? ''),
         'descripcion'    => trim(str_replace("\r\n", "\n", (string) ($p['description'] ?? ''))),
         'recamaras'      => $numero($p['suite_amount'] ?? null) ?? $numero($p['room_amount'] ?? null),
         'banos'          => $numero($p['bathroom_amount'] ?? null),

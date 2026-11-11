@@ -146,6 +146,9 @@ try {
                 return $items;
             });
             $mensaje = 'Se agregó «' . $nuevoItem['titulo'] . '» al principio de destacados.';
+            if (es_peticion_fetch()) {
+                avisar($mensaje);   // el navegador pasa luego a la lista de destacados
+            }
             break;
 
         case 'actualizar_tokko':   // forzar la actualización desde Tokko

@@ -191,6 +191,49 @@
         });
     });
 
+    // --- Agregar desde Tokko con barra de progreso ----------------------------------------
+    // La petición no informa su avance real: la barra avanza por etapas estimadas y llega
+    // al 100 % solo cuando el servidor responde.
+    $$('form[data-agregar-tokko]').forEach((f) => {
+        f.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const fila = f.closest('[data-propiedad]');
+            const caja = $('[data-progreso]', fila);
+            const barra = $('[role="progressbar"]', caja);
+            const relleno = $('[data-relleno]', caja);
+            const texto = $('[data-progreso-texto]', caja);
+            const botones = $$('form[data-agregar-tokko] button, form[data-espera] button');
+            const pintar = (pct, mensaje) => {
+                relleno.style.width = pct + '%';
+                barra.setAttribute('aria-valuenow', String(Math.round(pct)));
+                if (mensaje) texto.textContent = mensaje;
+            };
+            botones.forEach((b) => { b.disabled = true; });
+            $('button', f).textContent = 'Agregando…';
+            caja.hidden = false;
+            fila.classList.add('lista__item--cargando');
+            let pct = 0;
+            pintar(0, 'Obteniendo la propiedad de Tokko…');
+            const avance = setInterval(() => {
+                pct += (92 - pct) * 0.08;   // se acerca a 92 % sin llegar
+                pintar(pct, pct > 35 ? 'Copiando la foto de portada…' : null);
+            }, 200);
+            try {
+                await enviar(new FormData(f));
+                clearInterval(avance);
+                pintar(100, 'Listo. Abriendo destacados…');
+                setTimeout(() => { window.location.href = '/admin/seccion.php?s=destacados'; }, 500);
+            } catch (e) {
+                clearInterval(avance);
+                caja.hidden = true;
+                fila.classList.remove('lista__item--cargando');
+                botones.forEach((b) => { b.disabled = false; });
+                $('button', f).textContent = 'Agregar a destacados';
+                toast(e.message, true);
+            }
+        });
+    });
+
     // --- Buscador de propiedades de Tokko -----------------------------------------------
     const filtros = $('[data-filtros]');
     if (filtros) {

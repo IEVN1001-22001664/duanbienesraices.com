@@ -268,3 +268,10 @@ textarea.campo__control { resize: vertical; line-height: 1.5; }
 .filtros__cuenta { margin: 0; color: var(--gris); font-size: .9rem; }
 .lista--tokko .lista__item[hidden] { display: none; }
 .etiqueta-panel { display: inline-block; padding: .3rem .6rem; border-radius: 999px; background: var(--gris-claro); color: var(--gris); font-size: .85rem; white-space: nowrap; }
+
+.progreso { grid-column: 1 / -1; }
+.progreso__barra { height: 8px; border-radius: 999px; background: var(--gris-claro); overflow: hidden; }
+.progreso__relleno { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--rojo); transition: width .2s linear; }
+.progreso__texto { margin: .4rem 0 0; font-size: .9rem; color: var(--gris); }
+.lista__item--cargando { border-color: var(--rojo); }
+@media (prefers-reduced-motion: reduce) { .progreso__relleno { transition: none; } }

@@ -79,7 +79,7 @@ admin_cabecera('Elegir propiedad de Tokko', [['Inicio', '/admin/'], ['Propiedade
             $operaciones = implode(' ', array_column($p['operaciones'], 'tipo'));
             $mini = $p['fotos'][0]['mini'] ?? '';
             $yaEsta = isset($enDestacados[(int) $p['id']]);
-            $busqueda = mb_strtolower($p['titulo'] . ' ' . $p['codigo'] . ' ' . $p['tipo'] . ' ' . $p['ubicacion_completa']);
+            $busqueda = mb_strtolower(implode(' ', [$p['titulo'], $p['titulo_tokko'] ?? '', $p['codigo'], $p['tipo'], $p['ubicacion_completa'], $operaciones]));
         ?>
             <li class="lista__item" data-propiedad data-busqueda="<?= e($busqueda) ?>" data-operaciones="<?= e($operaciones) ?>">
                 <?php if ($mini !== ''): ?>
@@ -104,7 +104,7 @@ admin_cabecera('Elegir propiedad de Tokko', [['Inicio', '/admin/'], ['Propiedade
                     <?php if ($yaEsta): ?>
                         <span class="etiqueta-panel">Ya está en destacados</span>
                     <?php else: ?>
-                        <form method="post" action="/admin/accion.php" data-espera="Copiando fotos…">
+                        <form method="post" action="/admin/accion.php" data-agregar-tokko>
                             <?= campo_csrf() ?>
                             <input type="hidden" name="accion" value="agregar_tokko">
                             <input type="hidden" name="s" value="destacados">
@@ -112,6 +112,12 @@ admin_cabecera('Elegir propiedad de Tokko', [['Inicio', '/admin/'], ['Propiedade
                             <button class="boton boton--chico" type="submit">Agregar a destacados</button>
                         </form>
                     <?php endif; ?>
+                </div>
+                <div class="progreso" data-progreso hidden>
+                    <div class="progreso__barra" role="progressbar" aria-label="Agregando la propiedad" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <span class="progreso__relleno" data-relleno></span>
+                    </div>
+                    <p class="progreso__texto" data-progreso-texto aria-live="polite"></p>
                 </div>
             </li>
         <?php endforeach; ?>
