@@ -78,11 +78,23 @@ function subir_imagen(array $archivo, string $carpeta, string $prefijo, array $t
         imagepalettetotruecolor($origen);
     }
 
+    try {
+        return guardar_tamanos($origen, $carpeta, slug($prefijo, 40) . '-' . bin2hex(random_bytes(4)), $tamanos);
+    } finally {
+        imagedestroy($origen);
+    }
+}
+
+/**
+ * Guarda una imagen ya abierta en cada tamaño como WebP: uploads/{carpeta}/{base}-{clave}.webp.
+ * También la usa la sincronización con Tokko (includes/tokko.php). No destruye $origen.
+ */
+function guardar_tamanos(GdImage $origen, string $carpeta, string $base, array $tamanos): array
+{
     $dir = DIR_UPLOADS . '/' . $carpeta;
     if (!is_dir($dir) && !@mkdir($dir, 0755, true)) {
         throw new ErrorPanel('No se pudo crear la carpeta de imágenes.');
     }
-    $base = slug($prefijo, 40) . '-' . bin2hex(random_bytes(4));
     $rutas = [];
     try {
         foreach ($tamanos as $clave => [$ancho, $alto, $modo]) {
@@ -102,8 +114,6 @@ function subir_imagen(array $archivo, string $carpeta, string $prefijo, array $t
             @unlink(RAIZ_WEB . '/' . $r);
         }
         throw $ex;
-    } finally {
-        imagedestroy($origen);
     }
     return $rutas;
 }

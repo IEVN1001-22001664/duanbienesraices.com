@@ -15,7 +15,9 @@
 
 // --- Tokko Broker (si cambia a subdominio) ---
 // define('URL_TOKKO', 'https://propiedades.duanbienesraices.com');
-// define('TOKKO_API_KEY', '');                    // Fase 2 (opcional)
+// Clave de la API de Tokko (Configuración de la empresa > Permisos/API). Con ella los
+// destacados del inicio se llenan solos desde Tokko (includes/tokko.php).
+// define('TOKKO_API_KEY', '');
 
 // --- Panel /admin (Fase 2) ---
 // Genera el hash con: php -r "echo password_hash('TU_CONTRASEÑA', PASSWORD_DEFAULT);"

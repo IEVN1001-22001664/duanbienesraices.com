@@ -182,6 +182,40 @@
     // =============================================================================
     // Formulario de edición
     // =============================================================================
+    // --- Acciones lentas (Tokko): deshabilita el botón y avisa mientras espera -------------
+    $$('form[data-espera]').forEach((f) => {
+        f.addEventListener('submit', () => {
+            $$('form[data-espera] button').forEach((b) => { b.disabled = true; });
+            const boton = $('button', f);
+            if (boton) boton.textContent = f.dataset.espera;
+        });
+    });
+
+    // --- Buscador de propiedades de Tokko -----------------------------------------------
+    const filtros = $('[data-filtros]');
+    if (filtros) {
+        filtros.hidden = false;
+        const buscar = $('[data-buscar]', filtros);
+        const operacion = $('[data-filtro-operacion]', filtros);
+        const filas = $$('[data-propiedad]');
+        const sinAcentos = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        filas.forEach((f) => { f.dataset.busqueda = sinAcentos(f.dataset.busqueda); });
+        const filtrar = () => {
+            const palabras = sinAcentos(buscar.value).split(/\s+/).filter(Boolean);
+            let visibles = 0;
+            filas.forEach((f) => {
+                const ok = palabras.every((p) => f.dataset.busqueda.includes(p))
+                    && (!operacion.value || f.dataset.operaciones.split(' ').includes(operacion.value));
+                f.hidden = !ok;
+                if (ok) visibles++;
+            });
+            $('[data-cuenta]', filtros).textContent = visibles;
+            $('[data-sin-resultados]').hidden = visibles > 0;
+        };
+        buscar.addEventListener('input', filtrar);
+        operacion.addEventListener('change', filtrar);
+    }
+
     const form = $('[data-formulario]');
     if (!form) return;
     const seccion = form.dataset.seccion;

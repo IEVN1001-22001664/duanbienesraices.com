@@ -37,7 +37,7 @@ public_html/                 raíz web
   servicios/{renta,venta,administracion}.php   → includes/plantilla-servicio.php
   blog/index.php, blog/articulo.php (/blog/{slug}; slug_anterior de Wix → 301)
   sitemap.php (/sitemap.xml), robots.txt, .htaccess
-  includes/   config.php (constantes del negocio, MENU, SERVICIOS, opciones de formularios, rutas), funciones.php, formularios.php, head/header/footer, whatsapp.php
+  includes/   config.php (constantes del negocio, MENU, SERVICIOS, opciones de formularios, rutas), funciones.php, formularios.php, tokko.php, head/header/footer, whatsapp.php
   includes/vendor/phpmailer/   PHPMailer 6.9.3 (solo Exception, PHPMailer y SMTP)
   includes/admin/   núcleo del panel (ver abajo)
   components/ card-destacado, card-resultado, slide-hero, testimonio, video, card-blog, calculadora-gastos, cta-asesoria, envio-formulario
@@ -95,12 +95,21 @@ Decisiones del panel:
   - Blog: portada 1200×800; imágenes dentro del texto hasta 1200.
 - **Credenciales en producción:** `ADMIN_USUARIO` y `ADMIN_HASH` en `config.local.php` del servidor, generando una contraseña nueva (no usar la local).
 
+### Integración con Tokko (11 nov 2026)
+
+Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de la API de Tokko (hecho); **2)** después del lanzamiento, una página propia `/propiedades` (listado, filtros y ficha por propiedad) para dejar de mandar al sitio de Tokko.
+- `includes/tokko.php`: `tokko_sincronizar()` baja todas las propiedades (API v1 `property/`, de 50 en 50; 124 activas) y guarda en `data/tokko/propiedades.json` **solo campos públicos** con `tokko_normalizar()` (nunca `internal_data` —dueños, comisiones, notas—, sucursal, asesor ni dirección real). Ese archivo ya trae lo necesario para la futura `/propiedades` (operaciones, recámaras, baños, m², amenidades, fotos, videos).
+- Destacados: el panel solo elige qué propiedades y en qué orden (`admin/tokko.php` con buscador → acción `agregar_tokko`); no se editan. `tokko_actualizar_destacados()` rellena título, tipo, ubicación, precio (`precio_visible` = `web_price`), descripción corta y hasta 12 fotos copiadas a WebP en `uploads/destacados/tokko-{id}-{hash de la URL}-{card|full}.webp` (si la foto no cambia, no se vuelve a bajar). Si una propiedad deja de estar activa en Tokko, se oculta sola (`tokko_no_disponible`). Los destacados viejos hechos a mano se enlazaron a Tokko por su liga `/p/{id}-prop`; los que no existen en Tokko se quedan como estaban y se pueden seguir editando.
+- Actualización: cada 3 h (`TOKKO_VIGENCIA`), después de mandar la página de inicio a quien la visita (`tokko_refrescar_al_terminar()` + `fastcgi_finish_request`), con candado y un intento cada 15 min si Tokko falla; también con el botón «Actualizar desde Tokko». Solo escribe `destacados.json` (y genera respaldo) si algo cambió.
+- Sin `TOKKO_API_KEY` en `config.local.php` todo funciona como antes (destacados manuales). En el servidor hay que agregar la clave.
+- La ficha («Ver ficha») sigue llevando a `URL_TOKKO/p/{id}-prop` hasta que exista `/propiedades`.
+
 ## Decisiones tomadas en la Fase 1 (no revertir sin preguntar)
 
 - **Fuera de alcance:** la sección Propiedades vive en Tokko. Su URL está en la constante `URL_TOKKO`: `https://propiedades.duanbienesraices.com`, alias en Tokko de `duanbienesraices-buscador.com` (los dos dominios muestran el mismo sitio, sin redirección entre ellos).
 - **Páginas y archivos agregados:** carpeta `uploads-seed/`, `plantilla-servicio.php`, página `/aviso-de-privacidad`, componentes de calculadora y CTA, y `dev-router.php`.
 - **Menú:** los Servicios no están en el menú principal, igual que en Wix; se enlazan desde las tarjetas del inicio y el footer.
-- **Destacados:** galerías de hasta 12 fotos; el precio se guarda como número y se muestra con `formato_precio()`.
+- **Destacados:** galerías de hasta 12 fotos; el precio se guarda como número y se muestra con `formato_precio()`. Desde el 11 nov 2026 vienen de Tokko (ver «Integración con Tokko»).
 - **Videos:** el video del hero de Nosotros (24 MB) se quitó y se dejó un póster. El póster de la intro es el cuadro del logo a los 6 s del video.
 - **WhatsApp:** se usa el número 524775514226; algunas páginas de Wix usaban 4771599316.
 - **Blog:** los artículos tienen slugs nuevos y los de Wix redirigen con 301 (`/post/{slug}` → `/blog/{slug}` → `slug_anterior`).
@@ -161,4 +170,3 @@ Decisiones del panel:
 
 ### Opcional
 
-- Llenar un destacado desde la API de Tokko pegando el ID de la propiedad, con caché de algunas horas. Necesita `TOKKO_API_KEY` y la especificación pide validarlo antes.

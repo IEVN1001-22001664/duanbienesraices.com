@@ -18,7 +18,7 @@ $version = (string) ($_POST['version'] ?? '');
 $volver = '/admin/seccion.php?s=' . rawurlencode($s);
 
 /** Aplica $fn sobre el elemento $id de una sección de lista y guarda. */
-function cambiar_lista(string $s, string $version, callable $fn): string
+function cambiar_lista(string $s, ?string $version, callable $fn): string
 {
     return modificar_json(archivo_de($s), $version, function (?array $datos) use ($fn) {
         $datos ??= ['items' => []];
@@ -121,6 +121,52 @@ try {
             }
             $respuesta['urls'] = array_map('ruta_upload', $respuesta['rutas']);
             $mensaje = 'Archivo subido.';
+            break;
+
+        case 'agregar_tokko':   // elegir una propiedad de Tokko como destacado (va al principio de la lista)
+            if ($s !== 'destacados' || !tokko_activo()) {
+                throw new ErrorPanel('Acción no válida.');
+            }
+            $prop = tokko_propiedad((int) ($_POST['tokko_id'] ?? 0));
+            if (!$prop) {
+                throw new ErrorPanel('Esa propiedad ya no está en Tokko. Actualiza la lista.');
+            }
+            $yaEsta = array_filter(elementos_de('destacados'), fn($i) => tokko_id_de_destacado($i) === (int) $prop['id']);
+            if ($yaEsta) {
+                throw new ErrorPanel('Esa propiedad ya está en destacados.');
+            }
+            @set_time_limit(180);
+            $nuevoItem = tokko_item_destacado($prop);
+            if (!$nuevoItem['fotos']) {
+                throw new ErrorPanel('No se pudieron copiar las fotos desde Tokko. Intenta de nuevo en unos minutos.');
+            }
+            $nuevoItem['id'] = id_unico('destacados', 'tokko-' . $prop['id']);
+            cambiar_lista($s, null, function (array $items) use ($nuevoItem) {
+                array_unshift($items, $nuevoItem);
+                return $items;
+            });
+            $mensaje = 'Se agregó «' . $nuevoItem['titulo'] . '» al principio de destacados.';
+            break;
+
+        case 'actualizar_tokko':   // forzar la actualización desde Tokko
+            if ($s !== 'destacados' || !tokko_activo()) {
+                throw new ErrorPanel('Acción no válida.');
+            }
+            try {
+                if (!tokko_sincronizar_todo()) {
+                    throw new ErrorPanel('Ya hay una actualización en curso. Espera un minuto y recarga la página.');
+                }
+            } catch (RuntimeException $ex) {
+                if ($ex instanceof ErrorPanel) {
+                    throw $ex;
+                }
+                error_log('[duan] Tokko: ' . $ex->getMessage());
+                throw new ErrorPanel('No se pudo conectar con Tokko (' . $ex->getMessage() . '). Se conservan los datos anteriores.');
+            }
+            $mensaje = 'Listo: datos actualizados desde Tokko (' . count(tokko_propiedades()) . ' propiedades activas).';
+            if (($_POST['volver'] ?? '') === 'tokko') {
+                $volver = '/admin/tokko.php';
+            }
             break;
 
         case 'restaurar':

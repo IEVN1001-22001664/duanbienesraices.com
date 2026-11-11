@@ -9,6 +9,8 @@ $hero        = obtener_seccion('hero');
 $destacados  = obtener_seccion('destacados');
 $testimonios = obtener_seccion('testimonios');
 $videos      = obtener_seccion('videos');
+// Los destacados vienen de Tokko: si la copia local está vencida, se renueva al terminar de enviar la página.
+tokko_refrescar_al_terminar();
 
 $pagina = [
     'titulo'      => "Inmobiliaria en León, Guanajuato. Venta y Renta de Casas, Du'an Bienes Raíces",

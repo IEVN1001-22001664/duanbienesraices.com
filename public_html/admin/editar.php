@@ -32,6 +32,16 @@ if ($actual === null) {
     avisar('Ese elemento ya no existe.', 'error');
     redirigir('/admin/seccion.php?s=' . rawurlencode($s));
 }
+// Destacados de Tokko: no se editan aquí (los datos vienen de Tokko); los nuevos se eligen de la lista de Tokko.
+if ($s === 'destacados' && tokko_activo()) {
+    if ($esNuevo) {
+        redirigir('/admin/tokko.php');
+    }
+    if (!empty($actual['tokko_id'])) {
+        avisar('Los datos de esta propiedad vienen de Tokko. Para cambiarlos, edítala en Tokko y usa «Actualizar desde Tokko».');
+        redirigir('/admin/seccion.php?s=destacados');
+    }
+}
 $archivo = $esBlog ? ($esNuevo ? null : archivo_de('blog', $id)) : archivo_de($s);
 $version = $archivo ? version_de($archivo) : '';
 

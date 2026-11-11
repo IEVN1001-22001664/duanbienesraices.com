@@ -18,6 +18,8 @@ try {
     $errorArchivo = $ex->getMessage();
 }
 $version = $esBlog ? null : version_de(archivo_de($s));
+// Destacados alimentados por Tokko (si hay TOKKO_API_KEY)
+$conTokko = $s === 'destacados' && tokko_activo();
 
 admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
 ?>
@@ -30,9 +32,22 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
         <?php if (!$esBlog): ?>
             <a class="boton boton--secundario" href="/admin/respaldos.php?s=<?= e($s) ?>">Restaurar versión anterior</a>
         <?php endif; ?>
-        <a class="boton" href="/admin/editar.php?s=<?= e($s) ?>">+ <?= e($sec['nuevo']) ?></a>
+        <?php if ($conTokko): ?>
+            <form method="post" action="/admin/accion.php" data-espera="Actualizando desde Tokko…">
+                <?= campo_csrf() ?>
+                <input type="hidden" name="accion" value="actualizar_tokko">
+                <input type="hidden" name="s" value="destacados">
+                <button class="boton boton--secundario" type="submit">Actualizar desde Tokko</button>
+            </form>
+            <a class="boton" href="/admin/tokko.php">+ Elegir propiedad de Tokko</a>
+        <?php else: ?>
+            <a class="boton" href="/admin/editar.php?s=<?= e($s) ?>">+ <?= e($sec['nuevo']) ?></a>
+        <?php endif; ?>
     </div>
 </div>
+<?php if ($conTokko): ?>
+    <p class="ayuda-lista">Fotos, precio y textos se copian de Tokko<?= ($t = tokko_ultima_sincronizacion()) ? ' (última actualización: ' . e(date('d/m/Y H:i', $t)) . ')' : '' ?>; se actualizan solos cada 3 horas. Si una propiedad deja de estar activa en Tokko, se oculta sola.</p>
+<?php endif; ?>
 
 <?php if ($errorArchivo): ?>
     <p class="aviso aviso--error" role="alert"><?= e($errorArchivo) ?>
@@ -59,7 +74,9 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
                 <div class="lista__texto">
                     <p class="lista__nombre"><a href="/admin/editar.php?s=<?= e($s) ?>&amp;id=<?= e(rawurlencode($id)) ?>"><?= e($nombre) ?></a></p>
                     <p class="lista__detalle"><?= e(detalle_de($s, $item)) ?></p>
-                    <?php if ($errores): ?>
+                    <?php if (!empty($item['tokko_no_disponible'])): ?>
+                        <p class="lista__alerta">Ya no está activa en Tokko (desde el <?= e(fecha_es((string) $item['tokko_no_disponible'])) ?>). Se ocultó sola; puedes eliminarla.</p>
+                    <?php elseif ($errores): ?>
                         <p class="lista__alerta">No se muestra en el sitio: <?= e(implode('; ', $errores)) ?>. Edítalo para corregirlo.</p>
                     <?php endif; ?>
                 </div>
@@ -89,7 +106,11 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
                         </form>
                     <?php endif; ?>
 
-                    <a class="boton boton--secundario boton--chico" href="/admin/editar.php?s=<?= e($s) ?>&amp;id=<?= e(rawurlencode($id)) ?>">Editar</a>
+                    <?php if ($conTokko && !empty($item['tokko_id'])): ?>
+                        <a class="boton boton--secundario boton--chico" href="<?= e((string) ($item['url_tokko'] ?? '')) ?>" target="_blank" rel="noopener">Ver en Tokko ↗</a>
+                    <?php else: ?>
+                        <a class="boton boton--secundario boton--chico" href="/admin/editar.php?s=<?= e($s) ?>&amp;id=<?= e(rawurlencode($id)) ?>">Editar</a>
+                    <?php endif; ?>
                     <?php if ($esBlog): ?>
                         <a class="boton boton--texto boton--chico" href="/admin/respaldos.php?s=blog&amp;id=<?= e(rawurlencode($id)) ?>">Versiones</a>
                     <?php endif; ?>

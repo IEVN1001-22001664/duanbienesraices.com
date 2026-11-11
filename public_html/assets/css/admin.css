@@ -260,3 +260,11 @@ textarea.campo__control { resize: vertical; line-height: 1.5; }
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
 }
+
+/* --- Elegir propiedades de Tokko --------------------------------------------------- */
+.filtros { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin: 0 0 1rem; }
+.filtros__buscar { flex: 1 1 18rem; }
+.filtros input, .filtros select { width: 100%; padding: .6rem .75rem; border: 1px solid var(--borde); border-radius: 8px; font: inherit; background: #fff; }
+.filtros__cuenta { margin: 0; color: var(--gris); font-size: .9rem; }
+.lista--tokko .lista__item[hidden] { display: none; }
+.etiqueta-panel { display: inline-block; padding: .3rem .6rem; border-radius: 999px; background: var(--gris-claro); color: var(--gris); font-size: .85rem; white-space: nowrap; }

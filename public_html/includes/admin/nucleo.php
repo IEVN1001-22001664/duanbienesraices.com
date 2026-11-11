@@ -30,7 +30,7 @@ header('Cache-Control: no-store, max-age=0');
 header('X-Frame-Options: SAMEORIGIN');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob: https://i.ytimg.com; "
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data: blob: https://i.ytimg.com https://static.tokkobroker.com; "
     . "media-src 'self' blob:; frame-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; "
     . "base-uri 'none'; form-action 'self'; frame-ancestors 'self'");
 

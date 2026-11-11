@@ -114,6 +114,7 @@ date_default_timezone_set('America/Mexico_City');
 mb_internal_encoding('UTF-8');
 
 require __DIR__ . '/funciones.php';
+require __DIR__ . '/tokko.php';
 
 // Primer arranque: copia data-seed/ y uploads-seed/ si aún no existen en el servidor.
 inicializar_datos();

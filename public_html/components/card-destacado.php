@@ -33,7 +33,7 @@ $idGaleria = 'galeria-' . preg_replace('/[^a-z0-9-]/', '', strtolower((string) $
             <?php if (!empty($item['tipo'])): ?><span><?= e($item['tipo']) ?></span><?php endif; ?>
             <?php if (!empty($item['ubicacion'])): ?><span><?= icono('ubicacion', 'icono icono--mini') ?><?= e($item['ubicacion']) ?></span><?php endif; ?>
         </p>
-        <p class="destacado__precio"><?= e(formato_precio($item['precio'], $item['moneda'] ?? 'MXN')) ?></p>
+        <p class="destacado__precio"><?= ($item['precio_visible'] ?? true) === false ? 'Precio a consultar' : e(formato_precio($item['precio'], $item['moneda'] ?? 'MXN')) ?></p>
         <?php if (!empty($item['descripcion'])): ?>
             <p class="destacado__descripcion"><?= e($item['descripcion']) ?></p>
         <?php endif; ?>
