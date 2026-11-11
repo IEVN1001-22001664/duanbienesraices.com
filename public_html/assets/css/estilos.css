@@ -958,6 +958,26 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .filtros-propiedades .campo label, .campo__etiqueta { font-weight: 700; font-size: .9rem; }
 .filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .6rem .75rem; }
 .campo--buscar, .campo--precio { grid-column: 1 / -1; }
+/* Filtros extra: forman parte de la misma rejilla; en celular se pliegan tras «Más filtros» */
+.filtros-propiedades__extra { display: contents; }
+.filtros-propiedades__mas {
+    grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: .5rem;
+    min-height: 44px; margin-bottom: .85rem; padding: .5rem 1rem; border: 2px solid var(--borde); border-radius: 999px;
+    background: var(--blanco); color: var(--carbon); font: inherit; font-weight: 700; cursor: pointer;
+}
+.filtros-propiedades__mas:hover, .filtros-propiedades__mas[aria-expanded="true"] { border-color: var(--rojo); color: var(--rojo-oscuro); }
+.filtros-propiedades__mas .icono { width: 1.1em; height: 1.1em; }
+.filtros-propiedades__mas[hidden] { display: none; }
+.filtros-propiedades__cuenta {
+    display: inline-grid; place-items: center; min-width: 1.4rem; height: 1.4rem; padding: 0 .35rem;
+    border-radius: 999px; background: var(--rojo); color: var(--blanco); font-size: .8rem;
+}
+.filtros-propiedades.es-plegado .filtros-propiedades__extra { display: none; }
+@media (min-width: 760px) {
+    /* En tableta y escritorio siempre se ven todos */
+    .filtros-propiedades__mas { display: none !important; }
+    .filtros-propiedades.es-plegado .filtros-propiedades__extra { display: contents; }
+}
 .campo__par { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
 .filtros-propiedades__acciones { display: flex; gap: .75rem; flex-wrap: wrap; }
 .filtros-propiedades__acciones .boton { min-height: 44px; padding-block: .5em; }

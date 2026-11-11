@@ -80,6 +80,14 @@ require dirname(__DIR__) . '/includes/header.php';
                     <label for="f-q">Buscar</label>
                     <input id="f-q" type="search" name="q" value="<?= e($f['q']) ?>" placeholder="Colonia, fraccionamiento o código" autocomplete="off">
                 </div>
+                <?php
+                // En celular los demás filtros se pliegan tras «Más filtros» (main.js); sin JS se ven todos.
+                $extrasActivos = count(array_filter([$f['tipo'], $f['ciudad'], $f['recamaras'], $f['min'] ?: $f['max']], fn($v) => $v !== '' && $v !== null));
+                ?>
+                <button class="filtros-propiedades__mas" type="button" aria-expanded="false" aria-controls="filtros-extra" data-mas-filtros="<?= $extrasActivos ?>" hidden>
+                    <?= icono('filtro') ?> <span data-mas-texto>Más filtros</span><?php if ($extrasActivos): ?> <span class="filtros-propiedades__cuenta"><?= $extrasActivos ?></span><?php endif; ?>
+                </button>
+                <div class="filtros-propiedades__extra" id="filtros-extra">
                 <div class="campo">
                     <label for="f-tipo">Tipo</label>
                     <select id="f-tipo" name="tipo">
@@ -113,6 +121,7 @@ require dirname(__DIR__) . '/includes/header.php';
                         <input type="number" name="min" value="<?= e($f['min']) ?>" min="0" step="10000" inputmode="numeric" placeholder="Mínimo" aria-label="Precio mínimo">
                         <input type="number" name="max" value="<?= e($f['max']) ?>" min="0" step="10000" inputmode="numeric" placeholder="Máximo" aria-label="Precio máximo">
                     </div>
+                </div>
                 </div>
             </div>
             <div class="filtros-propiedades__acciones">

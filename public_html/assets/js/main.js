@@ -342,6 +342,22 @@
                 if (filtros.requestSubmit) filtros.requestSubmit(); else filtros.submit();
             }
         });
+        // Celular: tipo, ciudad, recámaras y precio se pliegan tras «Más filtros»
+        // (abiertos si alguno ya está aplicado). En pantallas anchas el CSS los muestra siempre.
+        var botonMas = $('[data-mas-filtros]', filtros);
+        if (botonMas) {
+            var textoMas = $('[data-mas-texto]', botonMas);
+            var plegar = function (plegado) {
+                filtros.classList.toggle('es-plegado', plegado);
+                botonMas.setAttribute('aria-expanded', plegado ? 'false' : 'true');
+                textoMas.textContent = plegado ? 'Más filtros' : 'Menos filtros';
+            };
+            botonMas.hidden = false;
+            plegar(botonMas.getAttribute('data-mas-filtros') === '0');
+            botonMas.addEventListener('click', function () {
+                plegar(!filtros.classList.contains('es-plegado'));
+            });
+        }
         // Los campos vacíos no viajan en la URL
         filtros.addEventListener('submit', function () {
             $$('input, select', filtros).forEach(function (c) { if (c.name && c.value === '') c.disabled = true; });
