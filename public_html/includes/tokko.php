@@ -21,6 +21,9 @@ declare(strict_types=1);
 const TOKKO_API = 'https://www.tokkobroker.com/api/v1/';
 const TOKKO_VIGENCIA = 3 * 3600;          // la copia local se renueva cada 3 h
 const TOKKO_ARCHIVO = 'tokko/propiedades.json';
+// Versión de los campos que guarda tokko_normalizar(). Subirla al agregar o cambiar campos:
+// una copia con otra versión se vuelve a bajar de Tokko en la siguiente visita.
+const TOKKO_FORMATO = 2;
 const TOKKO_FOTOS_DESTACADO = 1;           // en destacados solo la portada (la futura /propiedades usará todas)
 const TOKKO_TAMANOS_DESTACADO = ['card' => [720, 540, 'recortar'], 'full' => [1400, 1050, 'ajustar']];
 const TOKKO_TAMANO_PORTADA = ['card' => [720, 540, 'recortar']];   // portada de cada propiedad en /propiedades
@@ -82,7 +85,24 @@ function tokko_pedir(string $ruta, array $parametros = []): array
 /** Propiedades guardadas en data/tokko/propiedades.json (sin llamar a Tokko). */
 function tokko_propiedades(): array
 {
+    static $intentado = false;
     $datos = leer_json(TOKKO_ARCHIVO, ['propiedades' => []]);
+    // Copia de un formato anterior (p. ej. justo después de un deploy): se baja otra vez
+    // en esta misma visita, una sola vez. Si Tokko falla, no se usan datos incompletos.
+    if (($datos['formato'] ?? 1) !== TOKKO_FORMATO && !empty($datos['propiedades'])) {
+        if (!$intentado && tokko_activo()) {
+            $intentado = true;
+            try {
+                tokko_sincronizar();
+                $datos = leer_json(TOKKO_ARCHIVO, ['propiedades' => []]);
+            } catch (Throwable $e) {
+                error_log('[duan] Tokko: no se pudo actualizar el formato de la copia local: ' . $e->getMessage());
+            }
+        }
+        if (($datos['formato'] ?? 1) !== TOKKO_FORMATO) {
+            return [];
+        }
+    }
     return is_array($datos['propiedades'] ?? null) ? $datos['propiedades'] : [];
 }
 
@@ -97,11 +117,19 @@ function tokko_propiedad(int $id): ?array
     return null;
 }
 
-/** Fecha (timestamp) de la última sincronización correcta; 0 si nunca. */
+/**
+ * Fecha (timestamp) de la última sincronización completa; 0 si nunca.
+ * Cuenta también portadas.json, que se escribe al final de tokko_sincronizar_todo():
+ * si faltan las portadas, la copia se considera vieja y se completa en segundo plano.
+ */
 function tokko_ultima_sincronizacion(): int
 {
     $ruta = DIR_DATA . '/' . TOKKO_ARCHIVO;
-    return is_file($ruta) ? (int) filemtime($ruta) : 0;
+    $portadas = DIR_DATA . '/tokko/portadas.json';
+    if (!is_file($ruta) || !is_file($portadas)) {
+        return 0;
+    }
+    return min((int) filemtime($ruta), (int) filemtime($portadas));
 }
 
 /**
@@ -129,7 +157,7 @@ function tokko_sincronizar(): int
     if (!is_dir(dirname($ruta))) {
         mkdir(dirname($ruta), 0755, true);
     }
-    $json = json_encode(['actualizado' => date('c'), 'propiedades' => $propiedades],
+    $json = json_encode(['actualizado' => date('c'), 'formato' => TOKKO_FORMATO, 'propiedades' => $propiedades],
         JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n";
     $tmp = $ruta . '.' . bin2hex(random_bytes(4)) . '.tmp';
     if (file_put_contents($tmp, $json) !== strlen($json) || !rename($tmp, $ruta)) {
