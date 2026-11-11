@@ -151,6 +151,14 @@ Decisiones del panel:
 - **`contacto.php`:** horario de atención.
 - **`testimonios.json`:** 5 de 6 no tienen `url_resena` individual; por ahora enlazan al perfil general de Google.
 
+### Seguridad del panel (propuesta del 9 nov 2026; en revisión con desarrollo, NO implementar sin confirmar)
+
+- Varios usuarios en `data/seguridad/usuarios.json` (nombre, usuario, correo propio, hash, rol administrador/editor, activo); el usuario actual de `config.local.php` pasaría a ser el primer administrador.
+- Pantallas «Usuarios» (solo administrador: alta, desactivar, enlace para poner contraseña) y «Mi cuenta» (cambiar contraseña con la actual); «¿Olvidaste tu contraseña?» con enlace por correo de 30 min.
+- Contraseña segura obligatoria: mínimo 12, sin usuario/nombre/«duan», lista de comunes, medidor.
+- Código de 6 dígitos al correo de cada usuario (10 min), «confiar en este dispositivo» 30 días y aviso por correo al entrar desde un dispositivo nuevo. Alternativa más simple: Turnstile en el login + aviso por correo.
+- Mientras tanto la contraseña se cambia generando un hash en el servidor y editando `ADMIN_HASH`. Acceso: guardar `/admin` en favoritos (no enlazarlo en el sitio).
+
 ### Opcional
 
 - Llenar un destacado desde la API de Tokko pegando el ID de la propiedad, con caché de algunas horas. Necesita `TOKKO_API_KEY` y la especificación pide validarlo antes.
