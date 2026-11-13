@@ -54,5 +54,6 @@ admin_cabecera('Iniciar sesión');
         </div>
         <button class="boton boton--grande" type="submit">Entrar</button>
     </form>
+    <p class="acceso__enlace"><a href="/admin/recuperar.php">Olvidé mi contraseña</a></p>
 </section>
 <?php admin_pie();

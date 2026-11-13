@@ -82,6 +82,7 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
 | `includes/admin/formulario.php` | `recolectar()` (limpia y valida el POST) y `pintar_campo()` por tipo: texto, area, url, precio, opciones, youtube, fecha, imagen, fotos, video, markdown |
 | `admin/accion.php` | POST: activar, eliminar, ordenar, mover, subir, restaurar. Responde JSON si la petición trae `X-Requested-With: fetch` |
 | `admin/editar.php` + `vista-previa.php` | Formulario; la vista previa pinta el componente real del sitio en un iframe |
+| `includes/admin/cuenta.php` | Cuenta del único usuario: contraseña, correo confirmado y enlaces por correo (ver «Cuenta del panel») |
 | `admin/.user.ini` | Límites de subida en SiteGround |
 
 Secciones de Nosotros (11 nov 2026):
@@ -178,13 +179,16 @@ Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de l
 - **`contacto.php`:** horario de atención.
 - **`testimonios.json`:** 5 de 6 no tienen `url_resena` individual; por ahora enlazan al perfil general de Google.
 
-### Seguridad del panel (propuesta del 9 nov 2026; en revisión con desarrollo, NO implementar sin confirmar)
+### Cuenta del panel (11 nov 2026)
 
-- Varios usuarios en `data/seguridad/usuarios.json` (nombre, usuario, correo propio, hash, rol administrador/editor, activo); el usuario actual de `config.local.php` pasaría a ser el primer administrador.
-- Pantallas «Usuarios» (solo administrador: alta, desactivar, enlace para poner contraseña) y «Mi cuenta» (cambiar contraseña con la actual); «¿Olvidaste tu contraseña?» con enlace por correo de 30 min.
-- Contraseña segura obligatoria: mínimo 12, sin usuario/nombre/«duan», lista de comunes, medidor.
-- Código de 6 dígitos al correo de cada usuario (10 min), «confiar en este dispositivo» 30 días y aviso por correo al entrar desde un dispositivo nuevo. Alternativa más simple: Turnstile en el login + aviso por correo.
-- Mientras tanto la contraseña se cambia generando un hash en el servidor y editando `ADMIN_HASH`. Acceso: guardar `/admin` en favoritos (no enlazarlo en el sitio).
+El cliente decidió la versión sencilla: **un solo usuario**, sin roles ni códigos al entrar (la propuesta del 9 nov con varios usuarios y código de 6 dígitos quedó descartada).
+- `includes/admin/cuenta.php` + `data/seguridad/cuenta.json` (usuario, hash, `clave_ts`, correo confirmado, correo pendiente, token de restablecer y marcas de envíos). Mientras el archivo no exista se usan `ADMIN_USUARIO` y `ADMIN_HASH` de `config.local.php`; la cuenta pasa sola al archivo en el primer cambio. **Salida de emergencia:** borrar `cuenta.json` en el servidor y vuelve a valer `config.local.php`.
+- **Mi cuenta** (`admin/cuenta.php`, enlace en la barra): cambiar correo y contraseña, siempre con la contraseña actual. El correo no queda activo hasta abrir el enlace de confirmación (`admin/confirmar-correo.php`, 24 h, no pide sesión).
+- **Contraseña:** mínimo 10 caracteres, mayúscula, minúscula y número, sin el usuario ni «duan», máximo 72 (`validar_clave_nueva()`). Al cambiarla se cierran las demás sesiones (`clave_ts` en la sesión) y se avisa al correo confirmado.
+- **Olvidé mi contraseña** (`admin/recuperar.php` → `admin/restablecer.php`): enlace de un solo uso, 30 min, solo al correo confirmado; la respuesta es igual exista o no el correo. Cada solicitud cuenta para el bloqueo de 5 intentos por IP.
+- De los enlaces solo se guarda el sha256 del token. Máximo 5 correos de la cuenta por hora y 1 por minuto. Los enlaces usan `URL_SITIO` (no la cabecera Host).
+- Los correos salen con `mandar_correo()` (`formularios.php`), la misma cuenta SMTP de los formularios; en local sin SMTP se guardan en `data/correos-dev/*-panel-*.txt`.
+- Acceso: guardar `/admin` en favoritos (no enlazarlo en el sitio).
 
 ### Opcional
 

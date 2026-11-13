@@ -205,9 +205,32 @@ function enviar_correo(string $formulario, array $datos): bool
     $texto .= "—\n" . $pie;
     $html .= '<p style="color:#777;font-size:12px">' . e($pie) . '</p>';
 
+    return mandar_correo(
+        destino_formularios(),
+        $asunto,
+        $texto,
+        $html,
+        $datos['email'] !== '' ? [$datos['email'], $datos['nombre']] : null,
+        $formulario
+    );
+}
+
+/** Destinatario de los formularios ('' si aún no hay SMTP: en local el correo solo se guarda). */
+function destino_formularios(): string
+{
+    return defined('SMTP_DESTINO') ? (string) SMTP_DESTINO : '';
+}
+
+/**
+ * Envía un correo por la cuenta SMTP del sitio. Lo usan los formularios y el panel
+ * (confirmar correo, restablecer contraseña). $responderA = [correo, nombre] o null.
+ * Sin SMTP_* en MODO_DEV el correo se guarda en data/correos-dev/ con $etiqueta en el nombre.
+ */
+function mandar_correo(string $para, string $asunto, string $texto, string $html, ?array $responderA = null, string $etiqueta = 'correo'): bool
+{
     if (!smtp_activo()) {
         if (!MODO_DEV) {
-            error_log('Formularios: faltan las constantes SMTP_* en config.local.php');
+            error_log('Correo: faltan las constantes SMTP_* en config.local.php');
             return false;
         }
         // En local sin SMTP: el correo se guarda en data/correos-dev/ para revisarlo
@@ -215,8 +238,8 @@ function enviar_correo(string $formulario, array $datos): bool
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
-        $archivo = $dir . '/' . date('Ymd-His') . '-' . $formulario . '-' . bin2hex(random_bytes(3)) . '.txt';
-        return file_put_contents($archivo, 'Asunto: ' . $asunto . "\n\n" . $texto) !== false;
+        $archivo = $dir . '/' . date('Ymd-His') . '-' . $etiqueta . '-' . bin2hex(random_bytes(3)) . '.txt';
+        return file_put_contents($archivo, 'Para: ' . $para . "\nAsunto: " . $asunto . "\n\n" . $texto) !== false;
     }
 
     require_once __DIR__ . '/vendor/phpmailer/Exception.php';
@@ -236,9 +259,9 @@ function enviar_correo(string $formulario, array $datos): bool
         $correo->CharSet    = PHPMailer::CHARSET_UTF8;
 
         $correo->setFrom(SMTP_USUARIO, 'Sitio web ' . NOMBRE_SITIO);
-        $correo->addAddress(SMTP_DESTINO);
-        if ($datos['email'] !== '') {
-            $correo->addReplyTo($datos['email'], $datos['nombre']);
+        $correo->addAddress($para);
+        if ($responderA) {
+            $correo->addReplyTo($responderA[0], $responderA[1] ?? '');
         }
         $correo->Subject = $asunto;
         $correo->isHTML(true);
@@ -247,7 +270,7 @@ function enviar_correo(string $formulario, array $datos): bool
         $correo->send();
         return true;
     } catch (PHPMailerException $ex) {
-        error_log('Formularios: no se pudo enviar — ' . $correo->ErrorInfo);
+        error_log('Correo: no se pudo enviar — ' . $correo->ErrorInfo);
         return false;
     }
 }

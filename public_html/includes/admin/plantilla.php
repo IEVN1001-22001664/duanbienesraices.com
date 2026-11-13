@@ -31,6 +31,7 @@ function admin_cabecera(string $titulo, array $migas = []): void
         <?php if ($conSesion): ?>
             <nav class="barra__acciones" aria-label="Panel">
                 <a href="/" target="_blank" rel="noopener">Ver sitio ↗</a>
+                <a href="/admin/cuenta.php">Mi cuenta</a>
                 <form method="post" action="/admin/salir.php">
                     <?= campo_csrf() ?>
                     <button class="boton boton--texto boton--claro" type="submit">Cerrar sesión</button>

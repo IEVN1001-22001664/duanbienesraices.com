@@ -21,6 +21,9 @@
 
 // --- Panel /admin (Fase 2) ---
 // Genera el hash con: php -r "echo password_hash('TU_CONTRASEÑA', PASSWORD_DEFAULT);"
+// Son las credenciales iniciales: cuando la contraseña o el correo se cambian en «Mi cuenta»,
+// la cuenta pasa a data/seguridad/cuenta.json y estas dos constantes dejan de usarse.
+// Si se pierde el acceso, borra ese archivo y vuelven a valer.
 // define('ADMIN_USUARIO', 'editor');
 // define('ADMIN_HASH', '');
 

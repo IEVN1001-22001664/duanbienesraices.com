@@ -6,9 +6,11 @@
  *     require dirname(__DIR__) . '/includes/admin/nucleo.php';
  *     requerir_login();
  *
- * Credenciales en config.local.php (no se versiona):
+ * Credenciales iniciales en config.local.php (no se versiona):
  *     define('ADMIN_USUARIO', 'editor');
  *     define('ADMIN_HASH', '...');   // php -r "echo password_hash('...', PASSWORD_DEFAULT);"
+ * Cuando la contraseña o el correo se cambian desde «Mi cuenta», la cuenta pasa a
+ * data/seguridad/cuenta.json (ver cuenta.php) y esas constantes dejan de usarse.
  */
 
 declare(strict_types=1);
@@ -18,6 +20,7 @@ require __DIR__ . '/almacen.php';
 require __DIR__ . '/imagenes.php';
 require __DIR__ . '/formulario.php';
 require __DIR__ . '/plantilla.php';
+require __DIR__ . '/cuenta.php';
 
 const ADMIN_INACTIVIDAD = 2 * 3600;     // cierra la sesión tras 2 h sin uso
 const ADMIN_DURACION_MAX = 12 * 3600;   // y siempre tras 12 h
@@ -61,6 +64,11 @@ function sesion_activa(): bool
         cerrar_sesion();
         return false;
     }
+    // Si la contraseña cambió desde otro lugar (o se restableció), esta sesión ya no vale
+    if ((int) ($s['clave_ts'] ?? 0) !== (int) (cuenta()['clave_ts'] ?? 0)) {
+        cerrar_sesion();
+        return false;
+    }
     $_SESSION['admin']['ultimo'] = $ahora;
     return true;
 }
@@ -92,7 +100,8 @@ function cerrar_sesion(): void
 /** true si el panel tiene usuario y contraseña configurados. */
 function panel_configurado(): bool
 {
-    return defined('ADMIN_USUARIO') && defined('ADMIN_HASH') && ADMIN_USUARIO !== '' && ADMIN_HASH !== '';
+    $c = cuenta();
+    return $c['usuario'] !== '' && $c['hash'] !== '';
 }
 
 // --- Límite de intentos de login (por IP, guardado en data/seguridad/) ------------
@@ -177,8 +186,9 @@ function iniciar_sesion(string $usuario, string $clave): ?string
         return 'Demasiados intentos fallidos. Espera ' . (int) ceil($espera / 60) . ' min y vuelve a intentar.';
     }
     // Se verifica siempre la contraseña (aunque el usuario no coincida) para no revelar cuál falló.
-    $okClave = password_verify($clave, ADMIN_HASH);
-    $okUsuario = hash_equals(mb_strtolower(ADMIN_USUARIO), mb_strtolower(trim($usuario)));
+    $cuenta = cuenta();
+    $okClave = password_verify($clave, $cuenta['hash']);
+    $okUsuario = hash_equals(mb_strtolower($cuenta['usuario']), mb_strtolower(trim($usuario)));
     if (!$okClave || !$okUsuario) {
         registrar_fallo_login();
         usleep(random_int(300000, 700000));
@@ -186,10 +196,14 @@ function iniciar_sesion(string $usuario, string $clave): ?string
     }
     limpiar_intentos_login();
     session_regenerate_id(true);
-    $_SESSION = ['admin' => ['usuario' => ADMIN_USUARIO, 'inicio' => time(), 'ultimo' => time()]];
-    // Si el hash usa un algoritmo viejo, avisa en el log para regenerarlo.
-    if (password_needs_rehash(ADMIN_HASH, PASSWORD_DEFAULT)) {
-        error_log('[duan] ADMIN_HASH usa un algoritmo antiguo; genera uno nuevo.');
+    $_SESSION = ['admin' => ['usuario' => $cuenta['usuario'], 'inicio' => time(), 'ultimo' => time(), 'clave_ts' => (int) ($cuenta['clave_ts'] ?? 0)]];
+    // Si el hash usa un algoritmo viejo, se regenera con la contraseña que acaba de entrar
+    // (sin tocar clave_ts: la contraseña es la misma y las sesiones siguen valiendo).
+    if (password_needs_rehash($cuenta['hash'], PASSWORD_DEFAULT)) {
+        cuenta_modificar(function (array $c) use ($clave) {
+            $c['hash'] = password_hash($clave, PASSWORD_DEFAULT);
+            return [$c, null];
+        });
     }
     return null;
 }

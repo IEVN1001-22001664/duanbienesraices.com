@@ -7,6 +7,9 @@ requerir_login();
 
 admin_cabecera('Inicio');
 ?>
+<?php if ((cuenta()['correo'] ?? '') === ''): ?>
+    <p class="aviso" role="status">Aún no hay un correo confirmado en la cuenta. Regístralo en <a href="/admin/cuenta.php">Mi cuenta</a> para poder recuperar la contraseña si se olvida.</p>
+<?php endif; ?>
 <h1>¿Qué quieres editar hoy?</h1>
 <ul class="secciones">
     <?php foreach (SECCIONES_ADMIN as $clave => $sec):
