@@ -722,6 +722,12 @@
         var revisar = function () { subir.classList.toggle('es-visible', window.scrollY > 700); };
         window.addEventListener('scroll', revisar, { passive: true });
         revisar();
+        // Sube al inicio de la página. No se usa un ancla al encabezado: como es fijo siempre está
+        // a la vista y el navegador no se movía.
+        subir.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            window.scrollTo({ top: 0, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+        });
     }
     // --- Animación de entrada en celular: al terminar se quita y no se repite en la visita ---
     var intro = $('[data-intro]');

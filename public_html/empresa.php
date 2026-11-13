@@ -83,9 +83,9 @@ require __DIR__ . '/includes/header.php';
         <h2 class="titulo-seccion" id="titulo-cifras">Respaldo que se comprueba</h2>
         <?php /* Contador grande: main.js lo anima de 0 a la cifra al verse; sin JS muestra la cifra final */ ?>
         <p class="cifra-destacada">
-            <span class="cifra-destacada__num" data-contador="180" data-prefijo="+" aria-hidden="true">+180</span>
-            <span class="sr-only">Más de 180</span>
-            <span class="cifra-destacada__txt">propiedades han pasado por Du'an Bienes Raíces</span>
+            <span class="cifra-destacada__num" data-contador="500" data-prefijo="+" aria-hidden="true">+500</span>
+            <span class="sr-only">Más de 500</span>
+            <span class="cifra-destacada__txt">propiedades VENDIDAS / RENTADAS por Du'an Bienes Raíces</span>
         </p>
         <ul class="cifras__grid">
             <li class="cifra-bloque"><span class="cifra-bloque__num">+13</span><span class="cifra-bloque__txt">años de experiencia</span></li>

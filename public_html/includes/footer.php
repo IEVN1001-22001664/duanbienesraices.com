@@ -53,7 +53,7 @@
 
 <?php require __DIR__ . '/whatsapp.php'; ?>
 
-<a class="subir" href="#inicio" aria-label="Volver arriba"><?= icono('flecha-arriba') ?></a>
+<a class="subir" href="#top" aria-label="Volver arriba"><?= icono('flecha-arriba') ?></a>
 
 <script src="<?= e(asset('js/main.js')) ?>" defer></script>
 </body>
