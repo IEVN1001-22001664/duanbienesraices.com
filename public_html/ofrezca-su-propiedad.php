@@ -15,7 +15,7 @@ $pagina = [
     'imagen'      => '/assets/img/fondo-inventario.webp',
 ];
 
-// Pilares de blindaje: colores del gráfico triangular (arriba, abajo izq., abajo der.)
+// Pilares fundamentales: colores del gráfico triangular (arriba, abajo izq., abajo der.)
 $pilares = [
     ['icono' => 'balanza', 'titulo' => 'Certeza Jurídica',
      'texto' => 'Revisamos la documentación de su propiedad para confirmar que todo esté legalmente en regla y, si hace falta, le orientamos en el trámite necesario. Así cada operación llega segura hasta la firma ante notario.'],
@@ -26,9 +26,21 @@ $pilares = [
 ];
 
 $equipos = [
-    ['img' => 'equipo-camara-profesional.webp', 'w' => 500, 'h' => 445, 'titulo' => 'Cámara profesional', 'texto' => 'Para fotos y videos de alta calidad', 'alt' => 'Cámara profesional Canon EOS'],
-    ['img' => 'equipo-dron.webp',               'w' => 500, 'h' => 286, 'titulo' => 'Dron profesional',   'texto' => 'Para fotos y videos aéreos', 'alt' => 'Dron profesional Mavic Air'],
-    ['img' => 'equipo-camara-360.webp',         'w' => 384, 'h' => 512, 'titulo' => 'Cámara 360°',        'texto' => 'Creamos un tour virtual de su propiedad', 'alt' => 'Cámara 360 para tour virtual'],
+    // 'foto' (opcional): imagen de /assets/img/ que aparece al pasar el mouse. Sin ella la tarjeta solo cambia a rojo.
+    ['img' => 'equipo-camara-profesional.webp', 'w' => 500, 'h' => 445, 'titulo' => 'Cámara profesional', 'texto' => 'Para fotos y videos de alta calidad', 'alt' => 'Cámara profesional Canon EOS', 'foto' => null],
+    ['img' => 'equipo-dron.webp',               'w' => 500, 'h' => 286, 'titulo' => 'Dron profesional',   'texto' => 'Para fotos y videos aéreos', 'alt' => 'Dron profesional Mavic Air', 'foto' => null],
+    ['img' => 'equipo-camara-360.webp',         'w' => 384, 'h' => 512, 'titulo' => 'Cámara 360°',        'texto' => 'Creamos un tour virtual de su propiedad', 'alt' => 'Cámara 360 para tour virtual', 'foto' => null],
+];
+
+// Casa de ejemplo de «Así presentamos su propiedad»: datos tal como se publicó en venta
+$ejemploTitulo = 'Casa en Venta El Mayorazgo Residencial, Privada Mayorazgo Corralejo';
+$ejemploFotos = 12;   // assets/img/ejemplo/mayorazgo-NN.webp y mayorazgo-NN-mini.webp
+$ejemploDatos = [
+    ['cama', '3 recámaras'],            ['bano', '2 baños, 1 medio baño'],
+    ['auto', '2 estacionamientos'],     ['construccion', '194 m² de construcción'],
+    ['terreno', '140 m² de terreno'],   ['regla', '20 m de largo'],
+    ['regla', '7 m de frente'],         ['calendario', 'Año de construcción: 2017'],
+    ['pisos', 'Cantidad de pisos en el edificio: 2'], ['moneda', 'Mantenimiento: 800'],
 ];
 
 $mensajeWhatsapp = '¡Hola! Vengo de su página web, tengo una propiedad y me interesa venderla o rentarla.';
@@ -91,7 +103,7 @@ require __DIR__ . '/includes/header.php';
 
 <section class="seccion seccion--oscura pilares" aria-labelledby="titulo-pilares">
     <div class="contenedor">
-        <h2 class="titulo-seccion titulo-seccion--claro" id="titulo-pilares">Pilares de blindaje</h2>
+        <h2 class="titulo-seccion titulo-seccion--claro" id="titulo-pilares">Pilares fundamentales</h2>
         <p class="subtitulo-seccion subtitulo-seccion--claro">Tres compromisos que protegen cada operación que nos confía.</p>
         <div class="pilares__diagrama">
             <!-- Triángulo de 3 piezas; en el centro, los resultados que dan los tres pilares juntos -->
@@ -134,8 +146,8 @@ require __DIR__ . '/includes/header.php';
         <h2 class="titulo-seccion" id="titulo-tecnologia">Usamos la más alta tecnología para captar su inmueble desde todos los ángulos</h2>
         <ul class="tecnologia__grid">
             <?php foreach ($equipos as $eq): ?>
-                <li class="equipo">
-                    <img src="/assets/img/<?= e($eq['img']) ?>" alt="<?= e($eq['alt']) ?>" width="<?= $eq['w'] ?>" height="<?= $eq['h'] ?>" loading="lazy" decoding="async">
+                <li class="equipo<?= $eq['foto'] ? ' equipo--foto' : '' ?>"<?= $eq['foto'] ? ' style="--foto: url(\'/assets/img/' . e($eq['foto']) . '\')"' : '' ?>>
+                    <img class="equipo__img" src="/assets/img/<?= e($eq['img']) ?>" alt="<?= e($eq['alt']) ?>" width="<?= $eq['w'] ?>" height="<?= $eq['h'] ?>" loading="lazy" decoding="async">
                     <h3 class="equipo__titulo"><?= e($eq['titulo']) ?></h3>
                     <p><?= e($eq['texto']) ?></p>
                 </li>
@@ -150,13 +162,46 @@ require __DIR__ . '/includes/header.php';
         <p class="subtitulo-seccion">Cada inmueble recibe descripción profesional, video, tour virtual y ubicación.</p>
         <article class="ejemplo__tarjeta">
             <header class="ejemplo__encabezado">
-                <span class="etiqueta etiqueta--venta">VENTA</span>
-                <h3 class="ejemplo__titulo">Casa en Venta El Mayorazgo Residencial, Privada Mayorazgo Corralejo</h3>
-                <p class="destacado__precio"><?= e(formato_precio(3250000)) ?></p>
+                <div class="ejemplo__cabeza">
+                    <span class="etiqueta etiqueta--venta">VENTA</span>
+                    <h3 class="ejemplo__titulo"><?= e($ejemploTitulo) ?></h3>
+                </div>
+                <p class="destacado__precio ejemplo__precio"><?= e(formato_precio(3250000)) ?></p>
             </header>
-            <div class="ejemplo__grid">
-                <div>
-                    <h4>Descripción</h4>
+
+            <div class="ejemplo__fila ejemplo__fila--principal">
+                <div class="ejemplo__fotos">
+                    <div class="ficha__galeria galeria" data-galeria data-ficha-galeria>
+                        <ul class="galeria__pista" id="galeria-ficha" tabindex="0" aria-label="<?= e('Fotos de ' . $ejemploTitulo) ?>">
+                            <?php for ($i = 1; $i <= $ejemploFotos; $i++): ?>
+                                <li class="galeria__foto">
+                                    <img src="/assets/img/ejemplo/mayorazgo-<?= sprintf('%02d', $i) ?>.webp"
+                                         alt="<?= e($ejemploTitulo . ' — ' . $i . ' de ' . $ejemploFotos) ?>"
+                                         width="1000" height="750" loading="lazy" decoding="async">
+                                </li>
+                            <?php endfor; ?>
+                        </ul>
+                        <button class="galeria__flecha galeria__flecha--izq" type="button" aria-controls="galeria-ficha" aria-label="Foto anterior" hidden><?= icono('flecha-izq') ?></button>
+                        <button class="galeria__flecha galeria__flecha--der" type="button" aria-controls="galeria-ficha" aria-label="Foto siguiente" hidden><?= icono('flecha-der') ?></button>
+                        <span class="galeria__contador" aria-hidden="true"><span data-actual>1</span>/<?= $ejemploFotos ?></span>
+                    </div>
+                    <ul class="ficha__miniaturas" aria-label="Elegir foto" data-miniaturas>
+                        <?php for ($i = 1; $i <= $ejemploFotos; $i++): ?>
+                            <li>
+                                <button type="button" data-ir="<?= $i - 1 ?>" aria-label="<?= e('Ver foto ' . $i) ?>" <?= $i === 1 ? 'aria-current="true"' : '' ?>>
+                                    <img src="/assets/img/ejemplo/mayorazgo-<?= sprintf('%02d', $i) ?>-mini.webp" alt="" width="192" height="144" loading="lazy" decoding="async">
+                                </button>
+                            </li>
+                        <?php endfor; ?>
+                    </ul>
+                </div>
+                <div class="ejemplo__info">
+                    <ul class="ejemplo__datos" aria-label="Características">
+                        <?php foreach ($ejemploDatos as [$ico, $texto]): ?>
+                            <li><?= icono($ico) ?> <?= e($texto) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <h4 class="ejemplo__subtitulo">Descripción</h4>
                     <details class="leer-mas">
                         <summary>
                             <span>Casa en venta en El Mayorazgo Residencial, específicamente en la Privada Mayorazgo Corralejo, la 2.ª privada al acceso al fraccionamiento. Se ubica frente a área verde con gran arbolado y estacionamiento para visitas.</span>
@@ -168,21 +213,33 @@ require __DIR__ . '/includes/header.php';
                         <p>En planta alta hay 3 recámaras. La recámara principal, a altura y media, cuenta con minisplit, walk-in closet y baño completo en cristal templado, con WC y regadera independientes. Las otras 2 recámaras son prácticamente espejo: ambas con clóset amplio y vista al jardín trasero; comparten un baño completo con lavamanos exterior.</p>
                         <p>La casa se entrega equipada, con lámparas, espejos, cortineros y algunas persianas; el piso de la cochera se cambió por uno nuevo.</p>
                     </details>
-                    <h4>Tour virtual</h4>
-                    <a class="tour" href="https://my.matterport.com/show/?m=2vTa6Qq3QCf" target="_blank" rel="noopener">
-                        <img src="/assets/img/tour-virtual.webp" alt="Vista previa del tour virtual 360° de la propiedad" width="1000" height="563" loading="lazy" decoding="async">
-                        <span class="tour__boton"><?= icono('play') ?> Recorrer en 360°</span>
-                    </a>
                 </div>
+            </div>
+
+            <div class="ejemplo__fila">
                 <div>
-                    <h4>Video de la propiedad</h4>
+                    <h4 class="ejemplo__subtitulo">Video de la propiedad</h4>
                     <ul class="videos__grid videos__grid--uno">
                         <?php componente('video', ['item' => ['youtube_id' => 'dofkKU11Qdo', 'titulo' => 'Video recorrido: Casa en Venta El Mayorazgo Residencial']]); ?>
                     </ul>
-                    <h4>Ubicación</h4>
-                    <p><a href="https://www.google.com/maps?q=21.061594,-101.597571" target="_blank" rel="noopener"><?= icono('ubicacion', 'icono icono--mini') ?> Ver ubicación en Google Maps</a></p>
+                </div>
+                <div>
+                    <div class="ejemplo__ubicacion">
+                        <h4 class="ejemplo__subtitulo"><?= icono('ubicacion') ?> Ubicación</h4>
+                        <a href="https://www.google.com/maps?q=21.061594,-101.597571" target="_blank" rel="noopener">Ver ubicación en Google Maps</a>
+                    </div>
+                    <div class="mapa__marco ficha__mapa ejemplo__mapa">
+                        <iframe src="https://www.google.com/maps?ll=21.06,-101.6&amp;z=14&amp;t=m&amp;output=embed" title="Mapa de la zona: El Mayorazgo, León, Guanajuato" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <p class="ficha__mapa-zona"><?= icono('ubicacion', 'icono icono--mini') ?> El Mayorazgo, León, Guanajuato</p>
+                    </div>
                 </div>
             </div>
+
+            <ul class="redes ejemplo__redes" aria-label="Redes sociales">
+                <?php foreach (REDES as $red => $url): ?>
+                    <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e(ucfirst($red)) ?>"><?= icono($red) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
         </article>
     </div>
 </section>

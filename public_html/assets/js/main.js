@@ -34,10 +34,15 @@
         });
     }
 
-    /* Sombra del encabezado fijo al bajar */
+    /* Encabezado fijo: al bajar se vuelve tarjeta flotante (la transición está en el CSS).
+       Dos umbrales distintos para que no parpadee justo en el límite. */
     var encabezado = $('.encabezado');
     if (encabezado) {
-        var marcarDesplazado = function () { encabezado.classList.toggle('es-desplazado', window.scrollY > 8); };
+        var marcarDesplazado = function () {
+            var y = window.scrollY;
+            if (y > 40) encabezado.classList.add('es-desplazado');
+            else if (y < 12) encabezado.classList.remove('es-desplazado');
+        };
         window.addEventListener('scroll', marcarDesplazado, { passive: true });
         marcarDesplazado();
     }
@@ -482,6 +487,75 @@
             // El número animado es aria-hidden; los lectores de pantalla leen el texto oculto con la cifra final
             el.textContent = (el.getAttribute('data-prefijo') || '') + '0';
             vigiaContador.observe(el);
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Parallax de los fondos (portadas, servicios del inicio y banda
+       roja): la foto se mueve más lento que la página. Solo se calcula
+       para las secciones que están en pantalla.
+       --------------------------------------------------------------- */
+    var fondosParalaje = $$('.portada, .servicios, .banda-inventario');
+    if (fondosParalaje.length && !reducirMovimiento) {
+        var paralajePendiente = false;
+        var moverFondos = function () {
+            paralajePendiente = false;
+            var alto = window.innerHeight;
+            fondosParalaje.forEach(function (el) {
+                var r = el.getBoundingClientRect();
+                if (r.bottom < 0 || r.top > alto) return;
+                // 0 cuando la sección asoma por abajo, 1 cuando termina de salir por arriba
+                var avance = (alto - r.top) / (alto + r.height);
+                // La foto sobra un 16 % arriba y abajo; se usa hasta el 14 %
+                el.style.setProperty('--paralaje', ((avance - 0.5) * 2 * r.height * 0.14).toFixed(1) + 'px');
+            });
+        };
+        var pedirParalaje = function () {
+            if (!paralajePendiente) { paralajePendiente = true; requestAnimationFrame(moverFondos); }
+        };
+        window.addEventListener('scroll', pedirParalaje, { passive: true });
+        window.addEventListener('resize', pedirParalaje);
+        moverFondos();
+    }
+
+    /* ---------------------------------------------------------------
+       Aparición gradual al desplazar: títulos, tarjetas y bloques
+       entran con un fundido la primera vez que se ven. Lo que ya está
+       en pantalla al cargar no se toca. Los hermanos entran escalonados.
+       --------------------------------------------------------------- */
+    if (!reducirMovimiento && 'IntersectionObserver' in window) {
+        var candidatos = $$([
+            'main .titulo-seccion', 'main .subtitulo-seccion',
+            '.bienvenida__grid > *', '.servicio', '.destacados__grid > *', '.videos__grid > li',
+            '.fundador .contenedor > *', '.mision__grid > *', '.cifra-destacada', '.cifras__grid > li',
+            '.como__grid > *', '.pilar', '.pilares__grafico', '.equipo', '.ejemplo__tarjeta', '.banda-inventario .contenedor',
+            '.blog__grid > *', '.propiedades__grid > *', '.contacto .contenedor > *', '.formulario-seccion .contenedor > *'
+        ].join(','));
+        var altoVentana = window.innerHeight;
+        var vigiaAparece = new IntersectionObserver(function (entradas) {
+            var orden = 0;
+            entradas.forEach(function (en) {
+                if (!en.isIntersecting) return;
+                var el = en.target;
+                vigiaAparece.unobserve(el);
+                var retraso = Math.min(orden++, 5) * 90;
+                el.style.setProperty('--retraso', retraso + 'ms');
+                el.classList.add('es-visible');
+                // Al terminar se limpia todo para no estorbar a las transiciones propias (hover, etc.)
+                setTimeout(function () {
+                    el.classList.remove('aparece', 'aparece--izq', 'aparece--der', 'es-visible');
+                    el.style.removeProperty('--retraso');
+                }, retraso + 800);
+            });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+        candidatos.forEach(function (el) {
+            // No anidar: si un ancestro ya aparece, este se queda quieto
+            if (el.parentElement && el.parentElement.closest('.aparece')) return;
+            if (el.getBoundingClientRect().top < altoVentana * 0.92) return;
+            el.classList.add('aparece');
+            if (el.classList.contains('pilar')) el.classList.add('aparece--izq');
+            if (el.classList.contains('pilares__grafico')) el.classList.add('aparece--der');
+            vigiaAparece.observe(el);
         });
     }
 
