@@ -12,8 +12,9 @@ $pagina = [
     'descripcion' => 'Le apoyamos en todo el proceso de la renta o venta de su propiedad. Solicite una valoración personalizada, gratuita y sin compromiso.',
     'ruta'        => '/ofrezca-su-propiedad',
     'activo'      => 'propietario',
-    'imagen'      => '/assets/img/fondo-inventario.webp',
 ];
+$portada = portada_de('propietario', ['imagen' => '/assets/img/fondo-inventario.webp', 'antetitulo' => 'Tengo una propiedad', 'titulo' => '¡Resultados comprobados!', 'texto' => 'Más de 13 años de experiencia nos respaldan.']);
+$pagina['imagen'] = $pagina['precarga'] = $portada['imagen'];
 
 // Pilares fundamentales: colores del gráfico triangular (arriba, abajo izq., abajo der.)
 $pilares = [
@@ -49,14 +50,7 @@ require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
 
-<section class="portada" style="--fondo: url('/assets/img/fondo-inventario.webp')">
-    <div class="contenedor portada__texto">
-        <p class="portada__antetitulo">Tengo una propiedad</p>
-        <h1 class="portada__titulo">¡Resultados comprobados!</h1>
-        <p class="portada__lead">Más de 13 años de experiencia nos respaldan.</p>
-        <a class="boton boton--grande" href="#valuacion">Quiero una valoración gratuita</a>
-    </div>
-</section>
+<?php componente('portada', ['portada' => $portada, 'boton' => ['texto' => 'Quiero una valoración gratuita', 'url' => '#valuacion']]); ?>
 
 <?php if ($resultados): ?>
 <section class="resultados" aria-labelledby="titulo-resultados">

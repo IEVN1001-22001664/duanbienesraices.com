@@ -56,13 +56,10 @@ require dirname(__DIR__) . '/includes/head.php';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
-<section class="portada portada--baja" style="--fondo: url('/assets/img/servicio-venta.webp')">
-    <div class="contenedor portada__texto">
-        <p class="portada__antetitulo">Venta y renta en León y alrededores</p>
-        <h1 class="portada__titulo">Propiedades</h1>
-        <p class="portada__lead">Encuentre casa, departamento, terreno, bodega u oficina con el respaldo de Du'an Bienes Raíces.</p>
-    </div>
-</section>
+<?php componente('portada', ['baja' => true, 'portada' => portada_de('propiedades', [
+    'imagen' => '/assets/img/servicio-venta.webp', 'antetitulo' => 'Venta y renta en León y alrededores', 'titulo' => 'Propiedades',
+    'texto' => "Encuentre casa, departamento, terreno, bodega u oficina con el respaldo de Du'an Bienes Raíces.",
+])]); ?>
 
 <section class="seccion propiedades" aria-labelledby="titulo-resultados">
     <div class="contenedor">

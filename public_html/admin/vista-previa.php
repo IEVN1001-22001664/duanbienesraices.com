@@ -20,6 +20,7 @@ $relleno = match ($s) {
     'blog'        => ['titulo' => 'Título del artículo', 'fecha' => date('Y-m-d'), 'contenido' => ''],
     'fundador'    => ['cita' => 'Frase principal', 'mensaje' => 'Mensaje del fundador…', 'nombre' => 'Nombre'],
     'galeria'     => ['alt' => ''],
+    'portadas'    => ['titulo' => 'Título'],
     default       => [],
 };
 foreach ($relleno as $campo => $valor) {
@@ -80,6 +81,14 @@ foreach ($relleno as $campo => $valor) {
         <?php else: ?>
             <section class="seccion fundador"><div class="contenedor"><?php componente('fundador', ['item' => $item]); ?></div></section>
         <?php endif;
+        break;
+
+    case 'portadas':
+        if (empty($item['imagen'])): ?>
+            <p class="previa-vacia">Sube una foto para ver la portada.</p>
+        <?php else:
+            componente('portada', ['portada' => portada_normalizar($item)]);
+        endif;
         break;
 
     case 'galeria':

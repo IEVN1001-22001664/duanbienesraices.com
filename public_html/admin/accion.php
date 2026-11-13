@@ -45,6 +45,10 @@ try {
         throw new ErrorPanel('Esta sección tiene un solo elemento: no se puede eliminar ni reordenar.');
     }
 
+    if (!empty(SECCIONES_ADMIN[$s]['fijo']) && in_array($accion, ['eliminar', 'ordenar', 'mover', 'activar'], true)) {
+        throw new ErrorPanel('Los elementos de esta sección son fijos: solo se pueden editar.');
+    }
+
     switch ($accion) {
         case 'activar':
             if ($s === 'blog') {

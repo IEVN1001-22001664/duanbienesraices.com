@@ -90,6 +90,9 @@ function miniatura_de(string $seccion, array $item): string
 /** Nombre visible de un elemento en las listas. */
 function nombre_de(string $seccion, array $item): string
 {
+    if ($seccion === 'portadas') {
+        return PORTADAS[$item['id'] ?? ''] ?? 'Portada';
+    }
     $nombre = trim((string) ($item[SECCIONES_ADMIN[$seccion]['campo_nombre']] ?? ''));
     if ($nombre !== '') {
         return $nombre;
@@ -109,6 +112,7 @@ function detalle_de(string $seccion, array $item): string
         'videos'      => 'youtube.com/watch?v=' . ($item['youtube_id'] ?? ''),
         'fundador'    => extracto((string) ($item['cita'] ?? ''), 90),
         'galeria'     => '',
+        'portadas'    => (string) ($item['titulo'] ?? ''),
         'blog'        => (!empty($item['fecha']) ? fecha_es((string) $item['fecha']) : 'Sin fecha') . ' · /blog/' . ($item['slug'] ?? ''),
         default       => '',
     };

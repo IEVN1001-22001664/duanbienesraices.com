@@ -21,6 +21,11 @@ if ($esUnico && $id === '') {
     }
 }
 $esNuevo = $id === '';
+// Sección de elementos fijos (portadas): no se crean elementos nuevos
+$esFijo = !empty($sec['fijo']);
+if ($esFijo && $esNuevo) {
+    redirigir('/admin/seccion.php?s=' . rawurlencode($s));
+}
 // A dónde se vuelve al guardar o cancelar
 $volver = $esUnico ? '/admin/editar.php?s=' . rawurlencode($s) : '/admin/seccion.php?s=' . rawurlencode($s);
 $salir = $esUnico ? '/admin/' : $volver;
@@ -127,6 +132,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 
 $titulo = $esUnico ? $sec['titulo'] : ($esNuevo ? $sec['nuevo'] : 'Editar ' . $sec['singular']);
+if ($s === 'portadas') {
+    $titulo = 'Portada de ' . (PORTADAS[$id] ?? 'página');
+}
 $accion = '/admin/editar.php?s=' . rawurlencode($s) . ($esNuevo ? '' : '&id=' . rawurlencode($id));
 admin_cabecera($titulo, $esUnico
     ? [['Inicio', '/admin/'], [$titulo, null]]
@@ -177,10 +185,14 @@ admin_cabecera($titulo, $esUnico
 
         <?php pintar_campos($s, $item, $errores); ?>
 
-        <div class="campo campo--check">
-            <label><input type="checkbox" name="activo" value="1"<?= ($item['activo'] ?? true) !== false ? ' checked' : '' ?>> Visible en el sitio</label>
-            <p class="campo__ayuda">Desmárcalo para guardarlo sin que aparezca todavía.</p>
-        </div>
+        <?php if ($esFijo): ?>
+            <input type="hidden" name="activo" value="1">
+        <?php else: ?>
+            <div class="campo campo--check">
+                <label><input type="checkbox" name="activo" value="1"<?= ($item['activo'] ?? true) !== false ? ' checked' : '' ?>> Visible en el sitio</label>
+                <p class="campo__ayuda">Desmárcalo para guardarlo sin que aparezca todavía.</p>
+            </div>
+        <?php endif; ?>
 
         <div class="edicion__botones">
             <button class="boton boton--grande" type="submit">Guardar</button>

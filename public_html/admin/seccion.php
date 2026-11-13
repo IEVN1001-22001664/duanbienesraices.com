@@ -13,6 +13,8 @@ if (!empty($sec['unico'])) {
     redirigir('/admin/editar.php?s=' . rawurlencode($s));
 }
 $esBlog = $s === 'blog';
+// Elementos fijos (portadas): solo se editan
+$esFijo = !empty($sec['fijo']);
 
 $errorArchivo = null;
 try {
@@ -44,7 +46,7 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
                 <button class="boton boton--secundario" type="submit">Actualizar desde Tokko</button>
             </form>
             <a class="boton" href="/admin/tokko.php">+ Elegir propiedad de Tokko</a>
-        <?php else: ?>
+        <?php elseif (!$esFijo): ?>
             <a class="boton" href="/admin/editar.php?s=<?= e($s) ?>">+ <?= e($sec['nuevo']) ?></a>
         <?php endif; ?>
     </div>
@@ -59,10 +61,12 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
 <?php elseif (!$items): ?>
     <p class="vacio">Aún no hay elementos. Usa «<?= e($sec['nuevo']) ?>» para crear el primero.</p>
 <?php else: ?>
-    <?php if (!$esBlog): ?>
+    <?php if ($esFijo): ?>
+        <p class="ayuda-lista">Cada página tiene su portada. Elige «Editar» para cambiar la foto o los textos.</p>
+    <?php elseif (!$esBlog): ?>
         <p class="ayuda-lista">Arrastra <span aria-hidden="true">⠿</span> o usa las flechas para cambiar el orden en que aparecen en el sitio. Se guarda solo.</p>
     <?php endif; ?>
-    <ol class="lista" <?= $esBlog ? '' : 'data-ordenable data-seccion="' . e($s) . '"' ?>>
+    <ol class="lista" <?= $esBlog || $esFijo ? '' : 'data-ordenable data-seccion="' . e($s) . '"' ?>>
         <?php foreach ($items as $pos => $item):
             $id = (string) ($item['id'] ?? '');
             $activo = ($item['activo'] ?? true) !== false;
@@ -71,7 +75,7 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
             $errores = validar_item($item, $s);
         ?>
             <li class="lista__item<?= $activo ? '' : ' lista__item--oculto' ?>" data-item data-id="<?= e($id) ?>">
-                <?php if (!$esBlog): ?>
+                <?php if (!$esBlog && !$esFijo): ?>
                     <span class="lista__asa" data-asa title="Arrastra para mover" aria-hidden="true">⠿</span>
                 <?php endif; ?>
                 <?= miniatura_de($s, $item) ?>
@@ -86,6 +90,11 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
                 </div>
 
                 <div class="lista__acciones">
+                    <?php if ($esFijo): ?>
+                        <a class="boton boton--secundario boton--chico" href="/admin/editar.php?s=<?= e($s) ?>&amp;id=<?= e(rawurlencode($id)) ?>">Editar</a>
+                </div>
+            </li>
+                    <?php continue; endif; ?>
                     <form method="post" action="/admin/accion.php" data-accion="activar">
                         <?= campo_csrf() ?>
                         <input type="hidden" name="accion" value="activar">

@@ -31,6 +31,9 @@ admin_cabecera('Inicio');
                 <?php elseif (!empty($sec['unico'])): ?>
                     <?= $activos ? 'Visible en el sitio' : 'Oculta en el sitio' ?>
                     <?php if ($cambio): ?> · Último cambio: <?= e(date('d/m/Y H:i', $cambio)) ?><?php endif; ?>
+                <?php elseif (!empty($sec['fijo'])): ?>
+                    <?= count($items) ?> páginas
+                    <?php if ($cambio): ?> · Último cambio: <?= e(date('d/m/Y H:i', $cambio)) ?><?php endif; ?>
                 <?php else: ?>
                     <?= $activos ?> visibles de <?= count($items) ?>
                     <?php if ($cambio): ?> · Último cambio: <?= e(date('d/m/Y H:i', $cambio)) ?><?php endif; ?>

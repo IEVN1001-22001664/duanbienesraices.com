@@ -12,9 +12,9 @@ $pagina = [
     'descripcion' => 'Somos una empresa con más de 13 años de experiencia en el sector. Profesionalismo y credibilidad nos respaldan.',
     'ruta'        => '/empresa',
     'activo'      => 'nosotros',
-    'imagen'      => '/assets/img/nosotros-hero.webp',
-    'precarga'    => '/assets/img/nosotros-hero.webp',
 ];
+$portada = portada_de('nosotros', ['imagen' => '/assets/img/nosotros-hero.webp', 'antetitulo' => 'Desde 2013 en León, Guanajuato', 'titulo' => 'Nosotros', 'texto' => SLOGAN]);
+$pagina['imagen'] = $pagina['precarga'] = $portada['imagen'];
 
 $fundador = obtener_seccion('fundador')[0] ?? null;
 $galeria = obtener_seccion('galeria');
@@ -30,13 +30,7 @@ require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
 
-<section class="portada" style="--fondo: url('/assets/img/nosotros-hero.webp')">
-    <div class="contenedor portada__texto">
-        <p class="portada__antetitulo">Desde 2013 en León, Guanajuato</p>
-        <h1 class="portada__titulo">Nosotros</h1>
-        <p class="portada__lead"><?= e(SLOGAN) ?></p>
-    </div>
-</section>
+<?php componente('portada', ['portada' => $portada]); ?>
 
 <?php if ($fundador): ?>
 <section class="seccion fundador" aria-labelledby="titulo-fundador">

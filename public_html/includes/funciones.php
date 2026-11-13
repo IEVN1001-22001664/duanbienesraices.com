@@ -172,6 +172,10 @@ const ESQUEMAS = [
         'req'   => ['id', 'imagen', 'alt'],
         'tipos' => ['imagen' => 'ruta'],
     ],
+    'portadas' => [
+        'req'   => ['id', 'imagen', 'titulo'],
+        'tipos' => ['imagen' => 'ruta'],
+    ],
     'blog' => [
         'req'   => ['slug', 'titulo', 'fecha', 'contenido'],
         'tipos' => ['slug' => 'slug', 'fecha' => 'fecha', 'portada' => 'ruta?'],
@@ -269,6 +273,47 @@ function obtener_seccion(string $seccion): array
     return $validos;
 }
 
+/** Páginas que tienen portada editable en el panel (sección «portadas»): id => nombre de la página. */
+const PORTADAS = [
+    'nosotros'    => 'Nosotros',
+    'propiedades' => 'Propiedades',
+    'propietario' => 'Tengo una propiedad',
+    'blog'        => 'Blog',
+    'contacto'    => 'Contacto',
+];
+
+/** Encuadres de la foto de una portada: valor del panel => background-position. */
+const PORTADA_ENCUADRES = ['centro' => 'center', 'arriba' => 'center 25%', 'abajo' => 'center 80%'];
+
+/**
+ * Deja una portada lista para pintarse: ['imagen' (URL), 'posicion', 'antetitulo', 'titulo', 'texto'].
+ * $item viene de portadas.json (o del formulario del panel, en la vista previa).
+ */
+function portada_normalizar(array $item): array
+{
+    return [
+        'imagen'     => ruta_upload((string) ($item['imagen'] ?? '')),
+        'posicion'   => PORTADA_ENCUADRES[$item['encuadre'] ?? 'centro'] ?? 'center',
+        'antetitulo' => trim((string) ($item['antetitulo'] ?? '')),
+        'titulo'     => trim((string) ($item['titulo'] ?? '')),
+        'texto'      => trim((string) ($item['texto'] ?? '')),
+    ];
+}
+
+/**
+ * Portada de una página (ver PORTADAS). Si en el panel no existe, está oculta o es inválida,
+ * se usa $respaldo (con las mismas claves que devuelve portada_normalizar()).
+ */
+function portada_de(string $id, array $respaldo): array
+{
+    foreach (obtener_seccion('portadas') as $item) {
+        if ($item['id'] === $id) {
+            return portada_normalizar($item);
+        }
+    }
+    return $respaldo + ['posicion' => 'center', 'antetitulo' => '', 'texto' => ''];
+}
+
 /** Lista de artículos del blog activos, del más reciente al más antiguo. */
 function obtener_posts(): array
 {
@@ -307,7 +352,7 @@ function obtener_post(string $slug): ?array
  * Versión de data-seed/ y uploads-seed/. Subirla cuando se agregue una sección nueva a la semilla
  * (p. ej. 2 = fundador y galería de Nosotros) para que el servidor la copie en el siguiente deploy.
  */
-const SEMILLA_VERSION = '2';
+const SEMILLA_VERSION = '3';
 
 /**
  * Primer arranque en un servidor nuevo: copia data-seed/ → data/ y uploads-seed/ → uploads/.

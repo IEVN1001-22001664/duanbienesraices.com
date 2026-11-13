@@ -9,8 +9,9 @@ $pagina = [
     'descripcion' => 'Con gusto le atendemos. Escríbanos por WhatsApp al 477 551 4226 o a info@duanbienesraices.com.',
     'ruta'        => '/contacto',
     'activo'      => 'contacto',
-    'imagen'      => '/assets/img/contacto-ubicacion.webp',
 ];
+$portada = portada_de('contacto', ['imagen' => '/assets/img/contacto-ubicacion.webp', 'titulo' => 'Contáctenos', 'texto' => 'Con gusto atenderemos su llamada o mensaje.']);
+$pagina['imagen'] = $pagina['precarga'] = $portada['imagen'];
 $d = DIRECCION;
 // Mapa embebido sin API key; se carga al hacer clic para no frenar la página.
 $mapaSrc = 'https://www.google.com/maps?q=' . rawurlencode(NOMBRE_SITIO . ', ' . $d['calle'] . ', ' . $d['colonia'] . ', ' . $d['cp'] . ' León, Gto.') . '&z=16&output=embed';
@@ -19,12 +20,7 @@ require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
 
-<section class="portada portada--baja" style="--fondo: url('/assets/img/contacto-ubicacion.webp')">
-    <div class="contenedor portada__texto">
-        <h1 class="portada__titulo">Contáctenos</h1>
-        <p class="portada__lead">Con gusto atenderemos su llamada o mensaje.</p>
-    </div>
-</section>
+<?php componente('portada', ['portada' => $portada, 'baja' => true]); ?>
 
 <section class="seccion contacto" aria-label="Datos de contacto y formulario">
     <div class="contenedor contacto__grid">

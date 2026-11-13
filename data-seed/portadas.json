@@ -1,0 +1,50 @@
+{
+  "actualizado": "2026-11-13T00:00:00-06:00",
+  "items": [
+    {
+      "id": "nosotros",
+      "activo": true,
+      "imagen": "uploads/portadas/nosotros.webp",
+      "encuadre": "centro",
+      "antetitulo": "Desde 2013 en León, Guanajuato",
+      "titulo": "Nosotros",
+      "texto": "Su Patrimonio en Buenas Manos"
+    },
+    {
+      "id": "propiedades",
+      "activo": true,
+      "imagen": "uploads/portadas/propiedades.webp",
+      "encuadre": "centro",
+      "antetitulo": "Venta y renta en León y alrededores",
+      "titulo": "Propiedades",
+      "texto": "Encuentre casa, departamento, terreno, bodega u oficina con el respaldo de Du'an Bienes Raíces."
+    },
+    {
+      "id": "propietario",
+      "activo": true,
+      "imagen": "uploads/portadas/propietario.webp",
+      "encuadre": "centro",
+      "antetitulo": "Tengo una propiedad",
+      "titulo": "¡Resultados comprobados!",
+      "texto": "Más de 13 años de experiencia nos respaldan."
+    },
+    {
+      "id": "blog",
+      "activo": true,
+      "imagen": "uploads/portadas/blog.webp",
+      "encuadre": "arriba",
+      "antetitulo": "Du'an Bienes Raíces",
+      "titulo": "Blog",
+      "texto": "Guías y consejos para comprar, vender o rentar con certeza en León, Guanajuato."
+    },
+    {
+      "id": "contacto",
+      "activo": true,
+      "imagen": "uploads/portadas/contacto.webp",
+      "encuadre": "centro",
+      "antetitulo": "",
+      "titulo": "Contáctenos",
+      "texto": "Con gusto atenderemos su llamada o mensaje."
+    }
+  ]
+}
