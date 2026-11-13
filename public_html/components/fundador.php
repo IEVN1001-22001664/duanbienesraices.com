@@ -4,6 +4,8 @@
  * Variables: $item (único elemento de fundador.json).
  * El mensaje es texto plano; una línea en blanco separa los párrafos.
  */
+// Redes del fundador: solo las que tienen liga
+$redes = array_filter(array_intersect_key($item, array_flip(REDES_FUNDADOR)), fn($u) => is_string($u) && $u !== '');
 $parrafos = array_filter(array_map('trim', preg_split('/\R\s*\R/u', (string) ($item['mensaje'] ?? '')) ?: []));
 ?>
 <div class="fundador__tarjeta">
@@ -17,9 +19,18 @@ $parrafos = array_filter(array_map('trim', preg_split('/\R\s*\R/u', (string) ($i
         <?php foreach ($parrafos as $parrafo): ?>
             <p><?= nl2br(e($parrafo), false) ?></p>
         <?php endforeach; ?>
-        <p class="fundador__firma">
-            <strong><?= e($item['nombre']) ?></strong>
-            <?php if (!empty($item['cargo'])): ?><span><?= e($item['cargo']) ?></span><?php endif; ?>
-        </p>
+        <div class="fundador__pie">
+            <p class="fundador__firma">
+                <strong><?= e($item['nombre']) ?></strong>
+                <?php if (!empty($item['cargo'])): ?><span><?= e($item['cargo']) ?></span><?php endif; ?>
+            </p>
+            <?php if ($redes): ?>
+                <ul class="redes fundador__redes" aria-label="<?= e('Redes sociales de ' . $item['nombre']) ?>">
+                    <?php foreach ($redes as $red => $url): ?>
+                        <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e(ucfirst($red) . ' de ' . $item['nombre']) ?>"><?= icono($red) ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
     </div>
 </div>

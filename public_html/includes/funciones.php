@@ -166,7 +166,7 @@ const ESQUEMAS = [
     ],
     'fundador' => [
         'req'   => ['id', 'foto', 'cita', 'mensaje', 'nombre'],
-        'tipos' => ['foto' => 'ruta'],
+        'tipos' => ['foto' => 'ruta', 'facebook' => 'url?', 'instagram' => 'url?', 'youtube' => 'url?'],
     ],
     'galeria' => [
         'req'   => ['id', 'imagen', 'alt'],
@@ -273,6 +273,9 @@ function obtener_seccion(string $seccion): array
     return $validos;
 }
 
+/** Redes sociales del fundador que se pueden enlazar en su carta (campos opcionales de fundador.json). */
+const REDES_FUNDADOR = ['facebook', 'instagram', 'youtube'];
+
 /** Páginas que tienen portada editable en el panel (sección «portadas»): id => nombre de la página. */
 const PORTADAS = [
     'nosotros'    => 'Nosotros',
@@ -352,7 +355,7 @@ function obtener_post(string $slug): ?array
  * Versión de data-seed/ y uploads-seed/. Subirla cuando se agregue una sección nueva a la semilla
  * (p. ej. 2 = fundador y galería de Nosotros) para que el servidor la copie en el siguiente deploy.
  */
-const SEMILLA_VERSION = '3';
+const SEMILLA_VERSION = '4';
 
 /**
  * Primer arranque en un servidor nuevo: copia data-seed/ → data/ y uploads-seed/ → uploads/.
@@ -390,6 +393,18 @@ function inicializar_datos(): void
         };
         $copiarNuevos(DIR_DATA_SEED, DIR_DATA);
         $copiarNuevos(DIR_UPLOADS_SEED, DIR_UPLOADS);
+        // Versión 4: la carta del fundador ganó sus redes sociales. Se agregan una sola vez a la carta
+        // que ya existe (después se editan o se borran en el panel).
+        if ((int) trim((string) @file_get_contents($marca)) < 4) {
+            $archivo = DIR_DATA . '/fundador.json';
+            $carta = is_file($archivo) ? json_decode((string) file_get_contents($archivo), true) : null;
+            $redes = json_decode((string) @file_get_contents(DIR_DATA_SEED . '/fundador.json'), true)['items'][0] ?? [];
+            $redes = array_intersect_key($redes, array_flip(REDES_FUNDADOR));
+            if (is_array($carta) && isset($carta['items'][0]) && !array_intersect_key($carta['items'][0], $redes)) {
+                $carta['items'][0] += $redes;
+                @file_put_contents($archivo, json_encode($carta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", LOCK_EX);
+            }
+        }
         @file_put_contents($marca, SEMILLA_VERSION);
         return;
     }

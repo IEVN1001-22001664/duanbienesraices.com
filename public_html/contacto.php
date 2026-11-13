@@ -91,7 +91,7 @@ require __DIR__ . '/includes/header.php';
 <section class="mapa" aria-label="Mapa de ubicación">
     <div class="mapa__marco" data-mapa="<?= e($mapaSrc) ?>">
         <img src="/assets/img/contacto-ubicacion.webp" alt="" width="1920" height="883" loading="lazy" decoding="async">
-        <button class="boton mapa__boton" type="button"><?= icono('ubicacion') ?> Ver mapa interactivo</button>
+        <button class="boton mapa__boton" type="button"><?= icono('ubicacion') ?> Ver en Maps</button>
     </div>
 </section>
 
