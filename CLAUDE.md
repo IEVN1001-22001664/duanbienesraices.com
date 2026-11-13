@@ -147,6 +147,9 @@ Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de l
 
 ## Estado actual (2 nov 2026)
 
+- **Lanzado el 13 nov 2026:** `duanbienesraices.com` ya apunta a SiteGround (IP `35.215.119.253`). El dominio real quedó como **dominio aparcado** del sitio (también `es.` y `en.`); el dominio principal del hosting sigue siendo `emmanuelalejandrom4.sg-host.com`, así que la carpeta, `SG_RUTA`, `SG_HOST` y el deploy no cambiaron. DNS en Wix: `@` A → SiteGround y `www`/`es`/`en` CNAME → `duanbienesraices.com`; MX, SPF, DKIM y `propiedades` intactos. Let's Encrypt emitido para raíz+www, `es.` y `en.` (se renueva solo). `URL_SITIO` del servidor = `https://www.duanbienesraices.com`; GTM ya carga. El cliente probó formularios, panel, recuperación de contraseña y correo, y dejó GTM/GA4/Search Console configurados. Bitácora y pendientes en `docs/lanzamiento.md`.
+- El sitio temporal sigue respondiendo (con `noindex`) y sirve para probar.
+
 - **Fase 1** (maquetado y SEO) y **Fase 2** (panel) terminadas y subidas a `main`. Último commit: `f1e98d3`.
 - El panel pasó 56 pruebas de extremo a extremo y la revisión en el navegador a 375 y 1280 px.
 - **Teléfono fijo retirado:** el (477) 688 6298 ya no se publica (pie, Contacto, aviso de privacidad ni datos para Google). El único número es el WhatsApp 477 551 4226, que también se usa como `telephone` en los datos para Google.

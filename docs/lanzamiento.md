@@ -2,6 +2,10 @@
 
 Plan por fases para el día del cambio (13 nov 2026). El detalle técnico de cada paso está en `deploy.md` (secciones 6 a 8) y la zona DNS completa en `dns-respaldo-wix.md`.
 
+> **Estado (13 nov 2026): fases 0 a 5 terminadas; el sitio nuevo ya está en `www.duanbienesraices.com`.** Queda la fase 6.
+>
+> Cómo se hizo en realidad la fase 1: **no** se usó «Change Primary Domain». `duanbienesraices.com`, `es.` y `en.` se agregaron como **dominios aparcados** (Site Tools → Dominio → Dominios aparcados), así que la carpeta, `SG_RUTA` y `SG_HOST` no cambiaron. En la fase 3 se emitió un Let's Encrypt para cada uno (raíz + www, `es.` y `en.`), sin wildcard porque el DNS está en Wix.
+
 **Fecha límite:** el plan Premium de Wix termina antes del 18 nov 2026. Mientras siga activo se puede regresar a Wix en minutos (ver «Marcha atrás»).
 
 **Qué no cambia:** el dominio sigue registrado en Wix, el DNS se sigue administrando en Wix y el correo sigue en Google Workspace. Solo cambia a qué servidor apuntan `@`, `www`, `es` y `en`.
