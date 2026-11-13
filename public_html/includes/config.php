@@ -67,8 +67,10 @@ define('URL_RESENAS_GOOGLE', 'https://maps.app.goo.gl/4i9H3U41759pjZ2AA');
 define('REDES', [
     'facebook'  => 'https://www.facebook.com/duan.bienesraices/',
     'instagram' => 'https://www.instagram.com/duanbienesraices/',
-    'youtube'   => 'https://www.youtube.com/channel/UCIA2vHhcntbKeaHo8bRdtHQ',
+    'youtube'   => 'https://www.youtube.com/@alejandro.jaquez',
 ]);
+// TikTok: por ahora solo se enlaza desde la ficha de ejemplo de Tengo una propiedad
+define('URL_TIKTOK', 'https://www.tiktok.com/@arq.alejandrojaquez');
 // Botón «Ver canal completo» de la sección de videos del inicio
 define('URL_CANAL_VIDEOS', 'https://www.youtube.com/@alejandro.jaquez');
 

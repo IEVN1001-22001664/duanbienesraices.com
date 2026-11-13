@@ -852,15 +852,6 @@ html:not(.js) .menu-boton { display: none; }
 .leer-mas summary > span:first-child { display: block; margin-bottom: .5rem; }
 .leer-mas__boton { font-weight: 700; color: var(--rojo-oscuro); text-decoration: underline; }
 .leer-mas[open] .leer-mas__boton { display: none; }
-.tour { position: relative; display: block; border-radius: var(--radio); overflow: hidden; }
-.tour img { width: 100%; transition: transform .4s; }
-.tour:hover img { transform: scale(1.03); }
-.tour__boton {
-    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    display: inline-flex; gap: .5rem; align-items: center; background: var(--rojo); color: var(--blanco);
-    padding: .7rem 1.3rem; border-radius: 999px; font-weight: 700; font-family: var(--fuente-titulos);
-}
-
 .banda-inventario {
     color: var(--blanco); text-align: center; padding-block: clamp(3rem, 8vw, 5rem);
     --velo: linear-gradient(rgba(180, 0, 0, .88), rgba(130, 0, 0, .9));

@@ -153,7 +153,7 @@ require __DIR__ . '/includes/header.php';
 <section class="seccion ejemplo" aria-labelledby="titulo-ejemplo">
     <div class="contenedor">
         <h2 class="titulo-seccion" id="titulo-ejemplo">Así presentamos su propiedad</h2>
-        <p class="subtitulo-seccion">Cada inmueble recibe descripción profesional, video, tour virtual y ubicación.</p>
+        <p class="subtitulo-seccion">Cada inmueble recibe descripción profesional, fotos, video y ubicación.</p>
         <article class="ejemplo__tarjeta">
             <header class="ejemplo__encabezado">
                 <div class="ejemplo__cabeza">
@@ -230,8 +230,8 @@ require __DIR__ . '/includes/header.php';
             </div>
 
             <ul class="redes ejemplo__redes" aria-label="Redes sociales">
-                <?php foreach (REDES as $red => $url): ?>
-                    <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e(ucfirst($red)) ?>"><?= icono($red) ?></a></li>
+                <?php foreach (['facebook' => REDES['facebook'], 'instagram' => REDES['instagram'], 'tiktok' => URL_TIKTOK] as $red => $url): ?>
+                    <li><a href="<?= e($url) ?>" target="_blank" rel="noopener" aria-label="<?= e($red === 'tiktok' ? 'TikTok' : ucfirst($red)) ?>"><?= icono($red) ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </article>
