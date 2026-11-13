@@ -25,8 +25,9 @@ if ($valido && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     }
 }
 
-// El token no debe salir del sitio en la cabecera Referer ni quedar en caché
-header('Referrer-Policy: no-referrer');
+// Ojo: no poner aquí «Referrer-Policy: no-referrer». Con esa política el navegador manda
+// «Origin: null» al enviar el formulario y verificar_csrf() lo rechaza. La política general
+// del panel (same-origin, en nucleo.php) ya impide que el token salga del sitio.
 
 admin_cabecera('Contraseña nueva');
 ?>
