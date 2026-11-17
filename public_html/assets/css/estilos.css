@@ -603,6 +603,34 @@ html:not(.js) .menu-boton { display: none; }
 .fundador__redes a:hover { background: var(--rojo); }
 .fundador__firma strong { font-family: var(--fuente-titulos); font-weight: 700; font-size: 1.15rem; color: var(--blanco); }
 .fundador__firma span { font-family: var(--fuente-titulos); font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: #c3c6cc; }
+/* Versión con la publicación de Instagram: texto a la izquierda y el embed (máx. 540 px) a la derecha */
+.fundador__tarjeta--ig { align-items: center; }
+.fundador__nombre { font-family: var(--fuente-titulos); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.15; color: var(--blanco); margin: 0; }
+:where(main) .fundador__cargo { font-family: var(--fuente-titulos); font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: #c3c6cc; margin: .5rem 0 0; text-align: left; }
+:where(main) .fundador__frase {
+    font-family: var(--fuente-titulos); font-style: italic; font-weight: 700; font-size: clamp(1.15rem, 2vw, 1.4rem); line-height: 1.4;
+    color: var(--blanco); text-align: left; margin: 1.75rem 0 0; padding-left: 1.1rem; border-left: 3px solid var(--rojo);
+}
+.fundador__acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.25rem; margin-top: 2rem; }
+.fundador__seguir { display: inline-flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.fundador__seguir .icono { width: 20px; height: 20px; }
+.fundador__publicacion { padding: 0 1rem 1.5rem; }
+.fundador__marco-ig { max-width: 420px; margin: 0 auto; overflow: hidden; border-radius: var(--radio-chico); background: var(--blanco); box-shadow: 0 18px 40px rgba(0, 0, 0, .35); }
+.fundador__marco-ig iframe { display: block; width: 100%; border: 0; }
+/* Escritorio: la publicación ocupa cerca de un tercio de la tarjeta, con aire amplio arriba, abajo y a
+   la derecha; el texto va centrado en vertical a su izquierda. Por debajo de 1024 px van apilados. */
+@media (min-width: 860px) and (max-width: 1023px) {
+    .fundador__tarjeta.fundador__tarjeta--ig { grid-template-columns: 1fr; }
+    .fundador__publicacion { padding: 0 2rem 2.5rem; }
+}
+@media (min-width: 1024px) {
+    .fundador__tarjeta.fundador__tarjeta--ig {
+        grid-template-columns: 1fr minmax(320px, 400px); column-gap: clamp(2rem, 5vw, 5rem);
+        padding: clamp(3.5rem, 8vw, 7.5rem) clamp(2.5rem, 9vw, 8.5rem) clamp(3.5rem, 8vw, 7.5rem) clamp(2rem, 4.5vw, 4.5rem);
+    }
+    .fundador__tarjeta--ig .fundador__texto { padding: 0; }
+    .fundador__publicacion { padding: 0; }
+}
 @media (min-width: 860px) {
     .fundador__tarjeta { grid-template-columns: 41fr 59fr; }
     .fundador__foto img { aspect-ratio: auto; min-height: 100%; }

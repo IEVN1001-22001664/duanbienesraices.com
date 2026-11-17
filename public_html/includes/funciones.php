@@ -166,7 +166,7 @@ const ESQUEMAS = [
     ],
     'fundador' => [
         'req'   => ['id', 'foto', 'cita', 'mensaje', 'nombre'],
-        'tipos' => ['foto' => 'ruta', 'facebook' => 'url?', 'instagram' => 'url?', 'youtube' => 'url?'],
+        'tipos' => ['foto' => 'ruta', 'facebook' => 'url?', 'instagram' => 'url?', 'youtube' => 'url?', 'publicacion' => 'url?'],
     ],
     'galeria' => [
         'req'   => ['id', 'imagen', 'alt'],
@@ -273,6 +273,18 @@ function obtener_seccion(string $seccion): array
     return $validos;
 }
 
+/**
+ * Dirección del embed oficial de una publicación de Instagram (/p/, /reel/ o /tv/), sin el texto
+ * de la publicación. Devuelve null si la liga no es de una publicación de Instagram.
+ */
+function instagram_embed(string $url): ?string
+{
+    if (!preg_match('#^https?://(?:www\.)?instagram\.com/(?:[A-Za-z0-9_.]+/)?(p|reel|tv)/([A-Za-z0-9_-]{5,40})#', trim($url), $m)) {
+        return null;
+    }
+    return 'https://www.instagram.com/' . ($m[1] === 'tv' ? 'p' : $m[1]) . '/' . $m[2] . '/embed/';
+}
+
 /** Redes sociales del fundador que se pueden enlazar en su carta (campos opcionales de fundador.json). */
 const REDES_FUNDADOR = ['facebook', 'instagram', 'youtube'];
 
@@ -362,7 +374,7 @@ function obtener_post(string $slug): ?array
  * Versión de data-seed/ y uploads-seed/. Subirla cuando se agregue una sección nueva a la semilla
  * (p. ej. 2 = fundador y galería de Nosotros) para que el servidor la copie en el siguiente deploy.
  */
-const SEMILLA_VERSION = '4';
+const SEMILLA_VERSION = '5';
 
 /**
  * Primer arranque en un servidor nuevo: copia data-seed/ → data/ y uploads-seed/ → uploads/.
@@ -409,6 +421,25 @@ function inicializar_datos(): void
             $redes = array_intersect_key($redes, array_flip(REDES_FUNDADOR));
             if (is_array($carta) && isset($carta['items'][0]) && !array_intersect_key($carta['items'][0], $redes)) {
                 $carta['items'][0] += $redes;
+                @file_put_contents($archivo, json_encode($carta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", LOCK_EX);
+            }
+        }
+        // Versión 5: la sección del fundador muestra su publicación de Instagram. La liga se agrega
+        // una sola vez a la carta que ya existe (si la borran en el panel, vuelve a verse la carta),
+        // y de paso el nombre pierde el segundo apellido.
+        if ((int) trim((string) @file_get_contents($marca)) < 5) {
+            $archivo = DIR_DATA . '/fundador.json';
+            $carta = is_file($archivo) ? json_decode((string) file_get_contents($archivo), true) : null;
+            $semilla = json_decode((string) @file_get_contents(DIR_DATA_SEED . '/fundador.json'), true)['items'][0] ?? [];
+            if (is_array($carta) && isset($carta['items'][0]) && !isset($carta['items'][0]['publicacion'])
+                && !empty($semilla['publicacion'])) {
+                $carta['items'][0]['publicacion'] = $semilla['publicacion'];
+                // El nombre se publica sin el segundo apellido (pedido del cliente, 17 nov 2026)
+                foreach (['nombre', 'alt'] as $c) {
+                    if (isset($carta['items'][0][$c])) {
+                        $carta['items'][0][$c] = str_replace('Arq. Alejandro Jáquez Martínez', 'Arq. Alejandro Jáquez', $carta['items'][0][$c]);
+                    }
+                }
                 @file_put_contents($archivo, json_encode($carta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", LOCK_EX);
             }
         }

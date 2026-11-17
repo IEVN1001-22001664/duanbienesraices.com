@@ -81,6 +81,9 @@ function limpiar_campo(string $seccion, string $nombre, array $def, mixed $crudo
             if (!es_url_segura($texto) || str_starts_with($texto, '#')) {
                 return [$texto, 'Escribe una dirección completa (https://…) o una página del sitio que empiece con /.'];
             }
+            if (!empty($def['instagram']) && !instagram_embed($texto)) {
+                return [$texto, 'Pega la liga de una publicación de Instagram (https://www.instagram.com/p/…).'];
+            }
             return [$texto, null];
 
         case 'precio':

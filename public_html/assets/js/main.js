@@ -801,6 +801,50 @@
         }
     }
 
+    // --- Publicación de Instagram del fundador (components/fundador.php) ---
+    // El embed oficial avisa su alto con mensajes {type: "MEASURE", details: {height}}; con eso se
+    // ajusta el iframe para que no tenga barra propia, sin cargar el script de Instagram. Mientras no
+    // llega (o si nunca llega) se estima con el ancho: foto 4:5 + 184 px de encabezado y pie. Como
+    // Instagram no admite fotos más altas que 4:5, ese es el alto máximo: se usa el menor de los dos,
+    // porque con la sesión de Instagram abierta el embed reporta un área en blanco de más.
+    // El marco esconde los últimos 45 px, que son la fila «Agrega un comentario…».
+    var marcosInstagram = $$('[data-instagram-marco]');
+    if (marcosInstagram.length) {
+        var PIE_INSTAGRAM = 45;
+        var altoInstagram = function (marco, alto) {
+            marco.querySelector('iframe').style.height = alto + 'px';
+            marco.style.height = (alto - PIE_INSTAGRAM) + 'px';
+        };
+        var maximoInstagram = function (m) { return Math.round(m.clientWidth * 1.25 + 184); };
+        var estimarInstagram = function () {
+            marcosInstagram.forEach(function (m) {
+                if (m.clientWidth) altoInstagram(m, maximoInstagram(m));
+            });
+        };
+        estimarInstagram();
+        var anchoPrevio = window.innerWidth;
+        window.addEventListener('resize', function () {
+            if (window.innerWidth === anchoPrevio) return;   // en celular la barra del navegador cambia el alto
+            anchoPrevio = window.innerWidth;
+            estimarInstagram();
+        });
+        window.addEventListener('message', function (ev) {
+            if (ev.origin !== 'https://www.instagram.com') return;
+            var datos = ev.data;
+            if (typeof datos === 'string') {
+                try { datos = JSON.parse(datos); } catch (e) { return; }
+            }
+            if (!datos || datos.type !== 'MEASURE' || !datos.details) return;
+            var alto = parseInt(datos.details.height, 10);
+            if (!alto || alto < 200 || alto > 3000) return;
+            marcosInstagram.forEach(function (m) {
+                if (m.querySelector('iframe').contentWindow === ev.source) {
+                    altoInstagram(m, m.clientWidth ? Math.min(alto, maximoInstagram(m)) : alto);
+                }
+            });
+        });
+    }
+
     // --- Animación de entrada en celular: al terminar se quita y no se repite en la visita ---
     var intro = $('[data-intro]');
     if (intro) {
