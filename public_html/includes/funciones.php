@@ -276,6 +276,9 @@ function obtener_seccion(string $seccion): array
 /** Redes sociales del fundador que se pueden enlazar en su carta (campos opcionales de fundador.json). */
 const REDES_FUNDADOR = ['facebook', 'instagram', 'youtube'];
 
+/** Videos del hero por debajo de este peso (1 MB) también se reproducen en celular. */
+const VIDEO_HERO_LIGERO = 1048576;
+
 /** Páginas que tienen portada editable en el panel (sección «portadas»): id => nombre de la página. */
 const PORTADAS = [
     'nosotros'    => 'Nosotros',

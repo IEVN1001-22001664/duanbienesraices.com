@@ -60,7 +60,7 @@ uploads-seed/ imágenes y videos iniciales versionados (los videos del hero pesa
 - **main.js:**
   - Videos de YouTube: la tarjeta solo muestra la miniatura; al hacer clic se abre un `<dialog>` grande (a todo lo ancho en celular) y el iframe se borra al cerrar.
   - Galerías y carruseles con scroll-snap; cada uno guarda su propio índice.
-  - El video del hero solo se carga a ≥768 px y sin reducir movimiento. Cada diapositiva con video avanza cuando el video termina (el fundido empieza 0,9 s antes del final y el video que sale sigue corriendo mientras se desvanece); sin video, cada 7 s. Siempre hay un temporizador de respaldo y ya no se pausa con el mouse, para que nunca se quede atorado.
+  - El video del hero se carga a ≥768 px; en celular solo los ligeros (menos de 1 MB, `VIDEO_HERO_LIGERO`, marcados con `data-ligero`, hoy solo «Du'an Intro»). Nunca con «reducir movimiento» ni ahorro de datos. Cada diapositiva con video avanza cuando el video termina (el fundido empieza 0,9 s antes del final y el video que sale sigue corriendo mientras se desvanece); sin video, cada 7 s. Siempre hay un temporizador de respaldo y ya no se pausa con el mouse, para que nunca se quede atorado.
   - El mapa se carga al hacer clic.
   - Los formularios se envían por `fetch` a `api/enviar.php`; el script de Turnstile se carga solo cuando el formulario está por verse.
   - Animación de entrada en celular.

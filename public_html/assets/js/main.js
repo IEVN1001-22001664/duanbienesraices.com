@@ -77,8 +77,13 @@
         var FUNDIDO = 900;                 // igual que la transición de .hero__slide en el CSS
         var ESPERA_VIDEO = 10000;          // si el video no arranca en este tiempo, se avanza con el intervalo normal
         var temporizador = null;
-        var usarVideo = window.matchMedia('(min-width: 768px)').matches && !reducirMovimiento &&
-            !(navigator.connection && navigator.connection.saveData);
+        var ahorroDatos = !!(navigator.connection && navigator.connection.saveData);
+        var pantallaGrande = window.matchMedia('(min-width: 768px)').matches;
+        // Video en escritorio; en celular solo los ligeros (data-ligero, menos de 1 MB). Nunca con
+        // «reducir movimiento» ni con ahorro de datos.
+        function usarVideo(v) {
+            return !!v && !reducirMovimiento && !ahorroDatos && (pantallaGrande || v.hasAttribute('data-ligero'));
+        }
         var automatico = !reducirMovimiento && slides.length > 1;
 
         function siguiente() { ir(actual + 1); }
@@ -90,7 +95,7 @@
             clearTimeout(temporizador);
             if (!automatico) return;
             var v = $('video', slides[actual]);
-            if (!v || !usarVideo) { temporizador = setTimeout(siguiente, intervalo); return; }
+            if (!usarVideo(v)) { temporizador = setTimeout(siguiente, intervalo); return; }
             if (v.duration && isFinite(v.duration)) {
                 var resta = (v.duration - v.currentTime) * 1000 - FUNDIDO;
                 temporizador = setTimeout(siguiente, Math.max(resta, 1500) + 2000);   // respaldo por si se traba
@@ -116,7 +121,7 @@
             slides.forEach(function (s, i) {
                 var v = $('video', s);
                 if (!v) return;
-                if (i === actual && usarVideo) {
+                if (i === actual && usarVideo(v)) {
                     vigilarVideo(v, s);
                     if (!v.src) { v.src = v.getAttribute('data-src'); }
                     try { v.currentTime = 0; } catch (e) {}
