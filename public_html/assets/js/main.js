@@ -734,6 +734,73 @@
             window.scrollTo({ top: 0, behavior: reducirMovimiento ? 'auto' : 'smooth' });
         });
     }
+    // --- Mapa de la zona en las fichas (components/mapa-zona.php) ---
+    // Leaflet + OpenStreetMap se cargan solo cuando el mapa está por verse. El círculo de «zona
+    // aproximada» es una capa del mapa, así que se queda en su lugar al arrastrar y escala con el zoom.
+    // Si Leaflet no carga, se pone el mapa de Google de respaldo (sin círculo).
+    var mapasZona = $$('[data-mapa-zona]');
+    if (mapasZona.length) {
+        var leafletListo = null;
+        var cargarLeaflet = function (caja) {
+            if (!leafletListo) {
+                leafletListo = new Promise(function (listo, falla) {
+                    var pendientes = 2;
+                    var uno = function () { if (--pendientes === 0) listo(); };
+                    var css = document.createElement('link');
+                    css.rel = 'stylesheet'; css.href = caja.getAttribute('data-leaflet-css');
+                    css.onload = uno; css.onerror = falla;
+                    var js = document.createElement('script');
+                    js.src = caja.getAttribute('data-leaflet-js');
+                    js.onload = uno; js.onerror = falla;
+                    document.head.appendChild(css);
+                    document.head.appendChild(js);
+                });
+            }
+            return leafletListo;
+        };
+        var pintarMapa = function (caja) {
+            cargarLeaflet(caja).then(function () {
+                var L = window.L;
+                var centro = L.latLng(parseFloat(caja.getAttribute('data-lat')), parseFloat(caja.getAttribute('data-lng')));
+                var radio = parseFloat(caja.getAttribute('data-radio')) || 800;
+                var animar = !reducirMovimiento;
+                var mapa = L.map(caja, {
+                    scrollWheelZoom: false,          // la rueda sigue desplazando la página
+                    zoomAnimation: animar, fadeAnimation: animar, markerZoomAnimation: animar
+                });
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+                }).addTo(mapa);
+                // Primero la vista (el círculo necesita una para medirse) y luego el círculo
+                mapa.fitBounds(centro.toBounds(radio * 2), { padding: [28, 28], maxZoom: 16 });
+                L.circle(centro, {
+                    radius: radio, color: '#e21c21', weight: 2, opacity: .75,
+                    fillColor: '#e21c21', fillOpacity: .14, interactive: false
+                }).addTo(mapa);
+            }).catch(function () {
+                var marco = document.createElement('iframe');
+                marco.src = caja.getAttribute('data-respaldo');
+                marco.title = caja.getAttribute('aria-label') || 'Mapa de la zona';
+                marco.loading = 'lazy';
+                caja.innerHTML = '';
+                caja.appendChild(marco);
+            });
+        };
+        if ('IntersectionObserver' in window) {
+            var vigiaMapa = new IntersectionObserver(function (entradas) {
+                entradas.forEach(function (en) {
+                    if (!en.isIntersecting) return;
+                    vigiaMapa.unobserve(en.target);
+                    pintarMapa(en.target);
+                });
+            }, { rootMargin: '400px 0px' });
+            mapasZona.forEach(function (caja) { vigiaMapa.observe(caja); });
+        } else {
+            mapasZona.forEach(pintarMapa);
+        }
+    }
+
     // --- Animación de entrada en celular: al terminar se quita y no se repite en la visita ---
     var intro = $('[data-intro]');
     if (intro) {

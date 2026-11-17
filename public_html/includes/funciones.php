@@ -276,6 +276,10 @@ function obtener_seccion(string $seccion): array
 /** Redes sociales del fundador que se pueden enlazar en su carta (campos opcionales de fundador.json). */
 const REDES_FUNDADOR = ['facebook', 'instagram', 'youtube'];
 
+/** Radio del círculo de «zona aproximada» en los mapas de las fichas. Las coordenadas se redondean a
+ *  2 decimales (hasta ~770 m de error en León), así que con 800 m la propiedad siempre queda dentro. */
+const ZONA_RADIO_M = 800;
+
 /** Videos del hero por debajo de este peso (1 MB) también se reproducen en celular. */
 const VIDEO_HERO_LIGERO = 1048576;
 

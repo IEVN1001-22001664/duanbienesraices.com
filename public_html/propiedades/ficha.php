@@ -62,11 +62,6 @@ usort($similares, fn($a, $b) => [($b['tipo'] === $prop['tipo']), ($b['ciudad'] =
 $similares = array_slice($similares, 0, 3);
 
 $mensajeWhatsapp = "¡Hola! Me interesa la propiedad {$prop['codigo']}: {$prop['titulo']}. {$urlAbsoluta}";
-// Mapa de la zona: centrado en las coordenadas redondeadas (~1 km), sin marcador.
-// Si Tokko no trae coordenadas, se busca por colonia y ciudad.
-$mapaSrc = !empty($prop['zona_geo'])
-    ? 'https://www.google.com/maps?ll=' . $prop['zona_geo'][0] . ',' . $prop['zona_geo'][1] . '&z=15&t=m&output=embed'
-    : 'https://www.google.com/maps?q=' . rawurlencode($prop['ubicacion_completa'] . ', México') . '&z=14&output=embed';
 $descripcionSeo = extracto(implode(' ', $parrafos) ?: $prop['titulo'], 155);
 
 $pagina = [
@@ -224,11 +219,7 @@ require dirname(__DIR__) . '/includes/header.php';
                 <section class="ficha__bloque" aria-labelledby="titulo-zona">
                     <h2 class="ficha__subtitulo" id="titulo-zona">Zona</h2>
                     <p class="texto-suave">El mapa muestra la zona de la propiedad, no su dirección exacta. Con gusto le compartimos la ubicación al agendar una visita.</p>
-                    <?php /* Carga diferida nativa: el navegador lo pide al acercarse, sin depender de JS */ ?>
-                    <div class="mapa__marco ficha__mapa">
-                        <iframe src="<?= e($mapaSrc) ?>" title="<?= e('Mapa de la zona: ' . $prop['ubicacion_completa']) ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        <p class="ficha__mapa-zona"><?= icono('ubicacion', 'icono icono--mini') ?> <?= e($prop['ubicacion_completa']) ?></p>
-                    </div>
+                    <?php componente('mapa-zona', ['zonaGeo' => $prop['zona_geo'] ?? null, 'zonaNombre' => $prop['ubicacion_completa']]); ?>
                 </section>
             </div>
 

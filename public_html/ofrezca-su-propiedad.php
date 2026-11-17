@@ -227,10 +227,7 @@ require __DIR__ . '/includes/header.php';
                         <h4 class="ejemplo__subtitulo"><?= icono('ubicacion') ?> Ubicación</h4>
                         <a href="https://www.google.com/maps?q=21.061594,-101.597571" target="_blank" rel="noopener">Ver ubicación en Google Maps</a>
                     </div>
-                    <div class="mapa__marco ficha__mapa ejemplo__mapa">
-                        <iframe src="https://www.google.com/maps?ll=21.06,-101.6&amp;z=14&amp;t=m&amp;output=embed" title="Mapa de la zona: El Mayorazgo, León, Guanajuato" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        <p class="ficha__mapa-zona"><?= icono('ubicacion', 'icono icono--mini') ?> El Mayorazgo, León, Guanajuato</p>
-                    </div>
+                    <?php componente('mapa-zona', ['zonaGeo' => [21.06, -101.6], 'zonaNombre' => 'El Mayorazgo, León, Guanajuato', 'zonaClase' => 'ejemplo__mapa']); ?>
                 </div>
             </div>
 

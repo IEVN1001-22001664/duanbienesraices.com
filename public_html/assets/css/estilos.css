@@ -865,7 +865,7 @@ html:not(.js) .menu-boton { display: none; }
 .ejemplo__ubicacion .ejemplo__subtitulo { margin: 0; }
 .ejemplo__ubicacion a { font-weight: 600; }
 .ejemplo__mapa.ficha__mapa { height: 300px; margin-top: 0; border-radius: var(--radio-chico); }
-.ejemplo__mapa.ficha__mapa::after { width: 140px; height: 140px; }
+.ejemplo__mapa .ficha__mapa-abrir { display: none; }   /* ya está «Ver ubicación en Google Maps» arriba */
 .ejemplo__redes { justify-content: flex-end; margin-top: 1.5rem; }
 .ejemplo__redes a { background: none; color: var(--carbon); }
 .ejemplo__redes .icono { width: 26px; height: 26px; }
@@ -1257,15 +1257,24 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .ficha__videos { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .75rem; }
 .ficha__mapa { border-radius: var(--radio); margin-top: .75rem; height: 320px; }
 @media (min-width: 900px) { .ficha__mapa { height: 380px; } }
-/* Círculo de «zona aproximada» sobre el mapa (no bloquea el arrastre) */
-.ficha__mapa::after {
-    content: ""; position: absolute; left: 50%; top: 50%; width: 180px; height: 180px; transform: translate(-50%, -50%);
-    border-radius: 50%; background: rgba(226, 28, 33, .14); border: 2px solid rgba(226, 28, 33, .65); pointer-events: none;
+/* Mapa de la zona con Leaflet (components/mapa-zona.php). El círculo lo dibuja main.js dentro del mapa.
+   isolation: las capas de Leaflet (z-index 400 a 1000) no pasan por encima del encabezado fijo. */
+.ficha__mapa { isolation: isolate; }
+.ficha__mapa-lienzo { position: absolute; inset: 0; z-index: 0; background: var(--gris-claro); font-family: var(--fuente-texto); }
+.ficha__mapa-lienzo .leaflet-control-attribution { font-size: .7rem; }
+.ficha__mapa-lienzo .leaflet-bar a { color: var(--carbon); }
+.ficha__mapa-abrir {
+    position: absolute; top: .75rem; right: .75rem; z-index: 1; display: inline-flex; align-items: center; gap: .35rem;
+    padding: .4rem .8rem; border-radius: 999px; background: rgba(255, 255, 255, .96); box-shadow: var(--sombra);
+    font-size: .85rem; font-weight: 700; color: var(--rojo-oscuro); text-decoration: none;
 }
+.ficha__mapa-abrir:hover { background: var(--rojo); color: var(--blanco); }
+/* La etiqueta de la zona sube un poco para no tapar el crédito de OpenStreetMap */
+.ficha__mapa-lienzo ~ .ficha__mapa-zona { bottom: 1.6rem; }
 .ficha__mapa-zona {
     position: absolute; left: .75rem; bottom: .75rem; z-index: 1; margin: 0; max-width: calc(100% - 1.5rem);
     display: inline-flex; align-items: center; gap: .35rem; padding: .35rem .75rem; border-radius: 999px;
-    background: rgba(255, 255, 255, .94); box-shadow: var(--sombra); font-size: .85rem; font-weight: 700; color: var(--carbon);
+    background: rgba(255, 255, 255, .94); box-shadow: var(--sombra); font-size: .85rem; font-weight: 700; color: var(--carbon); text-align: left;
 }
 
 .ficha__contacto { background: var(--blanco); border-radius: var(--radio); box-shadow: var(--sombra-fuerte); border-top: 5px solid var(--rojo); padding: 1.5rem; }
