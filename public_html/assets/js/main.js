@@ -236,6 +236,121 @@
     });
 
     /* ---------------------------------------------------------------
+       Resultados comprobados: con JS la cinta se mueve aquí (sin JS, con CSS).
+       - Avanza sola a la misma velocidad que la animación CSS (--segundos por tarjeta).
+       - Las flechas avanzan o retroceden una tarjeta; se puede arrastrar con el dedo.
+       - Se detiene con el mouse encima o con el foco en una tarjeta, y tras usar las
+         flechas o arrastrar sigue 4 s después. La lista va dos veces: la posición se
+         toma módulo una copia, así nunca se acaba.
+       - Con «reducir movimiento» queda quieta y las flechas desplazan la ventana.
+       --------------------------------------------------------------- */
+    $$('[data-cinta]').forEach(function (seccion) {
+        var ventana = $('.resultados__ventana', seccion);
+        var pista = $('.resultados__pista', seccion);
+        var grupo = $('.resultados__grupo', seccion);
+        var flechas = $('.resultados__flechas', seccion);
+        if (!ventana || !pista || !grupo || !flechas) return;
+        seccion.classList.add('con-js');
+        flechas.hidden = false;
+
+        var paso = 0, copia = 0, velocidad = 0;   // px por tarjeta, px de una copia, px/s
+        var medir = function () {
+            var primera = grupo.children[0];
+            if (!primera) return;
+            var hueco = parseFloat(getComputedStyle(grupo).columnGap) || 0;
+            paso = primera.getBoundingClientRect().width + hueco;
+            copia = grupo.getBoundingClientRect().width;
+            var total = grupo.children.length || 1;
+            var segundos = parseFloat(getComputedStyle(pista).getPropertyValue('--segundos')) || 5;
+            velocidad = copia / (total * segundos);
+        };
+
+        if (reducirMovimiento) {
+            $$('[data-cinta-dir]', flechas).forEach(function (b) {
+                b.addEventListener('click', function () {
+                    medir();
+                    ventana.scrollBy({ left: Number(b.getAttribute('data-cinta-dir')) * paso });
+                });
+            });
+            return;
+        }
+
+        var pos = 0, salto = null, arrastre = null, pausaHasta = 0, encima = false, visible = true, antes = 0;
+        var normal = function (x) { return copia ? ((x % copia) + copia) % copia : 0; };
+        var pintar = function () { pista.style.transform = 'translate3d(' + (-normal(pos)) + 'px, 0, 0)'; };
+        var pausar = function (ms) { pausaHasta = Math.max(pausaHasta, performance.now() + ms); };
+        var focoEnTarjeta = function () {
+            var a = document.activeElement;
+            return a && ventana.contains(a);
+        };
+        var cuadro = function (t) {
+            var dt = antes ? Math.min((t - antes) / 1000, .1) : 0;
+            antes = t;
+            if (salto) {
+                var k = Math.min((t - salto.inicio) / salto.dura, 1);
+                pos = salto.desde + (salto.hasta - salto.desde) * (1 - Math.pow(1 - k, 3));
+                if (k === 1) { salto = null; pos = normal(pos); }
+            } else if (!arrastre && !encima && visible && t >= pausaHasta && !focoEnTarjeta()) {
+                pos += velocidad * dt;
+            }
+            pintar();
+            requestAnimationFrame(cuadro);
+        };
+
+        $$('[data-cinta-dir]', flechas).forEach(function (b) {
+            b.addEventListener('click', function () {
+                if (!paso) medir();
+                if (!paso) return;
+                var dir = Number(b.getAttribute('data-cinta-dir'));
+                var base = salto ? salto.hasta : pos;
+                var hasta = dir > 0
+                    ? (Math.floor(base / paso + 1e-3) + 1) * paso
+                    : (Math.ceil(base / paso - 1e-3) - 1) * paso;
+                salto = { desde: pos, hasta: hasta, inicio: performance.now(), dura: 450 };
+                pausar(4000);
+            });
+        });
+
+        // El mouse encima detiene la cinta (no aplica al tacto: ahí se arrastra)
+        ventana.addEventListener('pointerenter', function (ev) { if (ev.pointerType === 'mouse') encima = true; });
+        ventana.addEventListener('pointerleave', function (ev) { if (ev.pointerType === 'mouse') { encima = false; pausar(600); } });
+
+        // Arrastrar con el dedo (o lápiz); el desplazamiento vertical de la página sigue igual (touch-action: pan-y)
+        ventana.addEventListener('pointerdown', function (ev) {
+            if (ev.pointerType === 'mouse') return;
+            salto = null;
+            arrastre = { x: ev.clientX, pos: pos, id: ev.pointerId };
+        });
+        ventana.addEventListener('pointermove', function (ev) {
+            if (!arrastre || ev.pointerId !== arrastre.id) return;
+            pos = arrastre.pos - (ev.clientX - arrastre.x);
+        });
+        var soltar = function (ev) {
+            if (!arrastre || ev.pointerId !== arrastre.id) return;
+            arrastre = null;
+            pausar(4000);
+        };
+        ventana.addEventListener('pointerup', soltar);
+        ventana.addEventListener('pointercancel', soltar);
+
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entradas) { visible = entradas[0].isIntersecting; }).observe(ventana);
+        }
+        var espera;
+        window.addEventListener('resize', function () {
+            clearTimeout(espera);
+            espera = setTimeout(function () {
+                var proporcion = copia ? normal(pos) / copia : 0;
+                medir();
+                pos = proporcion * copia;
+                pintar();
+            }, 150);
+        });
+        medir();
+        requestAnimationFrame(cuadro);
+    });
+
+    /* ---------------------------------------------------------------
        Galerías de fotos de los destacados
        --------------------------------------------------------------- */
     $$('[data-galeria]').forEach(function (galeria) {

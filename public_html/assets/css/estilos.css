@@ -656,7 +656,23 @@ html:not(.js) .menu-boton { display: none; }
 /* Resultados comprobados (Tengo una propiedad): cinta infinita que se desplaza sola hacia la izquierda.
    1 fila en celular y 2 en escritorio; de borde a borde de la pantalla. */
 .resultados { background: var(--carbon); color: var(--blanco); padding-block: var(--espacio-seccion) calc(var(--espacio-seccion) - 1.5rem); overflow: hidden; }
-.resultados__cabecera { margin-bottom: 1.75rem; }
+.resultados__cabecera { margin-bottom: 1.75rem; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.25rem 2rem; }
+/* Flechas de la cinta (las muestra main.js) */
+.resultados__flechas { display: flex; gap: .75rem; }
+.resultados__flechas[hidden] { display: none; }
+.resultados__flecha {
+    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+    background: transparent; color: var(--blanco); border: 2px solid rgba(255, 255, 255, .45);
+    transition: background-color .2s ease, border-color .2s ease, transform .15s ease;
+}
+.resultados__flecha:hover { background: var(--rojo); border-color: var(--rojo); }
+.resultados__flecha:active { transform: scale(.94); }
+.resultados__flecha:focus-visible { outline: 3px solid var(--blanco); outline-offset: 3px; }
+.resultados__flecha .icono { width: 20px; height: 20px; }
+/* Con JS la cinta la mueve main.js (para poder avanzar con las flechas y arrastrar con el dedo) */
+.resultados.con-js .resultados__pista { animation: none; }
+.resultados.con-js .resultados__ventana { touch-action: pan-y; }
+.resultados.con-js .resultado__tarjeta img { -webkit-user-drag: none; user-select: none; }
 .resultados__antetitulo {
     font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .2em;
     text-transform: uppercase; color: #ff6266; margin-bottom: .5rem;
@@ -708,8 +724,9 @@ html:not(.js) .menu-boton { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
     .resultado__tarjeta img { transition: none; }
-    .resultados__ventana { overflow-x: auto; }
+    .resultados__ventana, .resultados.con-js .resultados__ventana { overflow-x: auto; scroll-behavior: smooth; touch-action: auto; }
     .resultados__pista { animation: none; }
+    .resultados__flecha { transition: none; }
     .resultados__grupo[aria-hidden] { display: none; }
 }
 

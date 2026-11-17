@@ -57,13 +57,20 @@ require __DIR__ . '/includes/header.php';
 ]); ?>
 
 <?php if ($resultados): ?>
-<section class="resultados" aria-labelledby="titulo-resultados">
+<section class="resultados" aria-labelledby="titulo-resultados" data-cinta>
     <div class="contenedor resultados__cabecera">
-        <p class="resultados__antetitulo">Resultados comprobados</p>
-        <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
+        <div>
+            <p class="resultados__antetitulo">Resultados comprobados</p>
+            <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
+        </div>
+        <?php // Flechas: main.js las muestra y mueve la cinta una tarjeta (sin JS la cinta corre sola con CSS). ?>
+        <div class="resultados__flechas" hidden>
+            <button class="resultados__flecha" type="button" aria-controls="cinta-resultados" aria-label="Propiedades anteriores" data-cinta-dir="-1"><?= icono('flecha-izq') ?></button>
+            <button class="resultados__flecha" type="button" aria-controls="cinta-resultados" aria-label="Siguientes propiedades" data-cinta-dir="1"><?= icono('flecha-der') ?></button>
+        </div>
     </div>
-    <?php // Cinta infinita: la lista se pinta dos veces y la animación recorre exactamente una copia, así el salto no se nota. ?>
-    <div class="resultados__ventana">
+    <?php // Cinta infinita: la lista se pinta dos veces y el movimiento recorre exactamente una copia, así el salto no se nota. ?>
+    <div class="resultados__ventana" id="cinta-resultados">
         <div class="resultados__pista" style="--total: <?= count($resultados) ?>">
             <?php for ($copia = 0; $copia < 2; $copia++): ?>
                 <ul class="resultados__grupo"<?= $copia ? ' aria-hidden="true"' : ' aria-label="Propiedades vendidas y rentadas"' ?>>
