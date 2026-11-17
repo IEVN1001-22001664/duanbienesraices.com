@@ -19,7 +19,7 @@
 declare(strict_types=1);
 
 const TOKKO_API = 'https://www.tokkobroker.com/api/v1/';
-const TOKKO_VIGENCIA = 3 * 3600;          // la copia local se renueva cada 3 h
+const TOKKO_VIGENCIA = 15 * 60;          // la copia local se renueva cada 15 min (pedido del cliente, 17 nov 2026)
 const TOKKO_ARCHIVO = 'tokko/propiedades.json';
 // Versión de los campos que guarda tokko_normalizar(). Subirla al agregar o cambiar campos:
 // una copia con otra versión se vuelve a bajar de Tokko en la siguiente visita.

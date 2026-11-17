@@ -10,6 +10,27 @@ admin_cabecera('Inicio');
 <?php if ((cuenta()['correo'] ?? '') === ''): ?>
     <p class="aviso" role="status">Aún no hay un correo confirmado en la cuenta. Regístralo en <a href="/admin/cuenta.php">Mi cuenta</a> para poder recuperar la contraseña si se olvida.</p>
 <?php endif; ?>
+<?php if (tokko_activo()):
+    $tokkoFecha = tokko_ultima_sincronizacion(); ?>
+    <?php /* Botón general: trae de Tokko propiedades, fichas, precios y destacados en ese momento */ ?>
+    <section class="tokko-refresco" aria-labelledby="titulo-tokko">
+        <div>
+            <h2 id="titulo-tokko">Propiedades de Tokko</h2>
+            <p>¿Cambiaste precios, fotos, textos o diste de alta o de baja propiedades en Tokko? Presiona el botón cuando termines para verlos en el sitio al momento. Además, el sitio se actualiza solo cada 15 minutos.</p>
+            <p class="tokko-refresco__datos">
+                <?= count(tokko_propiedades()) ?> propiedades activas
+                · Última actualización: <?= $tokkoFecha ? e(date('d/m/Y H:i', $tokkoFecha)) : 'nunca' ?>
+            </p>
+        </div>
+        <form method="post" action="/admin/accion.php" data-espera="Actualizando desde Tokko…">
+            <?= campo_csrf() ?>
+            <input type="hidden" name="accion" value="actualizar_tokko">
+            <input type="hidden" name="s" value="destacados">
+            <input type="hidden" name="volver" value="inicio">
+            <button class="boton" type="submit">Actualizar desde Tokko</button>
+        </form>
+    </section>
+<?php endif; ?>
 <h1>¿Qué quieres editar hoy?</h1>
 <ul class="secciones">
     <?php foreach (SECCIONES_ADMIN as $clave => $sec):

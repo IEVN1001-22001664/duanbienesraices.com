@@ -134,6 +134,16 @@ code { background: var(--gris-claro); padding: .1em .35em; border-radius: 4px; f
 .etiqueta-estado--falta { background: var(--rojo-suave); color: var(--rojo-oscuro); }
 
 /* --- Inicio del panel --- */
+/* Inicio del panel: recuadro para traer los cambios de Tokko */
+.tokko-refresco {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem;
+    background: var(--blanco); border: 1px solid var(--borde); border-left: 5px solid var(--rojo);
+    border-radius: 14px; padding: 1.1rem 1.25rem; margin: 0 0 1.75rem;
+}
+.tokko-refresco > div { flex: 1 1 22rem; }
+.tokko-refresco h2 { margin: 0 0 .35rem; font-size: 1.15rem; }
+.tokko-refresco p { margin: 0 0 .4rem; color: var(--gris); }
+.tokko-refresco__datos { font-size: .9rem; margin: 0; }
 .secciones { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 .seccion-tarjeta { position: relative; background: var(--blanco); border-radius: 14px; padding: 1.25rem 1.25rem 1rem; border: 1px solid var(--borde); }
 .seccion-tarjeta:hover { border-color: var(--rojo); }

@@ -176,6 +176,8 @@ try {
             $mensaje = 'Listo: datos actualizados desde Tokko (' . count(tokko_propiedades()) . ' propiedades activas).';
             if (($_POST['volver'] ?? '') === 'tokko') {
                 $volver = '/admin/tokko.php';
+            } elseif (($_POST['volver'] ?? '') === 'inicio') {
+                $volver = '/admin/';
             }
             break;
 

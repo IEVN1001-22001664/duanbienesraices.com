@@ -1,7 +1,7 @@
 <?php
 /**
  * Elegir propiedades de Tokko para los destacados del inicio.
- * Lista la copia local de Tokko (la renueva si tiene más de 3 h) con buscador.
+ * Lista la copia local de Tokko (la renueva si tiene más de 15 min) con buscador.
  */
 require dirname(__DIR__) . '/includes/admin/nucleo.php';
 requerir_login();

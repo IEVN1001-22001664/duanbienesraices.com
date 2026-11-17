@@ -52,7 +52,7 @@ admin_cabecera($sec['titulo'], [['Inicio', '/admin/'], [$sec['titulo'], null]]);
     </div>
 </div>
 <?php if ($conTokko): ?>
-    <p class="ayuda-lista">Fotos, precio y textos se copian de Tokko<?= ($t = tokko_ultima_sincronizacion()) ? ' (última actualización: ' . e(date('d/m/Y H:i', $t)) . ')' : '' ?>; se actualizan solos cada 3 horas. Si una propiedad deja de estar activa en Tokko, se oculta sola.</p>
+    <p class="ayuda-lista">Fotos, precio y textos se copian de Tokko<?= ($t = tokko_ultima_sincronizacion()) ? ' (última actualización: ' . e(date('d/m/Y H:i', $t)) . ')' : '' ?>; se actualizan solos cada 15 minutos. Si una propiedad deja de estar activa en Tokko, se oculta sola.</p>
 <?php endif; ?>
 
 <?php if ($errorArchivo): ?>
