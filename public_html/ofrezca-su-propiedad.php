@@ -50,16 +50,15 @@ require __DIR__ . '/includes/head.php';
 require __DIR__ . '/includes/header.php';
 ?>
 
-<?php componente('portada', ['portada' => $portada, 'boton' => ['texto' => 'Quiero una valoración gratuita', 'url' => '#valuacion']]); ?>
+<?php componente('portada', [
+    'portada' => $portada,
+    'boton'   => ['texto' => 'Quiero una valoración gratuita', 'url' => '#valuacion'],
+    'cifra'   => ['numero' => 500, 'prefijo' => '+', 'lectura' => 'Más de 500', 'texto' => "propiedades vendidas y rentadas por Du'an Bienes Raíces"],
+]); ?>
 
 <?php if ($resultados): ?>
 <section class="resultados" aria-labelledby="titulo-resultados">
     <div class="contenedor resultados__cabecera">
-        <p class="resultados__cifra">
-            <span class="resultados__cifra-num" data-contador="500" data-prefijo="+" aria-hidden="true">+500</span>
-            <span class="sr-only">Más de 500</span>
-            <span class="resultados__cifra-txt">propiedades vendidas y rentadas por Du'an Bienes Raíces</span>
-        </p>
         <p class="resultados__antetitulo">Resultados comprobados</p>
         <h2 class="resultados__titulo" id="titulo-resultados">Propiedades que ya vendimos y rentamos</h2>
     </div>

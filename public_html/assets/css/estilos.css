@@ -567,6 +567,23 @@ html:not(.js) .menu-boton { display: none; }
 .portada__titulo { color: var(--blanco); font-size: clamp(2.2rem, 7vw, 4rem); font-weight: 800; margin-bottom: .3em; }
 .portada__titulo::after { content: ""; display: block; width: 64px; height: 5px; border-radius: 3px; background: var(--rojo); margin-top: .35em; }
 .portada__lead { font-size: clamp(1.05rem, 2.4vw, 1.3rem); max-width: 46rem; margin-bottom: 1.25rem; }
+/* Cifra con contador en la portada (Tengo una propiedad). En celular va debajo del botón, con el número
+   y la leyenda en fila; desde 860 px ocupa una columna a la derecha, pegada al margen del contenedor,
+   separada del texto por una línea y centrada con él. */
+:where(main) .portada__cifra { display: flex; align-items: center; gap: 1rem; margin: 2rem 0 0; }
+.portada__cifra-num {
+    font-family: var(--fuente-titulos); font-weight: 800; line-height: 1; color: var(--rojo);
+    font-size: clamp(3rem, 12vw, 5.25rem); letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+    min-width: 4ch;   /* el ancho no brinca mientras el número sube */
+}
+:where(main) .portada__cifra-txt { font-family: var(--fuente-titulos); font-weight: 700; font-size: 1rem; line-height: 1.35; color: #e4e6ea; max-width: 14rem; text-align: left; hyphens: manual; text-shadow: 0 1px 8px rgba(0, 0, 0, .55); }
+@media (min-width: 860px) {
+    .portada__texto--cifra { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+    :where(main) .portada__texto--cifra .portada__cifra {
+        flex-direction: column; align-items: flex-start; gap: .75rem; margin: 0;
+        padding-left: clamp(2rem, 4vw, 3rem); border-left: 1px solid rgba(255, 255, 255, .45);
+    }
+}
 
 /* ==========================================================================
    Nosotros
@@ -640,24 +657,6 @@ html:not(.js) .menu-boton { display: none; }
    1 fila en celular y 2 en escritorio; de borde a borde de la pantalla. */
 .resultados { background: var(--carbon); color: var(--blanco); padding-block: var(--espacio-seccion) calc(var(--espacio-seccion) - 1.5rem); overflow: hidden; }
 .resultados__cabecera { margin-bottom: 1.75rem; }
-/* Cifra con contador. En celular va debajo del título (número y leyenda en fila);
-   desde 860 px se acomoda a la derecha del título, separada por una línea. */
-:where(main) .resultados__cifra { display: flex; align-items: center; gap: 1rem; margin: 0; order: 3; }
-.resultados__cabecera { display: flex; flex-direction: column; }
-.resultados__cabecera > .resultados__cifra { margin-top: 1.25rem; }
-.resultados__cifra-num {
-    font-family: var(--fuente-titulos); font-weight: 800; line-height: 1; color: var(--rojo);
-    font-size: clamp(3rem, 12vw, 4.75rem); letter-spacing: -.02em; font-variant-numeric: tabular-nums;
-    min-width: 4ch;   /* el ancho no brinca mientras el número sube */
-}
-.resultados__cifra-txt { font-family: var(--fuente-titulos); font-weight: 700; font-size: 1rem; line-height: 1.35; color: #d9dce0; max-width: 15rem; text-align: left; }
-@media (min-width: 860px) {
-    .resultados__cabecera { display: grid; grid-template-columns: 1fr auto; column-gap: 2.5rem; align-items: end; }
-    .resultados__cabecera > .resultados__cifra {
-        grid-column: 2; grid-row: 1 / span 2; margin: 0; align-self: center;
-        padding-left: 2.5rem; border-left: 1px solid rgba(255, 255, 255, .2);
-    }
-}
 .resultados__antetitulo {
     font-family: var(--fuente-titulos); font-weight: 800; font-size: .85rem; letter-spacing: .2em;
     text-transform: uppercase; color: #ff6266; margin-bottom: .5rem;
