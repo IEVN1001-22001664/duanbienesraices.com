@@ -101,8 +101,8 @@ define('OPERACIONES', ['Venta', 'Renta', 'Comprar o Rentar']);
 // Servicios: no están en el menú principal (igual que en Wix); se enlazan desde
 // las tarjetas del inicio y el footer.
 define('SERVICIOS', [
-    ['clave' => 'renta',          'texto' => 'Renta',          'url' => '/servicios/renta'],
     ['clave' => 'venta',          'texto' => 'Venta',          'url' => '/servicios/venta'],
+    ['clave' => 'renta',          'texto' => 'Renta',          'url' => '/servicios/renta'],
     ['clave' => 'administracion', 'texto' => 'Administración', 'url' => '/servicios/administracion'],
 ]);
 

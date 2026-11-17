@@ -28,12 +28,12 @@ $pagina = [
 ];
 
 $servicios = [
-    ['clave' => 'renta', 'titulo' => 'Renta', 'icono' => 'llave',
-     'texto' => 'Perfilamos al mejor inquilino para su propiedad, verificando historial, referencias y capacidad de pago, para asegurar siempre una persona o empresa confiable y solvente.',
-     'pasos' => 'Estos son los pasos que seguimos para lograr una RENTA EXITOSA.'],
     ['clave' => 'venta', 'titulo' => 'Venta', 'icono' => 'casa',
      'texto' => 'Le acompañamos de la mano durante todo el proceso de venta: desde la valoración y preparación del inmueble, hasta la firma de la escritura de compraventa ante notario público.',
      'pasos' => 'Estos son los pasos que seguimos para lograr una VENTA EXITOSA.'],
+    ['clave' => 'renta', 'titulo' => 'Renta', 'icono' => 'llave',
+     'texto' => 'Perfilamos al mejor inquilino para su propiedad, verificando historial, referencias y capacidad de pago, para asegurar siempre una persona o empresa confiable y solvente.',
+     'pasos' => 'Estos son los pasos que seguimos para lograr una RENTA EXITOSA.'],
     ['clave' => 'administracion', 'titulo' => 'Administración', 'icono' => 'edificio',
      'texto' => 'Nos encargamos de la administración integral de sus rentas: cobro puntual, seguimiento a inquilinos y supervisión del estado de su propiedad, para que usted solo disfrute de sus ingresos.',
      'pasos' => 'Estos son los pasos que seguimos para lograr una ADMINISTRACIÓN EXITOSA.'],
