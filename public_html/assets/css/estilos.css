@@ -436,6 +436,54 @@ html:not(.js) .menu-boton { display: none; }
     padding: .2rem .6rem; border-radius: 999px;
 }
 
+/* Banner de Torre Arbide (components/banner-torre-arbide.php): bloque carbón contrastante.
+   Celular: foto arriba y texto abajo; desde 860 px texto a la izquierda y foto a la derecha,
+   con la firma «Du'an | Torre Arbide» sobre la foto. */
+.arbide {
+    position: relative; display: flex; flex-direction: column; margin: 0 0 2.5rem;
+    background: var(--carbon); color: var(--blanco); border-radius: 16px; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(20, 22, 27, .28);
+}
+.arbide__foto { order: -1; aspect-ratio: 5 / 4; }
+.arbide__foto img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.arbide__texto { padding: 1.75rem 1.5rem 0; }
+.arbide__etiqueta {
+    position: absolute; top: 1rem; left: 1rem; z-index: 1; margin: 0;
+    background: var(--rojo); color: var(--blanco); border-radius: 4px; padding: .35rem .7rem;
+    font-family: var(--fuente-titulos); font-weight: 800; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
+}
+.arbide__titulo { color: var(--blanco); font-weight: 800; font-size: clamp(1.6rem, 6vw, 2.6rem); line-height: 1.1; margin: 0 0 .75rem; }
+:where(main) .arbide__descripcion { color: #d9dce0; text-align: left; margin: 0 0 1.1rem; max-width: 34rem; }
+:where(main) .arbide__precio { text-align: left; margin: 0 0 1.5rem; font-family: var(--fuente-titulos); font-weight: 700; font-size: .95rem; color: #d9dce0; }
+.arbide__precio strong { font-size: clamp(1.35rem, 4vw, 1.75rem); font-weight: 800; color: var(--blanco); margin-left: .2rem; }
+.arbide__botones { display: flex; flex-direction: column; gap: .75rem; }
+.arbide__boton { justify-content: center; }
+.arbide__boton--contorno { background: transparent; border-color: var(--blanco); color: var(--blanco); }
+.arbide__boton--contorno:hover { background: var(--blanco); border-color: var(--blanco); color: var(--carbon); }
+.arbide__firma { display: flex; align-items: center; gap: 1rem; margin: 0; padding: 1.5rem 1.5rem 1.6rem; }
+.arbide__duan { display: flex; flex-direction: column; font-family: var(--fuente-titulos); font-weight: 800; font-size: 1.35rem; line-height: 1; }
+.arbide__duan small { font-size: .5rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-top: .25rem; }
+.arbide__proyecto {
+    font-family: var(--fuente-titulos); font-weight: 700; font-size: .8rem; letter-spacing: .3em; text-transform: uppercase;
+    padding-left: 1rem; border-left: 1px solid rgba(255, 255, 255, .6); line-height: 2.2;
+}
+.arbide__solo-escritorio { display: none; }
+@media (min-width: 600px) {
+    .arbide__botones { flex-direction: row; flex-wrap: wrap; }
+    .arbide__foto { aspect-ratio: 16 / 9; }
+}
+@media (min-width: 860px) {
+    .arbide { display: grid; grid-template-columns: 47fr 53fr; min-height: 380px; }
+    .arbide__foto { order: 0; aspect-ratio: auto; }
+    .arbide__texto { padding: clamp(2rem, 4vw, 3rem); align-self: center; }
+    .arbide__etiqueta { position: static; display: inline-block; margin-bottom: 1rem; }
+    .arbide__solo-escritorio { display: inline; }
+    .arbide__solo-celular { display: none; }
+    .arbide__firma {
+        position: absolute; right: 1.25rem; bottom: 1.25rem; padding: .7rem 1.1rem;
+        background: rgba(20, 22, 27, .82); border-radius: 8px; backdrop-filter: blur(4px);
+    }
+}
 .destacados__cierre { text-align: center; margin-top: 3rem; }
 .destacados__cierre p { font-size: 1.15rem; max-width: 40rem; margin: 0 auto 1.25rem; }
 

@@ -99,6 +99,7 @@ require __DIR__ . '/includes/header.php';
     <div class="contenedor">
         <h2 class="titulo-seccion" id="titulo-destacados">Propiedades destacadas</h2>
         <p class="subtitulo-seccion">Algunas de las propiedades que actualmente comercializamos para nuestros clientes.</p>
+        <?php componente('banner-torre-arbide'); ?>
         <div class="destacados__grid">
             <?php foreach ($destacados as $item) {
                 componente('card-destacado', ['item' => $item]);
