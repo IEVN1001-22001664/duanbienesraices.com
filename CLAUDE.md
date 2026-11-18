@@ -138,7 +138,7 @@ Plan del cliente (opción C): **1)** los destacados del inicio se alimentan de l
 - **Menú:** los Servicios no están en el menú principal, igual que en Wix; se enlazan desde las tarjetas del inicio y el footer.
 - **Destacados:** galerías de hasta 12 fotos; el precio se guarda como número y se muestra con `formato_precio()`. Desde el 11 nov 2026 vienen de Tokko (ver «Integración con Tokko»).
 - **Videos:** el video del hero de Nosotros (24 MB) se quitó y se dejó un póster. El póster de la intro es el cuadro del logo a los 6 s del video.
-- **WhatsApp:** se usa el número 524775514226; algunas páginas de Wix usaban 4771599316.
+- **WhatsApp:** se usa el número 524775514226; algunas páginas de Wix usaban otro número personal que no debe publicarse.
 - **Blog:** los artículos tienen slugs nuevos y los de Wix redirigen con 301 (`/post/{slug}` → `/blog/{slug}` → `slug_anterior`).
 - **Animación de entrada en celular** (réplica de la de Wix, commit f1e98d3):
   - Secuencia: una línea roja se abre, aparece el logo, el rojo se cierra en una línea y se desvanece.
