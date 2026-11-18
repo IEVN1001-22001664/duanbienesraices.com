@@ -231,15 +231,29 @@ html:not(.js) .menu-boton { display: none; }
         background: none; border: 0; box-shadow: none; animation: none;
     }
     .menu { flex-direction: row; gap: .15rem; }
-    .menu__enlace { position: relative; padding: .55rem .85rem; font-size: .95rem; border-radius: 999px; }
-    .menu__enlace.es-activa { background: none; }
-    /* Indicador rojo debajo de la sección activa */
-    .menu__enlace::after {
-        content: ""; position: absolute; left: .85rem; right: .85rem; bottom: .15rem; height: 2px;
-        border-radius: 2px; background: var(--rojo); transform: scaleX(0); transition: transform .25s;
+    .menu__enlace {
+        --bloque: var(--rojo);
+        position: relative; isolation: isolate; padding: .55rem .85rem; font-size: .95rem; border-radius: 6px;
+        transition: color .3s cubic-bezier(.22, 1, .36, 1), transform .12s ease;
     }
-    .menu__enlace:hover::after, .menu__enlace.es-activa::after { transform: scaleX(1); }
-    .menu__enlace:hover { background: none; }
+    /* Al pasar el mouse (o con el teclado) se arma un bloque rojo: las líneas de arriba y abajo
+       se cierran desde el doble de alto mientras el fondo crece desde el centro; el texto queda blanco.
+       La sección en la que se está navegando se queda con el bloque armado. */
+    .menu__enlace::before {
+        content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 6px;
+        border-block: 2px solid var(--bloque);
+        background: linear-gradient(var(--bloque), var(--bloque)) center / 0 0 no-repeat;
+        opacity: 0; transform: scaleY(2);
+        transition: opacity .3s, transform .3s cubic-bezier(.22, 1, .36, 1), background-size .3s cubic-bezier(.22, 1, .36, 1);
+    }
+    .menu__enlace:is(:hover, :focus-visible), .menu__enlace.es-activa { background: none; color: var(--blanco); }
+    .menu__enlace:is(:hover, :focus-visible, .es-activa)::before { opacity: 1; transform: scaleY(1); background-size: 100% 100%; }
+    /* Al llegar a la página, el bloque de la sección activa se arma con el mismo movimiento */
+    .menu__enlace.es-activa::before { animation: menu-activa .45s cubic-bezier(.22, 1, .36, 1) both; }
+    .menu__enlace.es-activa:hover { --bloque: var(--rojo-oscuro); }
+    /* Al hacer clic el botón se hunde un poco */
+    .menu__enlace:active { transform: scale(.94); }
+    .menu__enlace:focus-visible { outline: 2px solid var(--carbon); outline-offset: 3px; }
     /* Redes en su propia cápsula oscura, separada del menú */
     .redes--encabezado {
         display: flex; justify-self: end; gap: .15rem; margin-left: 1rem;
@@ -253,7 +267,15 @@ html:not(.js) .menu-boton { display: none; }
 @media (min-width: 1024px) and (max-width: 1279px) {
     .encabezado__barra { gap: 1rem; }
     .menu__enlace { padding-inline: .7rem; font-size: .92rem; }
-    .menu__enlace::after { left: .7rem; right: .7rem; }
+}
+@keyframes menu-activa {
+    from { opacity: 0; transform: scaleY(2); background-size: 0 0; }
+    to { opacity: 1; transform: scaleY(1); background-size: 100% 100%; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+    .menu__enlace, .menu__enlace::before { transition: none; }
+    .menu__enlace.es-activa::before { animation: none; }
+    .menu__enlace:active { transform: none; }
 }
 
 /* Pestañas: solo la sub-navegación de servicios (ver más abajo) */
