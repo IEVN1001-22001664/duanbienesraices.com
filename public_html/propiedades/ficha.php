@@ -62,6 +62,9 @@ usort($similares, fn($a, $b) => [($b['tipo'] === $prop['tipo']), ($b['ciudad'] =
 $similares = array_slice($similares, 0, 3);
 
 $mensajeWhatsapp = "¡Hola! Me interesa la propiedad {$prop['codigo']}: {$prop['titulo']}. {$urlAbsoluta}";
+$urlAgendar = URL_AGENDAR_CITA !== ''
+    ? URL_AGENDAR_CITA . (str_contains(URL_AGENDAR_CITA, '?') ? '&' : '?') . http_build_query(['notes' => "Propiedad {$prop['codigo']}: {$prop['titulo']} — {$urlAbsoluta}"])
+    : whatsapp_url("¡Hola! Quiero agendar una cita para ver la propiedad {$prop['codigo']}: {$prop['titulo']}. {$urlAbsoluta}");
 $descripcionSeo = extracto(implode(' ', $parrafos) ?: $prop['titulo'], 155);
 
 $pagina = [
@@ -148,8 +151,10 @@ require dirname(__DIR__) . '/includes/header.php';
             <?php endif; ?>
         <?php endif; ?>
 
+        <?php /* Arriba: título y datos principales a la izquierda y la tarjeta de contacto a la derecha,
+                 con la misma altura. Abajo, a todo lo ancho, el resto de los bloques. */ ?>
         <div class="ficha__grid">
-            <div class="ficha__principal">
+            <div class="ficha__resumen">
                 <header class="ficha__encabezado">
                     <p class="ficha__antetitulo"><?= e($prop['tipo']) ?> en <?= e(implode(' y ', array_map(fn($o) => $o['tipo'], $prop['operaciones']))) ?> · <?= e($prop['codigo']) ?></p>
                     <h1 class="ficha__titulo"><?= e($prop['titulo']) ?></h1>
@@ -168,7 +173,29 @@ require dirname(__DIR__) . '/includes/header.php';
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
+            </div>
 
+            <aside class="ficha__lateral" aria-label="Contacto sobre esta propiedad">
+                <div class="ficha__contacto">
+                    <p class="ficha__contacto-texto">¿Le interesa? Agende una visita o pregunte lo que necesite.</p>
+                    <a class="boton boton--whatsapp boton--bloque" href="<?= e(whatsapp_url($mensajeWhatsapp)) ?>" target="_blank" rel="noopener" data-whatsapp-propiedad>
+                        <?= icono('whatsapp') ?> Preguntar por WhatsApp
+                    </a>
+                    <a class="boton boton--bloque ficha__agendar" href="<?= e($urlAgendar) ?>" target="_blank" rel="noopener" data-agendar-cita="<?= URL_AGENDAR_CITA !== '' ? 'cal' : 'whatsapp' ?>">
+                        <?= icono('calendario') ?> Agendar cita
+                    </a>
+                    <div class="ficha__compartir">
+                        <p>Compartir:</p>
+                        <ul class="compartir">
+                            <li><a href="https://www.facebook.com/sharer/sharer.php?u=<?= e(rawurlencode($urlAbsoluta)) ?>" target="_blank" rel="noopener"><?= icono('facebook') ?> Facebook</a></li>
+                            <li><a href="https://api.whatsapp.com/send?text=<?= e(rawurlencode($prop['titulo'] . ' ' . $urlAbsoluta)) ?>" target="_blank" rel="noopener"><?= icono('whatsapp') ?> WhatsApp</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <div class="ficha__cuerpo">
                 <?php if ($parrafos): ?>
                     <section class="ficha__bloque" aria-labelledby="titulo-descripcion">
                         <h2 class="ficha__subtitulo" id="titulo-descripcion">Descripción</h2>
@@ -221,50 +248,6 @@ require dirname(__DIR__) . '/includes/header.php';
                     <p class="texto-suave">El mapa muestra la zona de la propiedad, no su dirección exacta. Con gusto le compartimos la ubicación al agendar una visita.</p>
                     <?php componente('mapa-zona', ['zonaGeo' => $prop['zona_geo'] ?? null, 'zonaNombre' => $prop['ubicacion_completa']]); ?>
                 </section>
-            </div>
-
-            <aside class="ficha__lateral" aria-label="Contacto sobre esta propiedad">
-                <div class="ficha__contacto">
-                    <p class="ficha__contacto-precio"><?= e(precio_propiedad($prop, $op)) ?></p>
-                    <p class="ficha__contacto-texto">¿Le interesa? Agende una visita o pregunte lo que necesite.</p>
-                    <a class="boton boton--whatsapp boton--bloque" href="<?= e(whatsapp_url($mensajeWhatsapp)) ?>" target="_blank" rel="noopener" data-whatsapp-propiedad>
-                        <?= icono('whatsapp') ?> Preguntar por WhatsApp
-                    </a>
-
-                    <form class="formulario formulario--ficha" id="formulario" action="/api/enviar.php" method="post" data-formulario novalidate>
-                        <h2 class="formulario__titulo">O déjenos sus datos</h2>
-                        <input type="hidden" name="formulario" value="contacto">
-                        <input type="hidden" name="asunto" value="<?= $op['tipo'] === 'renta' ? 'Rentar una propiedad' : 'Comprar una propiedad' ?>">
-                        <div class="hp" aria-hidden="true"><label for="p-web">No llenar</label><input id="p-web" type="text" name="sitio_web" tabindex="-1" autocomplete="off"></div>
-                        <div class="campo">
-                            <label for="p-nombre">Nombre <span aria-hidden="true">*</span></label>
-                            <input id="p-nombre" type="text" name="nombre" autocomplete="name" required>
-                        </div>
-                        <div class="campo">
-                            <label for="p-email">Correo electrónico <span aria-hidden="true">*</span></label>
-                            <input id="p-email" type="email" name="email" autocomplete="email" required>
-                        </div>
-                        <div class="campo">
-                            <label for="p-tel">Teléfono / WhatsApp</label>
-                            <input id="p-tel" type="tel" name="telefono" autocomplete="tel" inputmode="tel">
-                        </div>
-                        <div class="campo">
-                            <label for="p-mensaje">Mensaje <span aria-hidden="true">*</span></label>
-                            <textarea id="p-mensaje" name="mensaje" rows="4" required><?= e("Hola, me interesa la propiedad {$prop['codigo']} ({$prop['titulo']}). {$urlAbsoluta}") ?></textarea>
-                        </div>
-                        <p class="formulario__requeridos"><span aria-hidden="true">*</span> Obligatorios. Al enviar acepta nuestro <a href="/aviso-de-privacidad">aviso de privacidad</a>.</p>
-                        <?php componente('envio-formulario', ['boton' => 'Solicitar información']); ?>
-                    </form>
-
-                    <div class="ficha__compartir">
-                        <p>Compartir:</p>
-                        <ul class="compartir">
-                            <li><a href="https://www.facebook.com/sharer/sharer.php?u=<?= e(rawurlencode($urlAbsoluta)) ?>" target="_blank" rel="noopener"><?= icono('facebook') ?> Facebook</a></li>
-                            <li><a href="https://api.whatsapp.com/send?text=<?= e(rawurlencode($prop['titulo'] . ' ' . $urlAbsoluta)) ?>" target="_blank" rel="noopener"><?= icono('whatsapp') ?> WhatsApp</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </aside>
         </div>
     </div>
 </article>

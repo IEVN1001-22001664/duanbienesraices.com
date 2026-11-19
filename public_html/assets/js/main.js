@@ -432,6 +432,42 @@
     });
 
     /* ---------------------------------------------------------------
+       «Agendar cita» (fichas): la agenda de Cal.com se abre en un modal sin
+       salir de la página (a pantalla completa en celular). El iframe se crea
+       al abrir y se borra al cerrar. Sin <dialog> o sin JS, abre otra pestaña.
+       --------------------------------------------------------------- */
+    var modalAgenda = null;
+    $$('[data-agendar-cita="cal"]').forEach(function (boton) {
+        if (typeof HTMLDialogElement !== 'function') return;
+        boton.addEventListener('click', function (ev) {
+            if (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button !== 0) return; // nueva pestaña a propósito
+            ev.preventDefault();
+            if (!modalAgenda) {
+                modalAgenda = document.createElement('dialog');
+                modalAgenda.className = 'agenda-modal';
+                modalAgenda.setAttribute('aria-label', 'Agendar cita');
+                modalAgenda.innerHTML = '<div class="agenda-modal__barra"><span class="agenda-modal__titulo">Agendar cita</span>' +
+                    '<button class="agenda-modal__cerrar" type="button" aria-label="Cerrar agenda">&times;</button></div>' +
+                    '<div class="agenda-modal__marco"><p class="agenda-modal__cargando">Cargando agenda…</p></div>';
+                document.body.appendChild(modalAgenda);
+                $('.agenda-modal__cerrar', modalAgenda).addEventListener('click', function () { modalAgenda.close(); });
+                modalAgenda.addEventListener('click', function (e) { if (e.target === modalAgenda) modalAgenda.close(); });
+                modalAgenda.addEventListener('close', function () {
+                    var viejo = $('iframe', modalAgenda);
+                    if (viejo) viejo.remove();
+                    document.documentElement.classList.remove('sin-scroll');
+                });
+            }
+            var iframe = document.createElement('iframe');
+            iframe.src = boton.href;
+            iframe.title = 'Agenda de citas de Du\'an Bienes Raíces';
+            $('.agenda-modal__marco', modalAgenda).appendChild(iframe);
+            document.documentElement.classList.add('sin-scroll');
+            modalAgenda.showModal();
+        });
+    });
+
+    /* ---------------------------------------------------------------
        Ficha de propiedad: miniaturas que mueven la galería principal
        --------------------------------------------------------------- */
     var galeriaFicha = $('[data-ficha-galeria]');

@@ -50,6 +50,9 @@ define('WHATSAPP_NUMERO', '524775514226');
 define('WHATSAPP_VISIBLE', '477 551 4226');
 define('WHATSAPP_MENSAJE', '¡Hola! Vengo de su página web, tengo interés de...');
 define('EMAIL_CONTACTO', 'info@duanbienesraices.com');
+// «Agendar cita» de las fichas de propiedades: evento «Visita a propiedad» de Cal.com. Se abre en un modal
+// (main.js, [data-agendar-cita="cal"]). Si se deja vacía, el botón abre WhatsApp pidiendo la cita.
+defined('URL_AGENDAR_CITA') || define('URL_AGENDAR_CITA', 'https://cal.com/informacion-du-an-bienes-raices-jfgxcn/visita-a-propiedad-duan');
 
 define('DIRECCION', [
     'calle'     => 'Valle del Yaqui 226',
