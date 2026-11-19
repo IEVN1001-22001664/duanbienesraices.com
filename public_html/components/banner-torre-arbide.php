@@ -13,6 +13,9 @@ $arbide = [
     'texto_celular'  => 'Lofts con vista panorámica en la colonia Arbide.',
     'precio'         => '$2,320,000 MXN',
     'url'            => 'https://torrearbide.com/',
+    // «Agendar visita»: evento «Visitas Torre Arbide» de Cal.com, en el mismo modal que las fichas.
+    // Si se deja vacío, el botón abre WhatsApp con el mensaje de abajo.
+    'agenda'         => 'https://cal.com/informacion-du-an-bienes-raices-jfgxcn/visitas-torre-arbide',
     'whatsapp'       => '¡Hola! Vengo de su página web y quiero agendar una visita a Torre Arbide.',
 ];
 ?>
@@ -26,7 +29,11 @@ $arbide = [
         </p>
         <p class="arbide__precio">Desde <strong><?= e($arbide['precio']) ?></strong></p>
         <div class="arbide__botones">
+            <?php if ($arbide['agenda'] !== ''): ?>
+            <a class="boton arbide__boton" href="<?= e($arbide['agenda']) ?>" target="_blank" rel="noopener" data-agendar-cita="cal">Agendar visita</a>
+            <?php else: ?>
             <a class="boton arbide__boton" href="<?= e(whatsapp_url($arbide['whatsapp'])) ?>" target="_blank" rel="noopener">Agendar visita</a>
+            <?php endif; ?>
             <a class="boton arbide__boton arbide__boton--contorno" href="<?= e($arbide['url']) ?>" target="_blank" rel="noopener">Ver departamentos<span class="sr-only"> en torrearbide.com (se abre en otra pestaña)</span></a>
         </div>
     </div>
