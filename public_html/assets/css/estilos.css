@@ -376,10 +376,10 @@ html:not(.js) .menu-boton { display: none; }
 .estrellas .icono { width: 1.1rem; height: 1.1rem; }
 .estrellas--grandes .icono { width: 1.75rem; height: 1.75rem; }
 /* Logo vertical grande a la izquierda del título (decorativo: el nombre ya está en el título) */
-.bienvenida__logo { width: clamp(110px, 30vw, 150px); height: auto; mix-blend-mode: multiply; /* el PNG trae fondo blanco */ }
+.bienvenida__logo { width: clamp(110px, 30vw, 150px); height: auto; mix-blend-mode: multiply; /* el PNG trae fondo blanco */ justify-self: center; /* centrado en celular */ }
 @media (min-width: 860px) {
     .bienvenida__grid { grid-template-columns: auto 1.6fr 1fr; gap: 3rem; }
-    .bienvenida__logo { width: clamp(150px, 15vw, 210px); }
+    .bienvenida__logo { width: clamp(150px, 15vw, 210px); justify-self: start; }
 }
 
 .servicios {
