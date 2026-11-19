@@ -182,7 +182,7 @@ require dirname(__DIR__) . '/includes/header.php';
                         <?= icono('whatsapp') ?> Preguntar por WhatsApp
                     </a>
                     <a class="boton boton--bloque ficha__agendar" href="<?= e($urlAgendar) ?>" target="_blank" rel="noopener" data-agendar-cita="<?= URL_AGENDAR_CITA !== '' ? 'cal' : 'whatsapp' ?>">
-                        <?= icono('calendario') ?> Agendar cita
+                        <?= icono('calendario') ?> Agendar visita
                     </a>
                     <div class="ficha__compartir">
                         <p>Compartir:</p>
