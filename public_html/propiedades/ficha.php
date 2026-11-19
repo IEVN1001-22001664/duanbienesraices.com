@@ -63,7 +63,11 @@ $similares = array_slice($similares, 0, 3);
 
 $mensajeWhatsapp = "¡Hola! Me interesa la propiedad {$prop['codigo']}: {$prop['titulo']}. {$urlAbsoluta}";
 $urlAgendar = URL_AGENDAR_CITA !== ''
-    ? URL_AGENDAR_CITA . (str_contains(URL_AGENDAR_CITA, '?') ? '&' : '?') . http_build_query(['notes' => "Propiedad {$prop['codigo']}: {$prop['titulo']} — {$urlAbsoluta}"])
+    ? URL_AGENDAR_CITA . (str_contains(URL_AGENDAR_CITA, '?') ? '&' : '?') . http_build_query([
+        'notes'     => "Propiedad {$prop['codigo']}: {$prop['titulo']} — {$urlAbsoluta}",
+        // Campo oculto «propiedad» del formulario de reserva de Cal.com; se usa en el nombre del evento del calendario
+        'propiedad' => "{$prop['codigo']} – {$prop['titulo']}",
+    ])
     : whatsapp_url("¡Hola! Quiero agendar una cita para ver la propiedad {$prop['codigo']}: {$prop['titulo']}. {$urlAbsoluta}");
 $descripcionSeo = extracto(implode(' ', $parrafos) ?: $prop['titulo'], 155);
 
