@@ -21,8 +21,13 @@ $relleno = match ($s) {
     'fundador'    => ['cita' => 'Frase principal', 'mensaje' => 'Mensaje del fundador…', 'nombre' => 'Nombre'],
     'galeria'     => ['alt' => ''],
     'portadas'    => ['titulo' => 'Título'],
+    'vitrina'     => ['titulo' => 'Título del banner'],
     default       => [],
 };
+// Banner de código: el código va en la sesión y el <iframe> lo pide aislado a vista-cartel.php
+if ($s === 'vitrina' && ($item['tipo'] ?? '') === 'codigo') {
+    $_SESSION['previa_cartel_codigo'] = (string) ($item['codigo'] ?? '');
+}
 foreach ($relleno as $campo => $valor) {
     if (($item[$campo] ?? '') === '' || ($campo === 'precio' && !is_numeric($item[$campo] ?? null))) {
         $item[$campo] = $valor;
@@ -89,6 +94,16 @@ foreach ($relleno as $campo => $valor) {
         <?php else:
             componente('portada', ['portada' => portada_normalizar($item)]);
         endif;
+        break;
+
+    case 'vitrina':
+        if (($item['tipo'] ?? '') === 'codigo' && trim((string) ($item['codigo'] ?? '')) === ''): ?>
+            <p class="previa-vacia">Pega el código para ver el banner.</p>
+        <?php else: ?>
+            <section class="destacados previa-cartel"><div class="vitrina"><?php
+                componente('cartel', ['item' => $item, 'src_codigo' => '/admin/vista-cartel.php?t=' . time()]);
+            ?></div></section>
+        <?php endif;
         break;
 
     case 'galeria':

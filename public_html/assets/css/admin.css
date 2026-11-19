@@ -212,6 +212,8 @@ code { background: var(--gris-claro); padding: .1em .35em; border-radius: 4px; f
     font: inherit; color: inherit; background: var(--blanco);
 }
 textarea.campo__control { resize: vertical; line-height: 1.5; }
+/* Código de los banners: monoespaciado y sin ajuste de línea */
+.campo__control--codigo { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .85rem; line-height: 1.45; white-space: pre; overflow-x: auto; tab-size: 2; }
 .campo__control:focus { border-color: var(--carbon); outline: none; box-shadow: var(--foco); }
 .campo__control--corto { max-width: 280px; }
 .campo--error .campo__control { border-color: var(--rojo); background: #fffafa; }

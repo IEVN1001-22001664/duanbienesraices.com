@@ -458,54 +458,66 @@ html:not(.js) .menu-boton { display: none; }
     padding: .2rem .6rem; border-radius: 999px;
 }
 
-/* Banner de Torre Arbide (components/banner-torre-arbide.php): bloque carbón contrastante.
-   Celular: foto arriba y texto abajo; desde 860 px texto a la izquierda y foto a la derecha,
-   con la firma «Du'an | Torre Arbide» sobre la foto. */
-.arbide {
-    position: relative; display: flex; flex-direction: column; margin: 0 0 2.5rem;
+/* Banners promocionales de Propiedades destacadas (components/vitrina.php y cartel.php, sección
+   «vitrina» del panel). Diseño Du'an: bloque carbón contrastante. Celular: foto arriba y texto abajo;
+   desde 860 px texto a la izquierda y foto a la derecha, con la firma «Du'an | nombre» sobre la foto.
+   Con varios banners van en el carrusel genérico; la pista deja aire para la sombra. */
+.vitrina { margin: 0 0 1.5rem; }
+.vitrina .carrusel__pista { padding: .5rem 0 2.75rem; align-items: stretch; }
+/* Un banner por vista en todas las medidas; si uno es más bajo que otro, queda centrado en vertical */
+.vitrina .carrusel__pista > li { flex-basis: 100%; display: flex; flex-direction: column; justify-content: center; }
+.vitrina .carrusel__pista > li > .cartel:not(.cartel--codigo) { flex: 1; }
+.vitrina .carrusel__controles { margin-top: -1.5rem; margin-bottom: 1rem; }
+.cartel {
+    position: relative; display: flex; flex-direction: column; height: 100%; margin: 0;
     background: var(--carbon); color: var(--blanco); border-radius: 16px; overflow: hidden;
     box-shadow: 0 18px 40px rgba(20, 22, 27, .28);
 }
-.arbide__foto { order: -1; aspect-ratio: 5 / 4; }
-.arbide__foto img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
-.arbide__texto { padding: 1.75rem 1.5rem 0; }
-.arbide__etiqueta {
+.cartel__foto { order: -1; aspect-ratio: 5 / 4; }
+.cartel__foto img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.cartel__foto--arriba img { object-position: center 25%; }
+.cartel__foto--abajo img { object-position: center 80%; }
+.cartel__texto { padding: 1.75rem 1.5rem 0; }
+.cartel__etiqueta {
     position: absolute; top: 1rem; left: 1rem; z-index: 1; margin: 0;
     background: var(--rojo); color: var(--blanco); border-radius: 4px; padding: .35rem .7rem;
     font-family: var(--fuente-titulos); font-weight: 800; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
 }
-.arbide__titulo { color: var(--blanco); font-weight: 800; font-size: clamp(1.6rem, 6vw, 2.6rem); line-height: 1.1; margin: 0 0 .75rem; }
-:where(main) .arbide__descripcion { color: #d9dce0; text-align: left; margin: 0 0 1.1rem; max-width: 34rem; }
-:where(main) .arbide__precio { text-align: left; margin: 0 0 1.5rem; font-family: var(--fuente-titulos); font-weight: 700; font-size: .95rem; color: #d9dce0; }
-.arbide__precio strong { font-size: clamp(1.35rem, 4vw, 1.75rem); font-weight: 800; color: var(--blanco); margin-left: .2rem; }
-.arbide__botones { display: flex; flex-direction: column; gap: .75rem; }
-.arbide__boton { justify-content: center; }
-.arbide__boton--contorno { background: transparent; border-color: var(--blanco); color: var(--blanco); }
-.arbide__boton--contorno:hover { background: var(--blanco); border-color: var(--blanco); color: var(--carbon); }
-.arbide__firma { display: flex; align-items: center; gap: 1rem; margin: 0; padding: 1.5rem 1.5rem 1.6rem; }
-.arbide__duan { display: flex; flex-direction: column; font-family: var(--fuente-titulos); font-weight: 800; font-size: 1.35rem; line-height: 1; }
-.arbide__duan small { font-size: .5rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-top: .25rem; }
-.arbide__proyecto {
+.cartel__titulo { color: var(--blanco); font-weight: 800; font-size: clamp(1.6rem, 6vw, 2.6rem); line-height: 1.1; margin: 0 0 .75rem; }
+:where(main) .cartel__descripcion { color: #d9dce0; text-align: left; margin: 0 0 1.1rem; max-width: 34rem; }
+:where(main) .cartel__precio { text-align: left; margin: 0 0 1.5rem; font-family: var(--fuente-titulos); font-weight: 700; font-size: .95rem; color: #d9dce0; }
+.cartel__precio strong { font-size: clamp(1.35rem, 4vw, 1.75rem); font-weight: 800; color: var(--blanco); margin-left: .2rem; }
+.cartel__botones { display: flex; flex-direction: column; gap: .75rem; }
+.cartel__boton { justify-content: center; }
+.cartel__boton--contorno { background: transparent; border-color: var(--blanco); color: var(--blanco); }
+.cartel__boton--contorno:hover { background: var(--blanco); border-color: var(--blanco); color: var(--carbon); }
+.cartel__firma { display: flex; align-items: center; gap: 1rem; margin: 0; padding: 1.5rem 1.5rem 1.6rem; }
+.cartel__duan { display: flex; flex-direction: column; font-family: var(--fuente-titulos); font-weight: 800; font-size: 1.35rem; line-height: 1; }
+.cartel__duan small { font-size: .5rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-top: .25rem; }
+.cartel__proyecto {
     font-family: var(--fuente-titulos); font-weight: 700; font-size: .8rem; letter-spacing: .3em; text-transform: uppercase;
     padding-left: 1rem; border-left: 1px solid rgba(255, 255, 255, .6); line-height: 2.2;
 }
-.arbide__solo-escritorio { display: none; }
+.cartel__solo-escritorio { display: none; }
 @media (min-width: 600px) {
-    .arbide__botones { flex-direction: row; flex-wrap: wrap; }
-    .arbide__foto { aspect-ratio: 16 / 9; }
+    .cartel__botones { flex-direction: row; flex-wrap: wrap; }
+    .cartel__foto { aspect-ratio: 16 / 9; }
 }
 @media (min-width: 860px) {
-    .arbide { display: grid; grid-template-columns: 47fr 53fr; min-height: 380px; }
-    .arbide__foto { order: 0; aspect-ratio: auto; }
-    .arbide__texto { padding: clamp(2rem, 4vw, 3rem); align-self: center; }
-    .arbide__etiqueta { position: static; display: inline-block; margin-bottom: 1rem; }
-    .arbide__solo-escritorio { display: inline; }
-    .arbide__solo-celular { display: none; }
-    .arbide__firma {
+    .cartel { display: grid; grid-template-columns: 47fr 53fr; min-height: 380px; }
+    .cartel__foto { order: 0; aspect-ratio: auto; }
+    .cartel__texto { padding: clamp(2rem, 4vw, 3rem); align-self: center; }
+    .cartel__etiqueta { position: static; display: inline-block; margin-bottom: 1rem; }
+    .cartel__solo-escritorio { display: inline; }
+    .cartel__solo-celular { display: none; }
+    .cartel__firma {
         position: absolute; right: 1.25rem; bottom: 1.25rem; padding: .7rem 1.1rem;
         background: rgba(20, 22, 27, .82); border-radius: 8px; backdrop-filter: blur(4px);
     }
 }
+/* Banner de código propio: marco aislado a todo lo ancho; main.js ajusta el alto */
+.cartel.cartel--codigo { display: block; height: auto; min-height: 0; background: none; box-shadow: none; border-radius: 16px; overflow: hidden; }
+.cartel__marco { display: block; width: 100%; height: 380px; border: 0; }
 .destacados__cierre { text-align: center; margin-top: 3rem; }
 .destacados__cierre p { font-size: 1.15rem; max-width: 40rem; margin: 0 auto 1.25rem; }
 

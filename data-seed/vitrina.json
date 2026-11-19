@@ -1,0 +1,25 @@
+{
+  "actualizado": "2026-11-19T12:00:00-06:00",
+  "items": [
+    {
+      "id": "torre-arbide",
+      "tipo": "diseno",
+      "nombre": "Torre Arbide",
+      "etiqueta": "Últimas 7 unidades",
+      "titulo": "Últimas unidades en Torre Arbide",
+      "texto": "Lofts con vista panorámica en la colonia Arbide, cerca de bancos, plazas y vías principales.",
+      "texto_celular": "Lofts con vista panorámica en la colonia Arbide.",
+      "precio_antes": "Desde",
+      "precio": "$2,320,000 MXN",
+      "imagen": "uploads/vitrina/torre-arbide.webp",
+      "encuadre": "arriba",
+      "alt": "Fachada de Torre Arbide, edificio de lofts en la colonia Arbide, León",
+      "firma": "Torre Arbide",
+      "boton1_texto": "Agendar visita",
+      "boton1_url": "https://cal.com/informacion-du-an-bienes-raices-jfgxcn/visitas-torre-arbide",
+      "boton2_texto": "Ver departamentos",
+      "boton2_url": "https://torrearbide.com/",
+      "activo": true
+    }
+  ]
+}

@@ -107,6 +107,7 @@ function detalle_de(string $seccion, array $item): string
         'destacados'  => ucfirst((string) ($item['operacion'] ?? '')) . ' · ' . formato_precio($item['precio'] ?? null, $item['moneda'] ?? 'MXN')
                          . ' · ' . count($item['fotos'] ?? []) . ' fotos',
         'hero'        => !empty($item['video']) ? 'Imagen + video' : 'Solo imagen',
+        'vitrina'     => ($item['tipo'] ?? '') === 'codigo' ? 'Código propio' : 'Diseño Du\'an · ' . ($item['titulo'] ?? ''),
         'testimonios' => extracto((string) ($item['texto'] ?? ''), 90),
         'resultados'  => ucfirst((string) ($item['estado'] ?? '')) . (!empty($item['subtitulo']) ? ' · ' . $item['subtitulo'] : ''),
         'videos'      => 'youtube.com/watch?v=' . ($item['youtube_id'] ?? ''),

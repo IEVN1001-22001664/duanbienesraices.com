@@ -176,6 +176,12 @@ const ESQUEMAS = [
         'req'   => ['id', 'imagen', 'titulo'],
         'tipos' => ['imagen' => 'ruta'],
     ],
+    // Banners promocionales de Propiedades destacadas. 'cond': campos obligatorios según el tipo.
+    'vitrina' => [
+        'req'   => ['id', 'tipo', 'nombre'],
+        'tipos' => ['tipo' => 'banner', 'imagen' => 'ruta?', 'boton1_url' => 'url?', 'boton2_url' => 'url?'],
+        'cond'  => ['diseno' => ['titulo', 'imagen'], 'codigo' => ['codigo']],
+    ],
     'blog' => [
         'req'   => ['slug', 'titulo', 'fecha', 'contenido'],
         'tipos' => ['slug' => 'slug', 'fecha' => 'fecha', 'portada' => 'ruta?'],
@@ -214,10 +220,18 @@ function validar_item(array $item, string $esquema): array
             'youtube'   => is_string($valor) && preg_match('/^[\w-]{11}$/', $valor),
             'slug'      => is_string($valor) && preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $valor),
             'fecha'     => is_string($valor) && strtotime($valor) !== false,
+            'banner'    => in_array($valor, ['diseno', 'codigo'], true),
             default     => true,
         };
         if (!$ok) {
             $errores[] = "Valor inválido en «{$campo}»";
+        }
+    }
+
+    // Obligatorios que dependen del tipo (banners: diseño Du'an o código propio)
+    foreach ($reglas['cond'][$item['tipo'] ?? ''] ?? [] as $campo) {
+        if (($item[$campo] ?? '') === '' || ($item[$campo] ?? null) === []) {
+            $errores[] = "Falta el campo «{$campo}»";
         }
     }
     return $errores;
@@ -374,7 +388,7 @@ function obtener_post(string $slug): ?array
  * Versión de data-seed/ y uploads-seed/. Subirla cuando se agregue una sección nueva a la semilla
  * (p. ej. 2 = fundador y galería de Nosotros) para que el servidor la copie en el siguiente deploy.
  */
-const SEMILLA_VERSION = '5';
+const SEMILLA_VERSION = '6';   // 6 = banners promocionales (Torre Arbide)
 
 /**
  * Primer arranque en un servidor nuevo: copia data-seed/ → data/ y uploads-seed/ → uploads/.
@@ -498,6 +512,39 @@ function componente_html(string $nombre, array $vars = []): string
     ob_start();
     componente($nombre, $vars);
     return (string) ob_get_clean();
+}
+
+/**
+ * Documento HTML de un banner de código propio (lo pega el editor en el panel). Se muestra dentro
+ * de un <iframe> que el servidor sirve con la CSP «sandbox» (api/cartel.php y admin/vista-cartel.php):
+ * su código corre en un origen aislado, sin acceso a la página, las cookies ni el panel.
+ * Al final se agrega un script que avisa a la página su alto, para que el marco se ajuste solo.
+ */
+function cartel_documento(string $codigo): string
+{
+    $medir = '<script>(function(){var a=0;function m(){var h=Math.ceil(document.documentElement.getBoundingClientRect().height);'
+        . 'if(h!==a){a=h;parent.postMessage({duanCartel:1,alto:h},"*");}}'
+        . 'addEventListener("load",m);if(window.ResizeObserver){new ResizeObserver(m).observe(document.documentElement);}m();})();</script>';
+    // Página completa: se respeta y el script va antes de </body>
+    if (preg_match('/<html[\s>]/i', $codigo)) {
+        $pos = strripos($codigo, '</body>');
+        return $pos === false ? $codigo . $medir : substr($codigo, 0, $pos) . $medir . substr($codigo, $pos);
+    }
+    // Fragmento: se envuelve en una página mínima; las ligas abren en la página (no dentro del marco)
+    return '<!DOCTYPE html><html lang="es-MX"><head><meta charset="utf-8">'
+        . '<meta name="viewport" content="width=device-width, initial-scale=1"><base target="_top">'
+        . '<style>html,body{margin:0;padding:0}</style></head><body>' . $codigo . $medir . '</body></html>';
+}
+
+/** Cabeceras del documento de un banner de código: origen aislado y solo dentro del sitio. */
+function cabeceras_cartel_codigo(): void
+{
+    header_remove('Content-Security-Policy');
+    header('Content-Type: text/html; charset=utf-8');
+    header("Content-Security-Policy: sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms "
+        . "allow-top-navigation-by-user-activation; frame-ancestors 'self'");
+    header('X-Robots-Tag: noindex');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
 }
 
 /** Ícono SVG en línea desde assets/img/iconos.svg (sprite). */

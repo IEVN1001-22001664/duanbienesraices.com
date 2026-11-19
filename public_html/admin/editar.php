@@ -33,6 +33,7 @@ $salir = $esUnico ? '/admin/' : $volver;
 // Valores iniciales de un elemento nuevo
 $nuevo = ['activo' => true] + match ($s) {
     'destacados'  => ['operacion' => 'venta', 'moneda' => 'MXN', 'fotos' => []],
+    'vitrina'     => ['tipo' => 'diseno', 'encuadre' => 'centro'],
     'testimonios' => ['estrellas' => 5],
     'resultados'  => ['estado' => 'vendido'],
     'blog'        => ['fecha' => date('Y-m-d')],

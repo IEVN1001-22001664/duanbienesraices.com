@@ -25,7 +25,8 @@ function recolectar(string $seccion, array $post, array $actual, bool $validar =
         [$valor, $error] = limpiar_campo($seccion, $nombre, $def, $crudo);
         $item[$nombre] = $valor;
 
-        if (!$validar) {
+        // Campo que no aplica al tipo elegido (banners): se guarda tal cual, sin exigirlo
+        if (!$validar || (isset($def['si']) && ($item['tipo'] ?? '') !== $def['si'])) {
             continue;
         }
         $vacio = $valor === '' || $valor === null || $valor === [];
@@ -45,6 +46,13 @@ function recolectar(string $seccion, array $post, array $actual, bool $validar =
     if ($validar && $seccion === 'hero' && ($item['texto_boton'] ?? '') !== '' && ($item['enlace'] ?? '') === '') {
         $errores['enlace'] = 'Si el botón tiene texto, necesita una liga.';
     }
+    if ($validar && $seccion === 'vitrina' && ($item['tipo'] ?? '') === 'diseno') {
+        foreach ([1, 2] as $n) {
+            if (($item["boton{$n}_texto"] ?? '') !== '' && ($item["boton{$n}_url"] ?? '') === '') {
+                $errores["boton{$n}_url"] ??= 'Si el botón tiene texto, necesita una liga.';
+            }
+        }
+    }
 
     // Quita los opcionales vacíos para dejar el JSON limpio
     foreach ($campos as $nombre => $def) {
@@ -58,13 +66,14 @@ function recolectar(string $seccion, array $post, array $actual, bool $validar =
 /** Limpia un valor según su tipo. Devuelve [valor, mensaje de error o null]. */
 function limpiar_campo(string $seccion, string $nombre, array $def, mixed $crudo): array
 {
-    $texto = is_string($crudo) ? texto_limpio($crudo, $def['tipo'] === 'area' || $def['tipo'] === 'markdown') : '';
+    $texto = is_string($crudo) ? texto_limpio($crudo, in_array($def['tipo'], ['area', 'markdown', 'codigo'], true)) : '';
     $max = $def['max'] ?? null;
 
     switch ($def['tipo']) {
         case 'texto':
         case 'area':
         case 'markdown':
+        case 'codigo':
             if ($max && mb_strlen($texto) > $max) {
                 return [$texto, "Máximo {$max} caracteres (llevas " . mb_strlen($texto) . ').'];
             }
@@ -200,7 +209,7 @@ function pintar_campo(string $seccion, string $nombre, array $def, mixed $valor,
     $tipo = $def['tipo'];
     $esArchivo = in_array($tipo, ['imagen', 'fotos', 'video'], true);
     ?>
-    <div class="campo campo--<?= e($tipo) ?><?= $error ? ' campo--error' : '' ?>" data-campo="<?= e($nombre) ?>">
+    <div class="campo campo--<?= e($tipo) ?><?= $error ? ' campo--error' : '' ?>" data-campo="<?= e($nombre) ?>"<?= isset($def['si']) ? ' data-si="' . e($def['si']) . '"' : '' ?>>
         <?php if ($esArchivo): ?>
             <p class="campo__etiqueta" id="<?= e($id) ?>-etiqueta"><?= e($def['etiqueta']) ?><?= $req ? ' <span class="obligatorio" aria-hidden="true">*</span>' : '' ?></p>
         <?php else: ?>
@@ -230,6 +239,10 @@ function pintar_campo(string $seccion, string $nombre, array $def, mixed $valor,
                 <?php break;
             case 'area': ?>
                 <textarea class="campo__control" id="<?= e($id) ?>" name="<?= e($nombre) ?>" rows="<?= (int) ($def['filas'] ?? 4) ?>"<?= $max . $aria ?>><?= e($valor) ?></textarea>
+                <?php break;
+            case 'codigo': ?>
+                <textarea class="campo__control campo__control--codigo" id="<?= e($id) ?>" name="<?= e($nombre) ?>" rows="18"
+                          spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"<?= $max . $aria ?>><?= e($valor) ?></textarea>
                 <?php break;
             case 'opciones': ?>
                 <select class="campo__control campo__control--corto" id="<?= e($id) ?>" name="<?= e($nombre) ?>"<?= $aria ?>>

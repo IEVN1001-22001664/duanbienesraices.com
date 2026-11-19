@@ -167,7 +167,10 @@
     });
 
     /* ---------------------------------------------------------------
-       Carruseles con scroll-snap (testimonios, galería de Nosotros)
+       Carruseles con scroll-snap (testimonios, galería de Nosotros, banners)
+       Con data-auto="ms" avanzan solos: se detienen con el mouse o el foco
+       dentro, fuera de pantalla y con «reducir movimiento»; tras usar las
+       flechas o deslizar, la cuenta vuelve a empezar.
        --------------------------------------------------------------- */
     $$('.carrusel[data-carrusel]').forEach(function (carrusel) {
         var pista = $('.carrusel__pista', carrusel);
@@ -204,8 +207,30 @@
         construirPuntos();
 
         var ant = $('[data-anterior]', carrusel), sig = $('[data-siguiente]', carrusel);
-        if (ant) ant.addEventListener('click', function () { ir(indice - 1); });
-        if (sig) sig.addEventListener('click', function () { ir(indice + 1); });
+        if (ant) ant.addEventListener('click', function () { ir(indice - 1); reiniciarAuto(); });
+        if (sig) sig.addEventListener('click', function () { ir(indice + 1); reiniciarAuto(); });
+
+        // Avance automático
+        var auto = parseInt(carrusel.getAttribute('data-auto'), 10) || 0;
+        var relojAuto = null, pausado = false, enPantalla = true;
+        function reiniciarAuto() {
+            clearInterval(relojAuto);
+            if (!auto || reducirMovimiento) return;
+            relojAuto = setInterval(function () {
+                if (!pausado && enPantalla && !document.hidden) ir(indice + 1);
+            }, auto);
+        }
+        if (auto && !reducirMovimiento) {
+            carrusel.addEventListener('mouseenter', function () { pausado = true; });
+            carrusel.addEventListener('mouseleave', function () { pausado = false; reiniciarAuto(); });
+            carrusel.addEventListener('focusin', function () { pausado = true; });
+            carrusel.addEventListener('focusout', function () { pausado = false; });
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (e) { enPantalla = e[0].isIntersecting; }).observe(carrusel);
+            }
+            pista.addEventListener('touchstart', reiniciarAuto, { passive: true });
+            reiniciarAuto();
+        }
 
         // Deslizar con el dedo: sincroniza el índice cuando termina el scroll.
         var espera;
@@ -430,6 +455,24 @@
             abrirVideo(id, marco.getAttribute('data-titulo'));
         });
     });
+
+    /* ---------------------------------------------------------------
+       Banners de código propio (inicio): el documento aislado del <iframe>
+       avisa su alto con postMessage y aquí se ajusta el marco. Solo se
+       acepta el mensaje si viene de uno de esos marcos.
+       --------------------------------------------------------------- */
+    var marcosBanner = $$('[data-cartel-codigo]');
+    if (marcosBanner.length) {
+        window.addEventListener('message', function (ev) {
+            var d = ev.data;
+            if (!d || d.duanCartel !== 1 || typeof d.alto !== 'number') return;
+            marcosBanner.forEach(function (marco) {
+                if (marco.contentWindow === ev.source) {
+                    marco.style.height = Math.max(60, Math.min(1600, Math.round(d.alto))) + 'px';
+                }
+            });
+        });
+    }
 
     /* ---------------------------------------------------------------
        «Agendar cita» (fichas): la agenda de Cal.com se abre en un modal sin

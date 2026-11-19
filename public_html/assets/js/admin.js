@@ -337,6 +337,15 @@
     const avisoError = $('[data-enfocar]');
     if (avisoError) avisoError.focus();
 
+    // --- Campos que dependen del tipo (banners: diseño Du'an o código propio) -----------
+    const selectorTipo = $('#campo-tipo', form);
+    const condicionales = $$('[data-si]', form);
+    if (selectorTipo && condicionales.length) {
+        const mostrar = () => condicionales.forEach((c) => { c.hidden = c.dataset.si !== selectorTipo.value; });
+        selectorTipo.addEventListener('change', mostrar);
+        mostrar();
+    }
+
     // --- Vista previa en vivo -----------------------------------------------------------
     let temporizadorPrevia;
     function actualizarPrevia() {
