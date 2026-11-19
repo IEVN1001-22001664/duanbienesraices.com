@@ -445,8 +445,8 @@
             if (!modalAgenda) {
                 modalAgenda = document.createElement('dialog');
                 modalAgenda.className = 'agenda-modal';
-                modalAgenda.setAttribute('aria-label', 'Agendar cita');
-                modalAgenda.innerHTML = '<div class="agenda-modal__barra"><span class="agenda-modal__titulo">Agendar cita</span>' +
+                modalAgenda.setAttribute('aria-label', 'Agendar visita');
+                modalAgenda.innerHTML = '<div class="agenda-modal__barra"><span class="agenda-modal__titulo">Agendar visita</span>' +
                     '<button class="agenda-modal__cerrar" type="button" aria-label="Cerrar agenda">&times;</button></div>' +
                     '<div class="agenda-modal__marco"><p class="agenda-modal__cargando">Cargando agenda…</p></div>';
                 document.body.appendChild(modalAgenda);
