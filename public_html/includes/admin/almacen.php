@@ -20,6 +20,73 @@ const HORAS_GRACIA_UPLOADS = 6;   // archivos recién subidos sin guardar no se 
  * Tipos de campo: texto, area, url, precio, opciones, youtube, fecha, imagen, fotos, video, markdown.
  * Las reglas finales siguen siendo las de ESQUEMAS (funciones.php), que también usa el sitio.
  */
+/**
+ * Instrucciones que el editor copia y pega en una IA (ChatGPT, Claude, Gemini…) para que le arme el
+ * código de un banner que funcione en la sección «vitrina». Se muestran debajo de «Código del banner».
+ * No atan el diseño a la marca Du'an (un banner puede ser de otro proyecto con su propia identidad):
+ * solo fijan las reglas técnicas; los colores y tipografías de Du'an quedan como valores por defecto,
+ * y la IA debe preguntarle primero al editor los datos que falten.
+ */
+const INSTRUCCIONES_CARTEL_IA = <<<'TXT'
+Vas a diseñar el código de un banner promocional que se mostrará en la página de inicio de un sitio web inmobiliario. El banner puede ser de cualquier proyecto, desarrollo, propiedad o marca, así que su diseño (colores, tipografías y estilo) lo decide la persona que te lo pide.
+
+ORDEN DE PRIORIDAD
+1. Lo que te pida la persona (su marca, colores, tipografías, estilo, textos) manda sobre todo lo demás.
+2. Las REGLAS TÉCNICAS de abajo son obligatorias siempre: sin ellas el banner no funciona en el sitio.
+3. Los VALORES POR DEFECTO solo se usan si la persona no indica nada sobre ese punto.
+
+PASO 1: ANTES DE ESCRIBIR CÓDIGO, PREGUNTA
+No generes el banner todavía. Primero hazle a la persona, en un solo mensaje y con una lista numerada, las preguntas que no estén ya respondidas en «MI BANNER»:
+1. ¿De qué proyecto, propiedad o marca es el banner y cuál es su objetivo? (vender, rentar, agendar visitas, dar a conocer una preventa, etc.)
+2. Textos: etiqueta corta opcional (ej.: «Últimas unidades»), título y una o dos líneas de descripción.
+3. Precio o condiciones (ej.: «Desde $2,320,000 MXN»), si los hay.
+4. Fecha límite de la promoción, si la hay (para mostrar una cuenta regresiva).
+5. Imágenes: ligas completas https://… de la foto principal y del logotipo, si los hay.
+6. Identidad visual: colores (en código #hex si los tiene), tipografías y estilo (elegante, moderno, minimalista, juvenil…). Si no tiene, dile que se usarán los valores por defecto.
+7. Botones (máximo dos): texto de cada uno y a dónde lleva (página del sitio, sitio externo, WhatsApp con su número, agenda en línea).
+8. ¿Quiere alguna animación o efecto? ¿Tiene un ejemplo o referencia del estilo que busca?
+Espera sus respuestas. Si responde «no sé» o deja algo en blanco, usa los valores por defecto o déjalo fuera; nunca inventes precios, cifras, fechas, direcciones ni datos de contacto (si falta un dato indispensable, escribe [PENDIENTE] en su lugar).
+
+PASO 2: REGLAS TÉCNICAS (OBLIGATORIAS)
+Formato
+- Entrega un solo bloque de código: HTML con su <style> y, solo si hace falta, un <script> al final.
+- No incluyas <html>, <head> ni <body>: el código se pega dentro de una página que ya existe.
+- JavaScript sencillo, sin librerías ni frameworks (nada de jQuery, React, Tailwind ni Bootstrap) y sin scripts de otros sitios. Las tipografías sí pueden venir de Google Fonts con display=swap.
+Tamaño y adaptación a pantallas
+- El banner ocupa todo el ancho de un recuadro que mide unos 1150 px en computadora y unos 340 px en celular. Debe verse bien en todo ese rango: diseña primero para celular y usa @media (min-width: …) para pantallas medianas (≈ 600 px) y grandes (≈ 860 px en adelante).
+- Medidas fluidas: porcentajes, fr, rem y clamp() para tamaños de texto (ej.: font-size: clamp(1.6rem, 4vw, 2.6rem)). Nada de anchos fijos en px que desborden; nada de scroll horizontal.
+- La altura la da el contenido: no uses height: 100vh ni height: 100% en el contenedor principal. Recomendado: 220–500 px de alto en computadora; en celular puede crecer hacia abajo (foto arriba y texto abajo, botones a lo ancho).
+- El contenedor principal lleva su propio fondo (no transparente) y box-sizing: border-box en todo.
+- Textos reales en HTML (no imágenes con texto), con contraste suficiente para leerse sobre el fondo o la foto (usa un velo oscuro sobre la foto si hace falta).
+- Si hay animaciones, que sean suaves y se desactiven con @media (prefers-reduced-motion: reduce).
+Imágenes
+- Solo imágenes publicadas en internet con dirección completa https://… (no se pueden subir archivos junto con el código).
+- Usa object-fit: cover para que no se deformen, width/height o aspect-ratio para que no salten al cargar, loading="lazy" y un alt que describa la imagen.
+Ligas
+- Páginas del propio sitio con ruta corta, sin dominio (ej.: /propiedades, /contacto): abren en la misma ventana.
+- Ligas a otros sitios, agendas en línea y WhatsApp: con target="_blank" rel="noopener".
+- WhatsApp: https://wa.me/52XXXXXXXXXX?text= seguido del mensaje codificado para URL (usa el número que te dé la persona).
+- Los botones son ligas <a>, de al menos 44 px de alto para poder tocarlos en celular.
+Prohibido
+- Formularios que pidan datos personales, cookies, localStorage, alert(), ventanas emergentes, sonidos y videos que se reproduzcan con sonido.
+- Scripts de rastreo o publicidad (Google Tag Manager, Analytics, píxeles).
+
+PASO 3: VALORES POR DEFECTO (SOLO SI LA PERSONA NO INDICA OTRA COSA)
+- Colores: rojo #e21c21, rojo oscuro #b40000, carbón #282d35, carbón claro #424a56 y blanco #ffffff.
+- Tipografías: títulos en Montserrat (700 u 800) y textos en Nunito Sans (400 o 600).
+- Esquinas redondeadas de 16 px; botones con forma de píldora (border-radius: 999px); el principal en el color más fuerte con texto blanco y el secundario solo con borde.
+- Distribución en computadora: texto a la izquierda y foto a la derecha; en celular: foto arriba y texto abajo.
+- Idioma: español de México, tratando al visitante de usted.
+
+PASO 4: ENTREGA
+- Entrega el código completo en un solo bloque, listo para copiar y pegar.
+- Después del código, en una o dos líneas, menciona solo lo que quedó como [PENDIENTE], si hay algo.
+- Si la persona pide cambios, vuelve a entregar el código completo, no solo la parte cambiada.
+
+MI BANNER:
+(Escribe aquí lo que ya sepas de tu banner. Lo que falte, la IA te lo preguntará.)
+TXT;
+
 const SECCIONES_ADMIN = [
     'destacados' => [
         'titulo'    => 'Propiedades destacadas',
@@ -92,6 +159,7 @@ const SECCIONES_ADMIN = [
                             'ayuda' => 'Ej.: Ver departamentos'],
             'boton2_url' => ['tipo' => 'url', 'etiqueta' => 'Botón blanco: liga', 'si' => 'diseno'],
             'codigo'    => ['tipo' => 'codigo', 'etiqueta' => 'Código del banner', 'req' => true, 'max' => 100000, 'si' => 'codigo',
+                            'instrucciones' => INSTRUCCIONES_CARTEL_IA,
                             'ayuda' => 'Pega el HTML (puede llevar <style> y <script>). Se muestra en un marco aislado del resto de la página '
                                      . 'a todo lo ancho de la sección, y su alto se ajusta solo. Las imágenes deben estar en internet (https://…).'],
         ],

@@ -218,6 +218,15 @@ function pintar_campo(string $seccion, string $nombre, array $def, mixed $valor,
         <?php if (!empty($def['ayuda'])): ?>
             <p class="campo__ayuda" id="<?= e($id) ?>-ayuda"><?= e($def['ayuda']) ?></p>
         <?php endif; ?>
+        <?php if (!empty($def['instrucciones'])): ?>
+            <details class="instrucciones-ia" data-instrucciones>
+                <summary>¿Lo va a pedir a una IA? Copie estas instrucciones</summary>
+                <p class="campo__ayuda">Cópielas en ChatGPT, Claude, Gemini u otra IA y, al final (en «MI BANNER»), escriba lo que ya sepa de su banner. La IA le preguntará los datos que falten; luego pegue aquí abajo el código que le entregue.</p>
+                <textarea class="campo__control campo__control--codigo instrucciones-ia__texto" rows="14" readonly
+                          aria-label="Instrucciones para la IA" data-instrucciones-texto><?= e($def['instrucciones']) ?></textarea>
+                <button class="boton boton--secundario" type="button" data-copiar-instrucciones>Copiar instrucciones</button>
+            </details>
+        <?php endif; ?>
 
         <?php switch ($tipo):
             case 'texto': ?>

@@ -255,6 +255,11 @@ textarea.campo__control { resize: vertical; line-height: 1.5; }
 .editor__barra label:focus-within { box-shadow: var(--foco); }
 .editor__texto { border-radius: 0 0 8px 8px; font-family: ui-monospace, Consolas, monospace; font-size: .92rem; }
 .editor__ayuda { margin-top: .5rem; font-size: .9rem; color: var(--gris); }
+/* Instrucciones para pedir el código de un banner a una IA */
+.instrucciones-ia { margin: .25rem 0 .9rem; padding: .75rem 1rem; border: 1px dashed var(--borde); border-radius: 8px; background: #fafafa; }
+.instrucciones-ia summary { cursor: pointer; font-weight: 700; color: var(--carbon); }
+.instrucciones-ia[open] summary { margin-bottom: .5rem; }
+.instrucciones-ia__texto { white-space: pre-wrap; margin-bottom: .6rem; background: var(--blanco, #fff); }
 .editor__ayuda summary { cursor: pointer; font-weight: 700; }
 
 /* --- Edición con vista previa --- */

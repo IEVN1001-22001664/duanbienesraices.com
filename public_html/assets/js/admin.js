@@ -346,6 +346,20 @@
         mostrar();
     }
 
+    // --- Copiar las instrucciones para la IA (banners de código) ------------------------
+    $$('[data-copiar-instrucciones]', form).forEach((boton) => {
+        boton.addEventListener('click', async () => {
+            const texto = $('[data-instrucciones-texto]', boton.closest('[data-instrucciones]'));
+            try {
+                await navigator.clipboard.writeText(texto.value);
+            } catch (e) {
+                texto.select();              // sin permiso de portapapeles: se selecciona para Ctrl+C
+                document.execCommand('copy');
+            }
+            toast('Instrucciones copiadas. Péguelas en la IA; ella le preguntará los datos de su banner.');
+        });
+    });
+
     // --- Vista previa en vivo -----------------------------------------------------------
     let temporizadorPrevia;
     function actualizarPrevia() {
