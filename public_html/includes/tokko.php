@@ -106,15 +106,17 @@ function tokko_propiedades(): array
     return is_array($datos['propiedades'] ?? null) ? $datos['propiedades'] : [];
 }
 
-/** Una propiedad de la copia local por su id de Tokko. */
+/** Una propiedad de la copia local por su id de Tokko (el índice se arma una vez por visita). */
 function tokko_propiedad(int $id): ?array
 {
-    foreach (tokko_propiedades() as $p) {
-        if ((int) ($p['id'] ?? 0) === $id) {
-            return $p;
+    static $indice = null;
+    if ($indice === null) {
+        $indice = [];
+        foreach (tokko_propiedades() as $p) {
+            $indice[(int) ($p['id'] ?? 0)] = $p;
         }
     }
-    return null;
+    return $indice[$id] ?? null;
 }
 
 /**
@@ -640,8 +642,89 @@ function tokko_refrescar_al_terminar(): void
 // Página /propiedades: filtros y datos para mostrar
 // =============================================================================
 
-const PROPIEDADES_POR_PAGINA = 12;
+const PROPIEDADES_POR_PAGINA = 24; // 6 filas de 4 desde 1440 px (y parejo en 3, 2 y 1 columnas)
 const RECAMARAS_FILTRO = [1, 2, 3, 4];
+const BANOS_FILTRO = [1, 2, 3, 4];
+const ESTACIONAMIENTOS_FILTRO = [1, 2, 3, 4];
+/** «Publicada»: días hacia atrás desde la fecha de alta en Tokko. */
+const PUBLICADA_FILTRO = [7 => 'Última semana', 30 => 'Último mes', 90 => 'Últimos 3 meses'];
+const MULTIMEDIA_FILTRO = ['video' => 'Con video', 'recorrido' => 'Recorrido virtual 360°'];
+
+/**
+ * Características del panel «Más filtros», agrupadas: clave en la URL => [texto, amenidades de Tokko].
+ * Una propiedad cumple si tiene cualquiera de las amenidades de la lista (Tokko usa varios nombres
+ * para lo mismo, como «Seguridad 24 h» y «Seguridad portería»). Las que ninguna propiedad tiene no se muestran.
+ */
+const CARACTERISTICAS_FILTRO = [
+    'Espacios' => [
+        'jardin'          => ['Jardín', ['Jardín']],
+        'patio'           => ['Patio', ['Patio']],
+        'terraza'         => ['Terraza', ['Terraza', 'Terraza Cubierta']],
+        'balcon'          => ['Balcón', ['Balcón']],
+        'cuarto-lavado'   => ['Cuarto de lavado', ['Cuarto de lavado']],
+        'cuarto-servicio' => ['Cuarto o baño de servicio', ['Cuarto de servicio', 'Baño de servicio']],
+        'estudio'         => ['Estudio u oficina', ['Estudio', 'Oficina', 'Biblioteca']],
+        'vestidor'        => ['Vestidor', ['Vestidor']],
+        'bodega'          => ['Bodega', ['Bodega']],
+    ],
+    'Generales' => [
+        'amueblado'  => ['Amueblado', ['Amueblado']],
+        'mascotas'   => ['Acepta mascotas', ['Apto mascotas']],
+        'una-planta' => ['Una planta', ['Una planta']],
+        'aire'       => ['Aire acondicionado', ['Aire acondicionado', 'Preinstalación de aire acondicionado']],
+        'elevador'   => ['Elevador', ['Ascensor']],
+        'accesible'  => ['Accesible (movilidad reducida)', ['Accesible para movilidad reducida']],
+    ],
+    'Amenidades' => [
+        'alberca'  => ['Alberca', ['Alberca', 'Alberca techada', 'Mantenimiento de alberca']],
+        'asador'   => ['Asador', ['Área de asador', 'Asador']],
+        'juegos'   => ['Juegos infantiles', ['Juegos para niños', 'Sala de juegos']],
+        'gimnasio' => ['Gimnasio o área deportiva', ['Gimnasio', 'Centro de deportes']],
+        'salon'    => ['Salón de usos múltiples', ['Salón de usos múltiples']],
+    ],
+    'Seguridad y servicios' => [
+        'seguridad' => ['Seguridad o vigilancia', ['Seguridad 24 h', 'Seguridad', 'Seguridad portería', 'Seguridad de día', 'Seguridad nocturna']],
+        'internet'  => ['Internet', ['Internet', 'Wifi']],
+        'gas'       => ['Gas natural', ['Gas Natural']],
+    ],
+];
+
+/** Claves de características => amenidades de Tokko (sin los grupos). */
+function caracteristicas_filtro(): array
+{
+    return array_merge(...array_values(CARACTERISTICAS_FILTRO));
+}
+
+/** Todas las amenidades de una propiedad en una sola lista. */
+function amenidades_de(array $p): array
+{
+    return array_merge(...array_values(array_map(fn($l) => (array) $l, $p['amenidades'] ?? [])) ?: [[]]);
+}
+
+/** ¿Cuántas propiedades tienen cada característica? (para mostrar el número y esconder las vacías) */
+function conteo_caracteristicas(array $props): array
+{
+    $conteo = [];
+    foreach ($props as $p) {
+        $tiene = amenidades_de($p);
+        foreach (caracteristicas_filtro() as $clave => [, $nombres]) {
+            if (array_intersect($nombres, $tiene)) {
+                $conteo[$clave] = ($conteo[$clave] ?? 0) + 1;
+            }
+        }
+    }
+    return $conteo;
+}
+
+/** Proveedores de video de una propiedad: 'video' (YouTube…) y 'recorrido' (Matterport). */
+function multimedia_de(array $p): array
+{
+    $tipos = [];
+    foreach ($p['videos'] ?? [] as $v) {
+        $tipos[] = ($v['proveedor'] ?? '') === 'matterport' ? 'recorrido' : 'video';
+    }
+    return array_unique($tipos);
+}
 
 /** Lee y limpia los filtros del listado desde $_GET (todo opcional). */
 function filtros_propiedades(array $get): array
@@ -650,23 +733,60 @@ function filtros_propiedades(array $get): array
     $entero = fn($k) => is_numeric($get[$k] ?? null) && (int) $get[$k] > 0 ? (int) $get[$k] : null;
     $operacion = $texto('operacion');
     $orden = $texto('orden');
+    // Listas de casillas (carac[]=…): solo claves conocidas, sin repetir
+    $lista = fn($k, array $permitidos) => array_values(array_intersect($permitidos,
+        array_filter((array) ($get[$k] ?? []), 'is_string')));
+    $sup = $texto('sup');
+    $publicada = $entero('publicada');
     return [
         'q'         => $texto('q'),
         'operacion' => in_array($operacion, ['venta', 'renta'], true) ? $operacion : '',
         'tipo'      => $texto('tipo', 40),
-        'ciudad'    => $texto('ciudad', 60),
         'recamaras' => in_array($entero('recamaras'), RECAMARAS_FILTRO, true) ? $entero('recamaras') : null,
         'min'       => $entero('min'),
         'max'       => $entero('max'),
+        // Panel «Más filtros»
+        'sup'       => $sup === 'terreno' ? 'terreno' : 'construida',
+        'm2min'     => $entero('m2min'),
+        'm2max'     => $entero('m2max'),
+        'banos'     => in_array($entero('banos'), BANOS_FILTRO, true) ? $entero('banos') : null,
+        'estac'     => in_array($entero('estac'), ESTACIONAMIENTOS_FILTRO, true) ? $entero('estac') : null,
+        'carac'     => $lista('carac', array_keys(caracteristicas_filtro())),
+        'media'     => $lista('media', array_keys(MULTIMEDIA_FILTRO)),
+        'publicada' => isset(PUBLICADA_FILTRO[$publicada]) ? $publicada : null,
         'orden'     => in_array($orden, ['recientes', 'precio-asc', 'precio-desc'], true) ? $orden : 'recientes',
     ];
+}
+
+/** Cuántos filtros del panel «Más filtros» están aplicados (para el número del botón). */
+function filtros_mas_activos(array $f): int
+{
+    return ($f['recamaras'] ? 1 : 0) + ($f['m2min'] || $f['m2max'] ? 1 : 0) + ($f['banos'] ? 1 : 0) + ($f['estac'] ? 1 : 0)
+        + count($f['carac']) + count($f['media']) + ($f['publicada'] ? 1 : 0);
+}
+
+/**
+ * Filtros aplicados listos para la URL (sin vacíos ni valores por defecto), p. ej. para la paginación.
+ * $sin: claves que se omiten.
+ */
+function consulta_filtros(array $f, array $sin = []): array
+{
+    $q = [];
+    foreach ($f as $k => $v) {
+        if (in_array($k, $sin, true) || $v === '' || $v === null || $v === [] || ($k === 'orden' && $v === 'recientes')
+            || ($k === 'sup' && ($v === 'construida' || (!$f['m2min'] && !$f['m2max'])))) {
+            continue;
+        }
+        $q[$k] = $v;
+    }
+    return $q;
 }
 
 /** ¿Hay algún filtro aplicado (además del orden)? */
 function hay_filtros(array $f): bool
 {
-    return $f['q'] !== '' || $f['operacion'] !== '' || $f['tipo'] !== '' || $f['ciudad'] !== ''
-        || $f['recamaras'] || $f['min'] || $f['max'];
+    return $f['q'] !== '' || $f['operacion'] !== '' || $f['tipo'] !== ''
+        || $f['min'] || $f['max'] || filtros_mas_activos($f) > 0;
 }
 
 /** Texto sin acentos y en minúsculas, para buscar. */
@@ -697,9 +817,6 @@ function filtrar_propiedades(array $props, array $f): array
         if ($f['tipo'] !== '' && $p['tipo'] !== $f['tipo']) {
             return false;
         }
-        if ($f['ciudad'] !== '' && $p['ciudad'] !== $f['ciudad']) {
-            return false;
-        }
         if ($f['recamaras'] && (int) ($p['recamaras'] ?? 0) < $f['recamaras']) {
             return false;
         }
@@ -708,6 +825,34 @@ function filtrar_propiedades(array $props, array $f): array
             if (!$p['precio_visible'] || ($f['min'] && $op['precio'] < $f['min']) || ($f['max'] && $op['precio'] > $f['max'])) {
                 return false;
             }
+        }
+        // Panel «Más filtros»
+        if ($f['m2min'] || $f['m2max']) {
+            $m2 = (float) ($f['sup'] === 'terreno' ? $p['terreno_m2'] : $p['construccion_m2']);
+            if (!$m2 || ($f['m2min'] && $m2 < $f['m2min']) || ($f['m2max'] && $m2 > $f['m2max'])) {
+                return false;
+            }
+        }
+        if ($f['banos'] && (int) ($p['banos'] ?? 0) < $f['banos']) {
+            return false;
+        }
+        if ($f['estac'] && (int) ($p['estacionamientos'] ?? 0) < $f['estac']) {
+            return false;
+        }
+        if ($f['carac']) {
+            $tiene = amenidades_de($p);
+            $todas = caracteristicas_filtro();
+            foreach ($f['carac'] as $clave) {
+                if (!array_intersect($todas[$clave][1], $tiene)) {
+                    return false;
+                }
+            }
+        }
+        if ($f['media'] && array_diff($f['media'], multimedia_de($p))) {
+            return false;
+        }
+        if ($f['publicada'] && strtotime((string) $p['creada']) < time() - $f['publicada'] * 86400) {
+            return false;
         }
         if ($palabras) {
             $texto = texto_busqueda(implode(' ', [$p['titulo'], $p['titulo_tokko'] ?? '', $p['codigo'], $p['tipo'], $p['ubicacion_completa']]));
@@ -776,6 +921,17 @@ function datos_clave(array $p, bool $largo = false): array
         $datos[] = ['auto', $n($p['estacionamientos']) . ($p['estacionamientos'] == 1 ? ' estacionamiento' : ' estacionamientos')];
     }
     return $datos;
+}
+
+/**
+ * Datos clave abreviados para las tarjetas compactas: [icono, texto corto, texto completo].
+ * Ej.: «2 rec.» con «2 recámaras» para el atributo title.
+ */
+function datos_clave_cortos(array $p, int $max = 4): array
+{
+    $corto = [' constr.' => '', ' terreno' => ' terr.', ' recámaras' => ' rec.', ' recámara' => ' rec.',
+              ' estacionamientos' => ' est.', ' estacionamiento' => ' est.'];
+    return array_map(fn($d) => [$d[0], strtr($d[1], $corto), $d[1]], array_slice(datos_clave($p), 0, $max));
 }
 
 /** Párrafos de la descripción de Tokko (texto plano; se escapan al imprimir). */

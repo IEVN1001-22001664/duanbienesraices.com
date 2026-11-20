@@ -511,6 +511,55 @@
     });
 
     /* ---------------------------------------------------------------
+       Ficha: «Regresar a la búsqueda». Si la página anterior fue el listado
+       de este mismo sitio, se usa el historial para volver con los mismos
+       filtros, página y posición; si no, la liga abre /propiedades.
+       --------------------------------------------------------------- */
+    var regresar = $('[data-regresar]');
+    if (regresar) {
+        regresar.addEventListener('click', function (ev) {
+            var anterior;
+            try { anterior = new URL(document.referrer); } catch (err) { return; }
+            if (anterior.origin === location.origin && /^\/propiedades\/?$/.test(anterior.pathname) && history.length > 1) {
+                ev.preventDefault();
+                history.back();
+            }
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Texto plegable ([data-plegable="N"] + el botón .plegable__boton que
+       le sigue): muestra N líneas y «Ver más / Ver menos». Si el texto
+       apenas pasa del límite (menos de 2 líneas de más) se deja completo.
+       --------------------------------------------------------------- */
+    $$('[data-plegable]').forEach(function (bloque) {
+        var boton = bloque.nextElementSibling;
+        if (!boton || !boton.classList.contains('plegable__boton')) return;
+        var lineas = parseInt(bloque.getAttribute('data-plegable'), 10) || 6;
+        var estilo = getComputedStyle($('p', bloque) || bloque);
+        var alto = parseFloat(estilo.lineHeight) || parseFloat(estilo.fontSize) * 1.6;
+        var limite = Math.round(alto * lineas);
+        if (bloque.scrollHeight <= limite + alto * 2) return;
+        var texto = $('[data-plegable-texto]', boton);
+        var plegar = function (plegado) {
+            bloque.classList.toggle('es-plegado', plegado);
+            bloque.style.maxHeight = plegado ? limite + 'px' : '';
+            boton.setAttribute('aria-expanded', plegado ? 'false' : 'true');
+            if (texto) texto.textContent = plegado ? 'Ver más' : 'Ver menos';
+        };
+        plegar(true);
+        boton.hidden = false;
+        boton.addEventListener('click', function () {
+            var plegado = !bloque.classList.contains('es-plegado');
+            plegar(plegado);
+            // Al cerrar, si el inicio del texto quedó arriba de la pantalla, volver a él
+            if (plegado && bloque.getBoundingClientRect().top < 0) {
+                bloque.scrollIntoView({ block: 'center', behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            }
+        });
+    });
+
+    /* ---------------------------------------------------------------
        Ficha de propiedad: miniaturas que mueven la galería principal
        --------------------------------------------------------------- */
     var galeriaFicha = $('[data-ficha-galeria]');
@@ -615,35 +664,98 @@
     }
 
     /* ---------------------------------------------------------------
-       Listado de propiedades: los chips y listas aplican el filtro al
-       cambiar; el texto y el precio esperan al botón «Buscar».
+       Listado de propiedades: ningún filtro se aplica solo; la búsqueda
+       corre al tocar la lupa («Buscar») o Enter. Mientras haya cambios sin
+       aplicar, el botón se resalta (.hay-cambios).
        --------------------------------------------------------------- */
     var filtros = $('[data-filtros-propiedades]');
     if (filtros) {
-        filtros.addEventListener('change', function (ev) {
-            if (ev.target.matches('input[type="radio"], select')) {
-                if (filtros.requestSubmit) filtros.requestSubmit(); else filtros.submit();
-            }
-        });
-        // Celular: tipo, ciudad, recámaras y precio se pliegan tras «Más filtros»
-        // (abiertos si alguno ya está aplicado). En pantallas anchas el CSS los muestra siempre.
+        var estadoFiltros = function () {
+            return $$('input, select', filtros).map(function (c) {
+                return c.type === 'radio' || c.type === 'checkbox' ? (c.checked ? c.name + '=' + c.value : '') : (c.name ? c.name + '=' + c.value : '');
+            }).join('&');
+        };
+        var estadoInicial = estadoFiltros();
+        var revisarCambios = function () { filtros.classList.toggle('hay-cambios', estadoFiltros() !== estadoInicial); };
+        filtros.addEventListener('change', revisarCambios);
+        filtros.addEventListener('input', revisarCambios);
+        // Celular: tipo, ciudad, recámaras y precio se pliegan tras «Filtros».
+        // En pantallas anchas el CSS los muestra siempre.
         var botonMas = $('[data-mas-filtros]', filtros);
         if (botonMas) {
-            var textoMas = $('[data-mas-texto]', botonMas);
             var plegar = function (plegado) {
                 filtros.classList.toggle('es-plegado', plegado);
                 botonMas.setAttribute('aria-expanded', plegado ? 'false' : 'true');
-                textoMas.textContent = plegado ? 'Más filtros' : 'Menos filtros';
             };
             botonMas.hidden = false;
-            plegar(botonMas.getAttribute('data-mas-filtros') === '0');
+            filtros.classList.add('con-js');
+            // Cerrado al cargar aunque haya filtros aplicados: el número del botón dice cuántos hay
+            plegar(true);
+            // Cerrar el desplegable al tocar fuera de la barra
+            document.addEventListener('click', function (ev) {
+                if (!filtros.contains(ev.target) && !filtros.classList.contains('es-plegado')) plegar(true);
+            });
             botonMas.addEventListener('click', function () {
                 plegar(!filtros.classList.contains('es-plegado'));
             });
         }
+        // Desde 760 px: botón «Más filtros» que abre el panel flotante; se cierra con Esc o al tocar fuera
+        var abrirMas = $('[data-abrir-mas]', filtros);
+        if (abrirMas) {
+            filtros.classList.add('con-js');
+            abrirMas.hidden = false;
+            var panelMas = function (abierto) {
+                filtros.classList.toggle('panel-abierto', abierto);
+                abrirMas.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+            };
+            abrirMas.addEventListener('click', function () { panelMas(!filtros.classList.contains('panel-abierto')); });
+            document.addEventListener('click', function (ev) {
+                if (!filtros.contains(ev.target)) panelMas(false);
+            });
+            document.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Escape' && filtros.classList.contains('panel-abierto')) { panelMas(false); abrirMas.focus(); }
+            });
+        }
+        // «Limpiar» del panel: deja sus opciones como al principio (sin buscar todavía)
+        var limpiarMas = $('[data-limpiar-mas]', filtros);
+        if (limpiarMas) {
+            limpiarMas.hidden = false;
+            limpiarMas.addEventListener('click', function () {
+                $$('input', $('[data-filtros-mas]', filtros)).forEach(function (c) {
+                    if (c.type === 'radio') c.checked = c.value === '' || c.value === 'construida';
+                    else if (c.type === 'checkbox') c.checked = false;
+                    else c.value = '';
+                });
+                revisarCambios();
+            });
+        }
+        // Celular: cuando la barra queda fija se compacta (sin chips). Un marcador de 0 px en su
+        // lugar original dice si ya se pasó; el alto de los chips se guarda para compensar el hueco.
+        if ('IntersectionObserver' in window) {
+            var marcador = document.createElement('div');
+            marcador.setAttribute('aria-hidden', 'true');
+            filtros.parentNode.insertBefore(marcador, filtros);
+            var chips = $('.filtros-propiedades__operacion', filtros);
+            var vigilar = function () {
+                var arriba = parseFloat(getComputedStyle(filtros).top) || 0;
+                if (chips && chips.offsetHeight) filtros.style.setProperty('--alto-chips', chips.offsetHeight + 'px');
+                if (vigilar.obs) vigilar.obs.disconnect();
+                vigilar.obs = new IntersectionObserver(function (e) {
+                    filtros.classList.toggle('es-compacta', !e[0].isIntersecting && e[0].boundingClientRect.top < arriba);
+                }, { rootMargin: (2 - Math.floor(arriba)) + 'px 0px 0px 0px' }); // 2 px de margen: el marcador empieza dentro (la barra está pegada al menú)
+                vigilar.obs.observe(marcador);
+            };
+            vigilar();
+            window.addEventListener('resize', vigilar, { passive: true });
+        }
+
         // Los campos vacíos no viajan en la URL
         filtros.addEventListener('submit', function () {
             $$('input, select', filtros).forEach(function (c) { if (c.name && c.value === '') c.disabled = true; });
+            // «Construida/Terreno» solo viaja si hay medidas
+            if (!filtros.elements.m2min.value && !filtros.elements.m2max.value) {
+                $$('input[name="sup"]', filtros).forEach(function (c) { c.disabled = true; });
+            }
         });
     }
     var orden = $('[data-orden]');

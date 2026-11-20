@@ -3,10 +3,14 @@
  * Tarjeta de propiedad destacada.
  * Variables: $item (elemento de destacados.json).
  * La galería usa scroll-snap (funciona sin JS); main.js agrega flechas y contador.
+ * Versión compacta, con el mismo cuerpo que las tarjetas de /propiedades (clases .propiedad-card__*):
+ * tipo y código, precio, título en 2 líneas, ubicación en 1 y datos clave de la copia de Tokko.
  */
 $fotos = array_values(array_filter($item['fotos'] ?? [], fn($f) => is_array($f) && !empty($f['card'])));
 $operacion = $item['operacion'] === 'renta' ? 'Renta' : 'Venta';
 $idGaleria = 'galeria-' . preg_replace('/[^a-z0-9-]/', '', strtolower((string) $item['id']));
+$prop = !empty($item['tokko_id']) && function_exists('tokko_propiedad') ? tokko_propiedad((int) $item['tokko_id']) : null;
+$datos = $prop ? datos_clave_cortos($prop) : [];
 ?>
 <article class="destacado">
     <div class="destacado__galeria galeria" data-galeria>
@@ -27,20 +31,29 @@ $idGaleria = 'galeria-' . preg_replace('/[^a-z0-9-]/', '', strtolower((string) $
         <?php endif; ?>
     </div>
 
-    <div class="destacado__cuerpo">
-        <h3 class="destacado__titulo"><?= e($item['titulo']) ?></h3>
-        <p class="destacado__meta">
-            <?php if (!empty($item['tipo'])): ?><span><?= e($item['tipo']) ?></span><?php endif; ?>
-            <?php if (!empty($item['ubicacion'])): ?><span><?= icono('ubicacion', 'icono icono--mini') ?><?= e($item['ubicacion']) ?></span><?php endif; ?>
-        </p>
-        <p class="destacado__precio"><?= ($item['precio_visible'] ?? true) === false ? 'Precio a consultar' : e(formato_precio($item['precio'], $item['moneda'] ?? 'MXN')) ?></p>
-        <?php if (!empty($item['descripcion'])): ?>
-            <p class="destacado__descripcion"><?= e($item['descripcion']) ?></p>
+    <div class="destacado__cuerpo propiedad-card__cuerpo">
+        <?php if (!empty($item['tipo']) || $prop): ?>
+            <p class="propiedad-card__chips">
+                <?php if (!empty($item['tipo'])): ?><span><?= e($item['tipo']) ?></span><?php endif; ?>
+                <?php if ($prop): ?><span class="propiedad-card__codigo"><?= e($prop['codigo']) ?></span><?php endif; ?>
+            </p>
+        <?php endif; ?>
+        <p class="propiedad-card__precio"><?= ($item['precio_visible'] ?? true) === false ? 'Precio a consultar' : e(formato_precio($item['precio'], $item['moneda'] ?? 'MXN')) ?></p>
+        <h3 class="propiedad-card__titulo destacado__titulo"><?= e($item['titulo']) ?></h3>
+        <?php if (!empty($item['ubicacion'])): ?>
+            <p class="propiedad-card__ubicacion" title="<?= e($item['ubicacion']) ?>"><?= icono('ubicacion', 'icono icono--mini') ?> <span><?= e($item['ubicacion']) ?></span></p>
+        <?php endif; ?>
+        <?php if ($datos): ?>
+            <ul class="propiedad-card__datos">
+                <?php foreach ($datos as [$icono, $corto, $completo]): ?>
+                    <li title="<?= e($completo) ?>"><?= icono($icono, 'icono icono--mini') ?> <?= e($corto) ?></li>
+                <?php endforeach; ?>
+            </ul>
         <?php endif; ?>
         <?php // Los destacados de Tokko abren la ficha propia; los manuales siguen enlazando a Tokko
         $ficha = (string) ($item['url_ficha'] ?? '') ?: $item['url_tokko'];
         $externa = (bool) preg_match('#^https?://#i', $ficha); ?>
-        <a class="boton boton--contorno destacado__boton" href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>>
+        <a class="boton boton--contorno boton--bloque destacado__boton" href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>>
             Ver ficha<?php if ($externa): ?> <?= icono('externo', 'icono icono--mini') ?><?php endif; ?><span class="sr-only"> de <?= e($item['titulo']) ?><?= $externa ? ' (abre en otra pestaña)' : '' ?></span>
         </a>
     </div>

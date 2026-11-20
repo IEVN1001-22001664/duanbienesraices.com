@@ -8,7 +8,7 @@
 $op = operacion_principal($prop, $operacion ?? '');
 $h = ($titulo_nivel ?? 'h2') === 'h3' ? 'h3' : 'h2';
 $portada = portada_propiedad($prop);
-$datos = array_slice(datos_clave($prop), 0, 4);
+$datos = datos_clave_cortos($prop);
 ?>
 <article class="propiedad-card">
     <a class="propiedad-card__enlace" href="<?= e(url_propiedad($prop)) ?>">
@@ -24,17 +24,17 @@ $datos = array_slice(datos_clave($prop), 0, 4);
             <?php endif; ?>
         </div>
         <div class="propiedad-card__cuerpo">
+            <p class="propiedad-card__chips"><span><?= e($prop['tipo']) ?></span><span class="propiedad-card__codigo"><?= e($prop['codigo']) ?></span></p>
             <p class="propiedad-card__precio"><?= e(precio_propiedad($prop, $op)) ?></p>
             <<?= $h ?> class="propiedad-card__titulo"><?= e($prop['titulo']) ?></<?= $h ?>>
-            <p class="propiedad-card__ubicacion"><?= icono('ubicacion', 'icono icono--mini') ?> <?= e($prop['ubicacion']) ?></p>
+            <p class="propiedad-card__ubicacion" title="<?= e($prop['ubicacion']) ?>"><?= icono('ubicacion', 'icono icono--mini') ?> <span><?= e($prop['ubicacion']) ?></span></p>
             <?php if ($datos): ?>
                 <ul class="propiedad-card__datos">
-                    <?php foreach ($datos as [$icono, $texto]): ?>
-                        <li><?= icono($icono, 'icono icono--mini') ?> <?= e($texto) ?></li>
+                    <?php foreach ($datos as [$icono, $corto, $completo]): ?>
+                        <li title="<?= e($completo) ?>"><?= icono($icono, 'icono icono--mini') ?> <?= e($corto) ?></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
-            <p class="propiedad-card__pie"><span><?= e($prop['tipo']) ?></span><span><?= e($prop['codigo']) ?></span></p>
         </div>
     </a>
 </article>

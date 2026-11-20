@@ -48,6 +48,10 @@
     --espacio-seccion: clamp(3rem, 8vw, 5.5rem);
     --foco: 0 0 0 3px var(--blanco), 0 0 0 6px var(--rojo-oscuro);
 }
+/* Pantallas muy grandes: el contenedor de todas las páginas se ensancha para aprovechar el espacio
+   (menos de 1440 px queda igual que antes, 1200 px). */
+@media (min-width: 1440px) { :root { --ancho: 1400px; } }
+@media (min-width: 1800px) { :root { --ancho: 1560px; } }
 
 /* --- Base --- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -349,10 +353,13 @@ html:not(.js) .menu-boton { display: none; }
 
 .puntos { display: flex; justify-content: center; gap: .5rem; }
 .puntos button {
+    position: relative;
     width: 12px; height: 12px; padding: 0; border-radius: 999px; border: 2px solid var(--blanco);
     background: rgba(255, 255, 255, .35); transition: width .3s, background-color .3s;
 }
 .puntos button[aria-current="true"] { background: var(--rojo); border-color: var(--rojo); width: 30px; }
+/* Área táctil invisible alrededor de cada punto (el punto se ve de 12 px) */
+.puntos button::before { content: ""; position: absolute; inset: -16px -6px; }
 .seccion .puntos button { border-color: var(--carbon-2); background: transparent; }
 .seccion .puntos button[aria-current="true"] { background: var(--rojo); border-color: var(--rojo); }
 @media (max-width: 599px) { .hero__flecha { display: none; } }
@@ -410,19 +417,18 @@ html:not(.js) .menu-boton { display: none; }
 .destacados__grid { display: grid; gap: 1.75rem; }
 @media (min-width: 700px) { .destacados__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1080px) { .destacados__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1440px) { .destacados__grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
 
 .destacado {
     background: var(--blanco); border-radius: var(--radio); overflow: hidden;
     box-shadow: var(--sombra); display: flex; flex-direction: column; transition: box-shadow .25s, transform .25s;
 }
 .destacado:hover { box-shadow: var(--sombra-fuerte); transform: translateY(-3px); }
-.destacado__cuerpo { padding: 1.25rem 1.35rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
-.destacado__titulo { font-size: 1.2rem; font-weight: 800; margin-bottom: .45rem; }
-.destacado__meta { display: flex; flex-wrap: wrap; gap: .25rem .9rem; color: var(--gris); font-size: .95rem; margin-bottom: .6rem; }
-.destacado__meta span { display: inline-flex; align-items: center; gap: .3rem; }
-.destacado__precio { font-family: var(--fuente-titulos); font-size: 1.4rem; font-weight: 800; color: var(--rojo-oscuro); margin-bottom: .6rem; }
-.destacado__descripcion { color: var(--carbon-2); font-size: .98rem; }
-.destacado__boton { margin-top: auto; align-self: flex-start; }
+/* El cuerpo usa las clases de la tarjeta de /propiedades (.propiedad-card__*) */
+.destacado:hover .destacado__titulo { color: var(--rojo-oscuro); }
+.destacado .galeria__pista { aspect-ratio: 3 / 2; }
+.destacado .propiedad-card__datos { margin: 0 0 .9rem; }
+.destacado__boton { margin-top: auto; min-height: 42px; padding-block: .45em; justify-content: center; }
 
 .etiqueta {
     position: absolute; top: 1rem; right: 0; z-index: 2;
@@ -1126,7 +1132,7 @@ html.sin-scroll { overflow: hidden; }
 .calculadora__entrada input { width: 100%; padding: .75rem .9rem .75rem 2rem; font: inherit; font-size: 1.3rem; font-weight: 800; border: 2px solid var(--borde); border-radius: var(--radio-chico); }
 .calculadora__entrada input:focus { outline: none; border-color: var(--rojo-oscuro); }
 .calculadora__chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0 0; }
-.chip { border: 1px solid var(--borde); background: var(--gris-claro); border-radius: 999px; padding: .35rem .9rem; font-weight: 700; font-size: .9rem; color: var(--carbon-2); }
+.chip { display: inline-flex; align-items: center; min-height: 40px; border: 1px solid var(--borde); background: var(--gris-claro); border-radius: 999px; padding: .35rem .9rem; font-weight: 700; font-size: .9rem; color: var(--carbon-2); }
 .chip:hover, .chip[aria-pressed="true"] { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
 .calculadora__tabla td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
 .calculadora__tabla th:last-child { text-align: right; }
@@ -1227,32 +1233,42 @@ html.sin-scroll { overflow: hidden; }
    Propiedades (/propiedades y /propiedades/{slug}-{id})
    ================================================================= */
 
-/* --- Filtros del listado --- */
+/* --- Filtros del listado ---
+   Barra compacta y fija (sticky) debajo del encabezado mientras se recorren las propiedades.
+   Las etiquetas quedan solo para lectores de pantalla; cada lista muestra su nombre como opción vacía.
+   Celular: chips arriba y en una fila buscar + «Filtros» + Buscar; los demás filtros se pliegan.
+   De 760 a 1279 px dos filas (chips, buscar, «Más filtros» y Buscar; luego tipo y precio);
+   desde 1280 px todo en una sola fila. */
 .filtros-propiedades {
+    position: sticky; top: calc(var(--alto-encabezado) + var(--flota) + .5rem); z-index: 20;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: .5rem; align-items: center;
     background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radio);
-    box-shadow: var(--sombra); padding: clamp(1rem, 3vw, 1.5rem);
+    box-shadow: var(--sombra); padding: .65rem;
 }
-.filtros-propiedades__operacion { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.filtros-propiedades__operacion { grid-column: 1 / -1; display: flex; gap: .4rem; }
 label.chip { position: relative; cursor: pointer; padding: 0; border: 0; background: none; }
 label.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 label.chip span {
     display: inline-block; border: 1px solid var(--borde); background: var(--gris-claro); border-radius: 999px;
-    padding: .45rem 1.1rem; font-weight: 700; font-size: .95rem; color: var(--carbon-2); transition: background-color .2s, color .2s;
+    padding: .4rem .95rem; font-weight: 700; font-size: .9rem; white-space: nowrap; color: var(--carbon-2); transition: background-color .2s, color .2s;
 }
 label.chip:hover { background: none; }
 label.chip:hover span { border-color: var(--rojo); color: var(--rojo-oscuro); }
 label.chip input:checked + span { background: var(--rojo); border-color: var(--rojo); color: var(--blanco); }
 label.chip input:focus-visible + span { box-shadow: var(--foco); }
-.filtros-propiedades__campos { display: grid; gap: 0 1rem; grid-template-columns: 1fr 1fr; }
-.filtros-propiedades .campo { margin-bottom: .85rem; min-width: 0; }
-.filtros-propiedades .campo label, .campo__etiqueta { font-weight: 700; font-size: .9rem; }
-.filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .6rem .75rem; }
-.campo--buscar, .campo--precio { grid-column: 1 / -1; }
-/* Filtros extra: forman parte de la misma rejilla; en celular se pliegan tras «Más filtros» */
-.filtros-propiedades__extra { display: contents; }
+.filtros-propiedades__campos { display: contents; }
+.filtros-propiedades .campo { margin: 0; min-width: 0; }
+.filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .55rem .7rem; min-height: 44px; font-size: .95rem; }
+.campo--buscar { grid-row: 2; grid-column: 1; }
+/* Filtros extra: en celular se pliegan tras «Filtros» y se abren dentro de la barra con su propio scroll */
+.filtros-propiedades__extra {
+    grid-column: 1 / -1; grid-row: 3; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+    max-height: calc(100svh - var(--alto-encabezado) - 12rem); overflow-y: auto;
+}
+.filtros-propiedades__extra .campo--precio, .filtros-propiedades__extra .campo:has(#f-tipo) { grid-column: 1 / -1; }
 .filtros-propiedades__mas {
-    grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: .5rem;
-    min-height: 44px; margin-bottom: .85rem; padding: .5rem 1rem; border: 2px solid var(--borde); border-radius: 999px;
+    grid-row: 2; grid-column: 2; display: flex; align-items: center; justify-content: center; gap: .5rem;
+    min-height: 44px; padding: .5rem .9rem; border: 2px solid var(--borde); border-radius: 999px;
     background: var(--blanco); color: var(--carbon); font: inherit; font-weight: 700; cursor: pointer;
 }
 .filtros-propiedades__mas:hover, .filtros-propiedades__mas[aria-expanded="true"] { border-color: var(--rojo); color: var(--rojo-oscuro); }
@@ -1263,29 +1279,109 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
     border-radius: 999px; background: var(--rojo); color: var(--blanco); font-size: .8rem;
 }
 .filtros-propiedades.es-plegado .filtros-propiedades__extra { display: none; }
-@media (min-width: 760px) {
-    /* En tableta y escritorio siempre se ven todos */
-    .filtros-propiedades__mas { display: none !important; }
-    .filtros-propiedades.es-plegado .filtros-propiedades__extra { display: contents; }
+@media (max-width: 759px) {
+    /* Con JS el panel de filtros es un desplegable debajo de la barra (no empuja las tarjetas) */
+    .filtros-propiedades.con-js .filtros-propiedades__extra {
+        position: absolute; grid-area: auto; top: calc(100% - .5rem); left: -1px; right: -1px; z-index: 1;
+        padding: .65rem; background: var(--blanco); border: 1px solid var(--borde); border-top: 0;
+        border-radius: 0 0 var(--radio) var(--radio); box-shadow: 0 14px 24px rgba(40, 45, 53, .14);
+    }
+    /* Fija y cerrada: sin chips; un relleno debajo ocupa su lugar para que el contenido no se mueva.
+       Al abrir «Filtros» los chips vuelven a la barra. */
+    .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__operacion { display: none; }
+    /* (relleno en la línea de resultados: un margen se fusionaría con el suyo) */
+    .filtros-propiedades.es-compacta.es-plegado + .propiedades__barra { padding-top: calc(var(--alto-chips, 2.6rem) + .5rem); }
+    .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__mas,
+    .filtros-propiedades.es-compacta.es-plegado .campo--buscar,
+    .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__acciones { grid-row: 1; }
 }
 .campo__par { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-.filtros-propiedades__acciones { display: flex; gap: .75rem; flex-wrap: wrap; }
-.filtros-propiedades__acciones .boton { min-height: 44px; padding-block: .5em; }
-@media (min-width: 760px) {
-    .filtros-propiedades__campos { grid-template-columns: 2fr 1fr 1fr 1fr; }
-    .campo--buscar { grid-column: auto; }
-    .campo--precio { grid-column: span 2; }
+.filtros-propiedades__acciones { grid-row: 2; grid-column: 3; display: flex; }
+.filtros-propiedades__acciones .boton { min-height: 44px; padding: .5em 1.1em; }
+/* --- Panel «Más filtros» (superficie, baños, estacionamientos, características, multimedia, fecha) --- */
+.filtros-propiedades:not(.con-js) { position: static; } /* sin JS el panel va abierto: la barra no se fija */
+.filtros-mas { grid-column: 1 / -1; }
+.filtros-mas__cuerpo { display: grid; gap: 1.1rem; }
+.filtros-mas__grupo { border: 0; margin: 0; padding: 0; min-width: 0; }
+.filtros-mas__grupo legend { padding: 0; margin-bottom: .5rem; font-family: var(--fuente-titulos); font-weight: 700; font-size: .92rem; color: var(--carbon); }
+.filtros-mas__opciones { display: flex; flex-wrap: wrap; gap: .4rem; }
+.filtros-mas__opciones + .campo__par { margin-top: .5rem; }
+.filtros-mas .campo__par input { padding: .55rem .7rem; min-height: 44px; font-size: .95rem; }
+label.chip--chico span { padding: .5rem .85rem; font-size: .86rem; }
+label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
+.filtros-mas__pie {
+    position: sticky; bottom: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    margin-top: 1.1rem; padding: .75rem 0; background: var(--blanco); border-top: 1px solid var(--borde);
 }
-@media (min-width: 1100px) {
-    .filtros-propiedades { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 0 1rem; }
-    .filtros-propiedades__operacion { grid-column: 1 / -1; }
-    .filtros-propiedades__campos { grid-template-columns: 1.6fr 1fr 1fr 1fr 1.5fr; }
-    .campo--precio { grid-column: auto; }
-    .filtros-propiedades__acciones { margin-bottom: .85rem; flex-wrap: nowrap; }
+.filtros-mas__limpiar { min-height: 44px; padding: 0 .25rem; border: 0; background: none; font: inherit; font-weight: 700; color: var(--carbon); text-decoration: underline; cursor: pointer; }
+.filtros-mas__limpiar:hover { color: var(--rojo-oscuro); }
+.filtros-mas__pie .boton { margin-left: auto; min-height: 44px; padding-block: .5em; }
+.filtros-propiedades__abrir-mas { display: none; }
+@media (max-width: 759px) {
+    /* Celular: el panel va al final del desplegable de «Filtros», que se desplaza por dentro */
+    /* Con el desplegable abierto se esconden los botones flotantes: taparían el panel y «Ver resultados» */
+    body:has(.filtros-propiedades.con-js:not(.es-plegado)) :is(.whatsapp-flotante, .subir) { display: none; }
+    .filtros-mas { margin-top: .5rem; padding-top: 1rem; border-top: 1px solid var(--borde); }
+    .filtros-propiedades.con-js .filtros-propiedades__extra { max-height: calc(100svh - var(--alto-encabezado) - 9rem); overflow-y: auto; overscroll-behavior: contain; padding-bottom: 0; }
+}
+@media (min-width: 760px) {
+    .filtros-propiedades.con-js .filtros-propiedades__abrir-mas {
+        display: flex; align-items: center; gap: .45rem; min-height: 44px; padding: .5rem .9rem; white-space: nowrap;
+        border: 2px solid var(--borde); border-radius: 999px; background: var(--blanco); color: var(--carbon); font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .filtros-propiedades__abrir-mas .icono { width: 1.1em; height: 1.1em; }
+    .filtros-propiedades__abrir-mas:hover, .filtros-propiedades__abrir-mas[aria-expanded="true"] { border-color: var(--rojo); color: var(--rojo-oscuro); }
+    /* Con JS el panel flota debajo de la barra, alineado a la derecha, y se desplaza por dentro */
+    .filtros-propiedades.con-js .filtros-mas {
+        display: none; position: absolute; grid-area: auto; z-index: 2; top: calc(100% + .5rem); right: -1px;
+        width: min(700px, calc(100vw - 2rem)); max-height: calc(100svh - var(--alto-encabezado) - var(--flota) - 8rem);
+        overflow-y: auto; overscroll-behavior: contain; padding: 1.25rem 1.25rem 0;
+        background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra-fuerte);
+    }
+    .filtros-propiedades.con-js.panel-abierto .filtros-mas { display: block; }
+    .filtros-mas__cuerpo { grid-template-columns: 1fr 1fr; gap: 1.25rem 2rem; }
 }
 
+/* Filtros cambiados sin aplicar: el botón de buscar late para indicar que falta tocarlo */
+.filtros-propiedades.hay-cambios .filtros-propiedades__buscar { animation: buscar-pendiente 1.6s ease-out infinite; }
+@keyframes buscar-pendiente {
+    0% { box-shadow: 0 0 0 0 rgba(226, 28, 33, .55); }
+    100% { box-shadow: 0 0 0 12px rgba(226, 28, 33, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .filtros-propiedades.hay-cambios .filtros-propiedades__buscar { animation: none; box-shadow: 0 0 0 3px var(--blanco), 0 0 0 6px var(--rojo); }
+}
+/* Celular: solo la lupa (el texto queda para lectores de pantalla) */
+@media (max-width: 759px) {
+    .filtros-propiedades__acciones .filtros-propiedades__buscar { width: 44px; padding: 0; justify-content: center; gap: 0; }
+    .filtros-propiedades__buscar .icono { flex: none; width: 20px; height: 20px; }
+    .filtros-propiedades__buscar span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .filtros-propiedades__mas { padding-inline: .8rem; }
+}
+@media (min-width: 760px) {
+    .filtros-propiedades { grid-template-columns: auto minmax(0, 1fr) auto auto; gap: .5rem .6rem; padding: .6rem .75rem; }
+    .filtros-propiedades__operacion { grid-row: 1; grid-column: 1; }
+    .campo--buscar { grid-row: 1; grid-column: 2; }
+    .filtros-propiedades__abrir-mas { grid-row: 1; grid-column: 3; }
+    .filtros-propiedades__acciones { grid-row: 1; grid-column: 4; }
+    .filtros-propiedades__mas { display: none !important; }
+    .filtros-propiedades__extra, .filtros-propiedades.es-plegado .filtros-propiedades__extra {
+        display: grid; grid-row: 2; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); max-height: none; overflow: visible;
+    }
+    .filtros-propiedades__extra .campo--precio, .filtros-propiedades__extra .campo:has(#f-tipo) { grid-column: auto; }
+}
+@media (min-width: 1280px) {
+    .filtros-propiedades { grid-template-columns: auto minmax(0, 1.8fr) minmax(0, 1fr) minmax(0, 1.3fr) auto auto; }
+    .filtros-propiedades__operacion, .campo--buscar, .filtros-propiedades__abrir-mas, .filtros-propiedades__acciones { grid-row: auto; grid-column: auto; }
+    .filtros-propiedades__extra, .filtros-propiedades.es-plegado .filtros-propiedades__extra { display: contents; }
+}
+
+/* El listado no tiene portada: la barra de filtros va pegada al menú */
+.seccion.propiedades { padding-top: 1rem; }
+
 /* --- Barra de resultados y orden --- */
-.propiedades__barra { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .75rem 1.5rem; margin: 2rem 0 1.25rem; }
+.propiedades__barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1.5rem; margin: 1.75rem 0 1.25rem; }
+.propiedades__limpiar { display: inline-flex; align-items: center; gap: .3rem; margin-right: auto; font-weight: 700; font-size: .92rem; color: var(--rojo-oscuro); }
 .propiedades__conteo { font-size: clamp(1.15rem, 3vw, 1.4rem); margin: 0; }
 .campo--orden { flex-direction: row; align-items: center; gap: .6rem; margin: 0; }
 .campo--orden label { font-weight: 700; font-size: .9rem; white-space: nowrap; }
@@ -1295,11 +1391,13 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .propiedades__grid { display: grid; gap: 1.5rem; }
 @media (min-width: 640px) { .propiedades__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1024px) { .propiedades__grid { grid-template-columns: repeat(3, 1fr); } }
+/* Con el contenedor ancho caben 4 por fila (las 3 similares de la ficha se quedan en 3) */
+@media (min-width: 1440px) { .propiedades__grid:not(.propiedades__grid--3) { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
 .propiedad-card { background: var(--blanco); border-radius: var(--radio); overflow: hidden; box-shadow: var(--sombra); transition: box-shadow .25s, transform .25s; }
 .propiedad-card:hover { box-shadow: var(--sombra-fuerte); transform: translateY(-3px); }
 .propiedad-card__enlace { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
 .propiedad-card__enlace:focus-visible { outline: none; box-shadow: var(--foco); border-radius: var(--radio); }
-.propiedad-card__foto { position: relative; aspect-ratio: 4 / 3; background: var(--gris-claro); overflow: hidden; }
+.propiedad-card__foto { position: relative; aspect-ratio: 3 / 2; background: var(--gris-claro); overflow: hidden; }
 .propiedad-card__foto img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
 .propiedad-card:hover .propiedad-card__foto img { transform: scale(1.04); }
 .propiedad-card__sin-foto { display: grid; place-items: center; height: 100%; color: var(--gris); }
@@ -1308,16 +1406,46 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
     position: absolute; left: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .3rem;
     background: rgba(20, 22, 27, .7); color: var(--blanco); font-size: .8rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px;
 }
-.propiedad-card__cuerpo { padding: 1.1rem 1.25rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
-.propiedad-card__precio { font-family: var(--fuente-titulos); font-size: 1.35rem; font-weight: 800; color: var(--rojo-oscuro); margin: 0 0 .3rem; }
-.propiedad-card__titulo { font-size: 1.08rem; font-weight: 800; line-height: 1.3; margin: 0 0 .35rem; transition: color .2s; }
+/* Tarjeta compacta: tipo y código, precio, título en 2 líneas como máximo, ubicación en 1 línea y datos clave
+   abreviados en una fila (el texto completo queda en «title»). */
+.propiedad-card__cuerpo { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }
+.propiedad-card__chips { display: flex; align-items: center; gap: .5rem; margin: 0 0 .55rem; font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--carbon-2); }
+.propiedad-card__chips span:first-child { padding: .2rem .5rem; border-radius: 4px; background: var(--gris-claro); }
+.propiedad-card__codigo { margin-left: auto; color: var(--gris); font-weight: 600; }
+.propiedad-card__precio { font-family: var(--fuente-titulos); font-size: 1.22rem; font-weight: 800; color: var(--rojo-oscuro); margin: 0 0 .25rem; }
+.propiedad-card__titulo {
+    font-size: .98rem; font-weight: 700; line-height: 1.32; margin: 0 0 .35rem; transition: color .2s;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
 .propiedad-card:hover .propiedad-card__titulo { color: var(--rojo-oscuro); }
 :where(main) .propiedad-card p { text-align: left; hyphens: manual; }
-.propiedad-card__ubicacion { display: flex; align-items: center; gap: .3rem; color: var(--gris); font-size: .92rem; margin: 0 0 .8rem; }
-.propiedad-card__datos { list-style: none; margin: 0 0 1rem; padding: .75rem 0 0; border-top: 1px solid var(--borde); display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: .9rem; color: var(--carbon-2); }
-.propiedad-card__datos li { display: inline-flex; align-items: center; gap: .3rem; }
-.propiedad-card__pie { margin: auto 0 0; display: flex; justify-content: space-between; gap: 1rem; font-size: .8rem; color: var(--gris); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+.propiedad-card__ubicacion { display: flex; align-items: center; gap: .3rem; color: var(--gris); font-size: .86rem; margin: 0 0 .7rem; min-width: 0; }
+.propiedad-card__ubicacion span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.propiedad-card__ubicacion .icono { flex: none; }
+.propiedad-card__datos { list-style: none; margin: auto 0 0; padding: .65rem 0 0; border-top: 1px solid var(--borde); display: flex; flex-wrap: wrap; gap: .35rem .9rem; font-size: .84rem; color: var(--carbon-2); }
+.propiedad-card__datos li { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
 .icono--mini { width: 1em; height: 1em; flex: none; }
+/* Celular (una columna): la tarjeta es la vista principal del listado. Va un poco más angosta que la
+   pantalla (más margen a los lados) y con foto 3:2 para que una tarjeta completa quepa entre la barra de
+   filtros fija y el borde inferior (~430 px de alto a 384 px de ancho); datos clave en 2 columnas. */
+@media (max-width: 639px) {
+    .propiedades__grid { gap: 1.5rem; padding-inline: clamp(0px, 4.5vw - 8px, 1.25rem); }
+    .propiedad-card__cuerpo { padding: .95rem 1.1rem 1.05rem; }
+    .propiedad-card__chips { margin-bottom: .6rem; font-size: .72rem; }
+    .propiedad-card__chips span:first-child { padding: .25rem .55rem; border-radius: 6px; }
+    .propiedad-card__precio { font-size: 1.32rem; margin-bottom: .3rem; }
+    .propiedad-card__titulo { font-size: 1rem; line-height: 1.34; margin-bottom: .4rem; }
+    .propiedad-card__ubicacion { font-size: .88rem; margin-bottom: .75rem; }
+    .propiedad-card__datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem .75rem; padding-top: .75rem; font-size: .88rem; color: var(--carbon); }
+    .propiedad-card__datos li { gap: .4rem; min-width: 0; }
+    .propiedad-card__datos .icono { width: 1.15em; height: 1.15em; color: var(--rojo); }
+}
+/* Celulares de 320–359 px: sin margen extra y un poco menos de relleno para que «1,000 m² terr.» quepa */
+@media (max-width: 359px) {
+    .propiedad-card__cuerpo { padding-inline: .9rem; }
+    .propiedad-card__datos { gap: .5rem .5rem; font-size: .84rem; }
+    .propiedad-card__datos li { gap: .3rem; }
+}
 
 /* --- Paginación y sin resultados --- */
 .paginacion { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: 2.5rem; }
@@ -1332,6 +1460,25 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 
 /* --- Ficha --- */
 .ficha { padding: 1.25rem 0 var(--espacio-seccion); }
+/* Barra superior de la ficha: «Regresar a la búsqueda» y migas. En celular «Regresar» es pequeño y gris
+   (ahí se regresa deslizando); desde 760 px es un botón claro con flecha. */
+.ficha__barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .25rem 1.5rem; margin-bottom: 1rem; }
+.ficha__barra .ficha__migas { margin-bottom: 0; }
+.ficha__regresar {
+    display: inline-flex; align-items: center; gap: .35rem; min-height: 40px; margin-left: -.15rem;
+    font-size: .88rem; font-weight: 600; color: var(--gris); text-decoration: none;
+}
+.ficha__regresar .icono { width: 1.05em; height: 1.05em; flex: none; transition: transform .2s; }
+.ficha__regresar:hover { color: var(--rojo-oscuro); }
+.ficha__regresar:hover .icono { transform: translateX(-3px); }
+.ficha__regresar-extra { display: none; }
+@media (min-width: 760px) {
+    .ficha__barra { margin-bottom: 1.25rem; }
+    .ficha__regresar { gap: .7rem; min-height: 44px; margin-left: 0; font-size: 1.08rem; font-weight: 600; color: var(--carbon); }
+    .ficha__regresar .icono { width: 1.4em; height: 1.4em; }
+    .ficha__regresar-extra { display: inline; }
+}
+@media (prefers-reduced-motion: reduce) { .ficha__regresar:hover .icono { transform: none; } }
 .ficha__migas { font-size: .9rem; color: var(--gris); margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: .35rem; }
 .ficha__migas a { color: var(--carbon-2); }
 .ficha__galeria { border-radius: var(--radio); overflow: hidden; background: #16181c; }
@@ -1390,6 +1537,22 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .ficha__bloque { margin-top: 2.5rem; }
 .ficha__subtitulo { font-size: 1.3rem; font-weight: 800; margin: 0 0 1rem; padding-bottom: .5rem; border-bottom: 3px solid var(--rojo); display: inline-block; }
 .ficha__descripcion p { margin: 0 0 .9rem; }
+/* Texto largo plegado ([data-plegable="N"]): main.js lo corta a N líneas con un degradado y muestra
+   «Ver más / Ver menos» solo si de verdad sobra texto. Sin JS se ve completo. */
+.es-plegado { position: relative; overflow: hidden; }
+.es-plegado::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3.2em; pointer-events: none;
+    background: linear-gradient(rgba(255, 255, 255, 0), var(--blanco));
+}
+.plegable__boton {
+    display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: 0; margin-top: .25rem;
+    border: 0; background: none; font: inherit; font-weight: 700; color: var(--rojo-oscuro); cursor: pointer;
+}
+.plegable__boton span { text-decoration: underline; text-underline-offset: 3px; }
+.plegable__boton:hover { color: var(--rojo); }
+.plegable__boton[hidden] { display: none; }
+.plegable__boton .icono { width: 1em; height: 1em; transform: rotate(180deg); transition: transform .2s; }
+.plegable__boton[aria-expanded="true"] .icono { transform: none; }
 .ficha__tabla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 2rem; margin: 0; }
 .ficha__tabla div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid var(--borde); }
 .ficha__tabla dt { color: var(--gris); }
@@ -1443,5 +1606,7 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
     opacity: 1; transform: none;
     transition: opacity .7s ease-out var(--retraso, 0s), transform .7s cubic-bezier(.22, 1, .36, 1) var(--retraso, 0s);
 }
+/* Lo que entra desde los lados no debe abrir scroll horizontal en celular mientras se anima */
+main { overflow-x: clip; }
 .aparece--izq { --desde-x: -36px; --desde-y: 0px; }
 .aparece--der { --desde-x: 36px; --desde-y: 0px; }

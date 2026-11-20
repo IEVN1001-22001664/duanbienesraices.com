@@ -116,11 +116,18 @@ require dirname(__DIR__) . '/includes/header.php';
 
 <article class="ficha">
     <div class="contenedor">
-        <nav class="ficha__migas" aria-label="Ubicación en el sitio">
-            <a href="/propiedades">Propiedades</a> <span aria-hidden="true">›</span>
-            <a href="/propiedades?<?= e(http_build_query(['tipo' => $prop['tipo']])) ?>"><?= e($prop['tipo']) ?></a> <span aria-hidden="true">›</span>
-            <span aria-current="page"><?= e($prop['codigo']) ?></span>
-        </nav>
+        <div class="ficha__barra">
+            <?php /* Si se llegó desde el listado, main.js regresa con el historial (conserva filtros, página y
+                     posición); si no, la liga abre /propiedades. En celular es más discreto: ahí se regresa deslizando. */ ?>
+            <a class="ficha__regresar" href="/propiedades" data-regresar>
+                <?= icono('flecha-izq') ?> <span>Regresar<span class="ficha__regresar-extra"> a la búsqueda</span></span>
+            </a>
+            <nav class="ficha__migas" aria-label="Ubicación en el sitio">
+                <a href="/propiedades">Propiedades</a> <span aria-hidden="true">›</span>
+                <a href="/propiedades?<?= e(http_build_query(['tipo' => $prop['tipo']])) ?>"><?= e($prop['tipo']) ?></a> <span aria-hidden="true">›</span>
+                <span aria-current="page"><?= e($prop['codigo']) ?></span>
+            </nav>
+        </div>
 
         <?php if ($galeria): ?>
             <div class="ficha__galeria galeria" data-galeria data-ficha-galeria>
@@ -203,11 +210,15 @@ require dirname(__DIR__) . '/includes/header.php';
                 <?php if ($parrafos): ?>
                     <section class="ficha__bloque" aria-labelledby="titulo-descripcion">
                         <h2 class="ficha__subtitulo" id="titulo-descripcion">Descripción</h2>
-                        <div class="ficha__descripcion" data-plegable>
+                        <?php /* main.js la corta a 6 líneas y muestra «Ver más» solo si sobra texto; sin JS se ve completa */ ?>
+                        <div class="ficha__descripcion" id="ficha-descripcion" data-plegable="6">
                             <?php foreach ($parrafos as $parrafo): ?>
                                 <p><?= e($parrafo) ?></p>
                             <?php endforeach; ?>
                         </div>
+                        <button class="plegable__boton" type="button" aria-expanded="false" aria-controls="ficha-descripcion" hidden>
+                            <span data-plegable-texto>Ver más</span> <?= icono('flecha-arriba') ?>
+                        </button>
                     </section>
                 <?php endif; ?>
 

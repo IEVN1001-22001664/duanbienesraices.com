@@ -4,7 +4,8 @@
  * (data/tokko/propiedades.json, ver includes/tokko.php).
  *
  * Los filtros van por GET para que funcionen sin JavaScript y se puedan compartir;
- * main.js solo los aplica al cambiar una lista. 12 por página.
+ * se aplican al tocar «Buscar» (o «Ver resultados» en el panel «Más filtros»).
+ * PROPIEDADES_POR_PAGINA por página.
  */
 require dirname(__DIR__) . '/includes/config.php';
 
@@ -17,11 +18,24 @@ $actual = min($paginas, max(1, (int) ($_GET['pagina'] ?? 1)));
 $visibles = array_slice($resultado, ($actual - 1) * PROPIEDADES_POR_PAGINA, PROPIEDADES_POR_PAGINA);
 
 $tipos = opciones_propiedades($todas, 'tipo');
-$ciudades = opciones_propiedades($todas, 'ciudad');
+$conteoCarac = conteo_caracteristicas($todas);
+$conteoMedia = array_count_values(array_merge(...array_map('multimedia_de', $todas) ?: [[]]));
+$masActivos = filtros_mas_activos($f);
+
+/** Campos ocultos con los filtros aplicados (para el formulario de «Ordenar por»). */
+$camposOcultos = function (array $q, string $prefijo = '') use (&$camposOcultos): string {
+    $html = '';
+    foreach ($q as $k => $v) {
+        $nombre = $prefijo === '' ? (string) $k : $prefijo . '[]';
+        $html .= is_array($v) ? $camposOcultos($v, (string) $k)
+            : '<input type="hidden" name="' . e($nombre) . '" value="' . e((string) $v) . '">';
+    }
+    return $html;
+};
 
 /** URL de la página $numero del listado con los filtros actuales (no se llama $url: header.php usa esa variable). */
 $urlPagina = function (int $numero) use ($f): string {
-    $q = array_filter($f, fn($v, $k) => $v !== '' && $v !== null && !($k === 'orden' && $v === 'recientes'), ARRAY_FILTER_USE_BOTH);
+    $q = consulta_filtros($f);
     if ($numero > 1) {
         $q['pagina'] = $numero;
     }
@@ -56,13 +70,11 @@ require dirname(__DIR__) . '/includes/head.php';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
-<?php componente('portada', ['baja' => true, 'portada' => portada_de('propiedades', [
-    'imagen' => '/assets/img/servicio-venta.webp', 'antetitulo' => 'Venta y renta en León y alrededores', 'titulo' => 'Propiedades',
-    'texto' => "Encuentre casa, departamento, terreno, bodega u oficina con el respaldo de Du'an Bienes Raíces.",
-])]); ?>
-
+<?php /* Sin portada (hero) por ahora: la página abre directo en los filtros. El título queda para Google
+   y lectores de pantalla. La portada «propiedades» sigue en el panel por si se vuelve a poner. */ ?>
 <section class="seccion propiedades" aria-labelledby="titulo-resultados">
     <div class="contenedor">
+        <h1 class="sr-only">Propiedades en venta y renta en León</h1>
         <form class="filtros-propiedades" action="/propiedades" method="get" role="search" aria-label="Filtrar propiedades" data-filtros-propiedades>
             <div class="filtros-propiedades__operacion" role="radiogroup" aria-label="Operación">
                 <?php foreach (['' => 'Todas', 'venta' => 'Venta', 'renta' => 'Renta'] as $valor => $texto): ?>
@@ -74,58 +86,102 @@ require dirname(__DIR__) . '/includes/header.php';
             </div>
             <div class="filtros-propiedades__campos">
                 <div class="campo campo--buscar">
-                    <label for="f-q">Buscar</label>
+                    <label class="sr-only" for="f-q">Buscar</label>
                     <input id="f-q" type="search" name="q" value="<?= e($f['q']) ?>" placeholder="Colonia, fraccionamiento o código" autocomplete="off">
                 </div>
                 <?php
                 // En celular los demás filtros se pliegan tras «Más filtros» (main.js); sin JS se ven todos.
-                $extrasActivos = count(array_filter([$f['tipo'], $f['ciudad'], $f['recamaras'], $f['min'] ?: $f['max']], fn($v) => $v !== '' && $v !== null));
+                $extrasActivos = count(array_filter([$f['tipo'], $f['min'] ?: $f['max']], fn($v) => $v !== '' && $v !== null)) + $masActivos;
                 ?>
                 <button class="filtros-propiedades__mas" type="button" aria-expanded="false" aria-controls="filtros-extra" data-mas-filtros="<?= $extrasActivos ?>" hidden>
-                    <?= icono('filtro') ?> <span data-mas-texto>Más filtros</span><?php if ($extrasActivos): ?> <span class="filtros-propiedades__cuenta"><?= $extrasActivos ?></span><?php endif; ?>
+                    <?= icono('filtro') ?> <span data-mas-texto>Filtros</span><?php if ($extrasActivos): ?> <span class="filtros-propiedades__cuenta"><?= $extrasActivos ?></span><?php endif; ?>
                 </button>
                 <div class="filtros-propiedades__extra" id="filtros-extra">
                 <div class="campo">
-                    <label for="f-tipo">Tipo</label>
+                    <label class="sr-only" for="f-tipo">Tipo</label>
                     <select id="f-tipo" name="tipo">
-                        <option value="">Todos</option>
+                        <option value="">Tipo</option>
                         <?php foreach ($tipos as $valor => $n): ?>
                             <option value="<?= e($valor) ?>" <?= $f['tipo'] === $valor ? 'selected' : '' ?>><?= e($valor) ?> (<?= $n ?>)</option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="campo">
-                    <label for="f-ciudad">Ciudad</label>
-                    <select id="f-ciudad" name="ciudad">
-                        <option value="">Todas</option>
-                        <?php foreach ($ciudades as $valor => $n): ?>
-                            <option value="<?= e($valor) ?>" <?= $f['ciudad'] === $valor ? 'selected' : '' ?>><?= e($valor) ?> (<?= $n ?>)</option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="campo">
-                    <label for="f-recamaras">Recámaras</label>
-                    <select id="f-recamaras" name="recamaras">
-                        <option value="">Cualquiera</option>
-                        <?php foreach (RECAMARAS_FILTRO as $n): ?>
-                            <option value="<?= $n ?>" <?= $f['recamaras'] === $n ? 'selected' : '' ?>><?= $n ?> o más</option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
                 <div class="campo campo--precio">
-                    <span class="campo__etiqueta" id="f-precio">Precio (MXN)</span>
+                    <span class="sr-only" id="f-precio">Precio (MXN)</span>
                     <div class="campo__par" role="group" aria-labelledby="f-precio">
-                        <input type="number" name="min" value="<?= e($f['min']) ?>" min="0" step="10000" inputmode="numeric" placeholder="Mínimo" aria-label="Precio mínimo">
-                        <input type="number" name="max" value="<?= e($f['max']) ?>" min="0" step="10000" inputmode="numeric" placeholder="Máximo" aria-label="Precio máximo">
+                        <input type="number" name="min" value="<?= e($f['min']) ?>" min="0" step="10000" inputmode="numeric" placeholder="$ mín." aria-label="Precio mínimo">
+                        <input type="number" name="max" value="<?= e($f['max']) ?>" min="0" step="10000" inputmode="numeric" placeholder="$ máx." aria-label="Precio máximo">
+                    </div>
+                </div>
+                <?php /* Panel «Más filtros»: en celular va dentro del desplegable de «Filtros»; desde 760 px
+                         se abre con su propio botón como panel flotante debajo de la barra. */ ?>
+                <div class="filtros-mas" id="filtros-mas" data-filtros-mas>
+                    <div class="filtros-mas__cuerpo">
+                        <fieldset class="filtros-mas__grupo">
+                            <legend>Superficie</legend>
+                            <div class="filtros-mas__opciones">
+                                <?php foreach (['construida' => 'Construida', 'terreno' => 'Terreno'] as $valor => $texto): ?>
+                                    <label class="chip chip--chico"><input type="radio" name="sup" value="<?= e($valor) ?>" <?= $f['sup'] === $valor ? 'checked' : '' ?>><span><?= e($texto) ?></span></label>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="campo campo__par">
+                                <input type="number" name="m2min" value="<?= e($f['m2min']) ?>" min="0" step="10" inputmode="numeric" placeholder="Desde (m²)" aria-label="Superficie mínima en m²">
+                                <input type="number" name="m2max" value="<?= e($f['m2max']) ?>" min="0" step="10" inputmode="numeric" placeholder="Hasta (m²)" aria-label="Superficie máxima en m²">
+                            </div>
+                        </fieldset>
+                        <?php foreach (['recamaras' => ['Recámaras', RECAMARAS_FILTRO], 'banos' => ['Baños', BANOS_FILTRO], 'estac' => ['Estacionamientos', ESTACIONAMIENTOS_FILTRO]] as $campo => [$titulo, $numeros]): ?>
+                            <fieldset class="filtros-mas__grupo">
+                                <legend><?= e($titulo) ?></legend>
+                                <div class="filtros-mas__opciones filtros-mas__opciones--segmento">
+                                    <label class="chip chip--chico"><input type="radio" name="<?= $campo ?>" value="" <?= $f[$campo] ? '' : 'checked' ?>><span><?= $campo === 'recamaras' ? 'Todas' : 'Todos' ?></span></label>
+                                    <?php foreach ($numeros as $n): ?>
+                                        <label class="chip chip--chico"><input type="radio" name="<?= $campo ?>" value="<?= $n ?>" <?= $f[$campo] === $n ? 'checked' : '' ?>><span><?= $n ?>+</span></label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </fieldset>
+                        <?php endforeach; ?>
+                        <?php foreach (CARACTERISTICAS_FILTRO as $grupo => $opciones):
+                            $opciones = array_filter($opciones, fn($k) => !empty($conteoCarac[$k]) || in_array($k, $f['carac'], true), ARRAY_FILTER_USE_KEY);
+                            if (!$opciones) continue; ?>
+                            <fieldset class="filtros-mas__grupo">
+                                <legend><?= e($grupo) ?></legend>
+                                <div class="filtros-mas__opciones">
+                                    <?php foreach ($opciones as $clave => [$texto]): ?>
+                                        <label class="chip chip--chico"><input type="checkbox" name="carac[]" value="<?= e($clave) ?>" <?= in_array($clave, $f['carac'], true) ? 'checked' : '' ?>><span><?= e($texto) ?> <small>(<?= (int) ($conteoCarac[$clave] ?? 0) ?>)</small></span></label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </fieldset>
+                        <?php endforeach; ?>
+                        <fieldset class="filtros-mas__grupo">
+                            <legend>Multimedia</legend>
+                            <div class="filtros-mas__opciones">
+                                <?php foreach (MULTIMEDIA_FILTRO as $clave => $texto): if (empty($conteoMedia[$clave])) continue; ?>
+                                    <label class="chip chip--chico"><input type="checkbox" name="media[]" value="<?= e($clave) ?>" <?= in_array($clave, $f['media'], true) ? 'checked' : '' ?>><span><?= e($texto) ?> <small>(<?= (int) $conteoMedia[$clave] ?>)</small></span></label>
+                                <?php endforeach; ?>
+                            </div>
+                        </fieldset>
+                        <fieldset class="filtros-mas__grupo">
+                            <legend>Publicada</legend>
+                            <div class="filtros-mas__opciones">
+                                <label class="chip chip--chico"><input type="radio" name="publicada" value="" <?= $f['publicada'] ? '' : 'checked' ?>><span>Cualquier fecha</span></label>
+                                <?php foreach (PUBLICADA_FILTRO as $dias => $texto): ?>
+                                    <label class="chip chip--chico"><input type="radio" name="publicada" value="<?= $dias ?>" <?= $f['publicada'] === $dias ? 'checked' : '' ?>><span><?= e($texto) ?></span></label>
+                                <?php endforeach; ?>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="filtros-mas__pie">
+                        <button class="filtros-mas__limpiar" type="button" data-limpiar-mas hidden>Limpiar</button>
+                        <button class="boton" type="submit">Ver resultados</button>
                     </div>
                 </div>
                 </div>
             </div>
+            <button class="filtros-propiedades__abrir-mas" type="button" aria-expanded="false" aria-controls="filtros-mas" data-abrir-mas hidden>
+                <?= icono('filtro') ?> <span>Más filtros</span><?php if ($masActivos): ?> <span class="filtros-propiedades__cuenta"><?= $masActivos ?></span><?php endif; ?>
+            </button>
             <div class="filtros-propiedades__acciones">
-                <button class="boton" type="submit"><?= icono('filtro') ?> Buscar</button>
-                <?php if (hay_filtros($f)): ?>
-                    <a class="boton boton--contorno" href="/propiedades">Limpiar filtros</a>
-                <?php endif; ?>
+                <button class="boton filtros-propiedades__buscar" type="submit"><?= icono('buscar') ?> <span>Buscar</span></button>
             </div>
         </form>
 
@@ -133,6 +189,9 @@ require dirname(__DIR__) . '/includes/header.php';
             <h2 class="propiedades__conteo" id="titulo-resultados" aria-live="polite">
                 <?= $total === 1 ? '1 propiedad' . (hay_filtros($f) ? ' encontrada' : ' disponible') : $total . ' propiedades' . (hay_filtros($f) ? ' encontradas' : ' disponibles') ?>
             </h2>
+            <?php if (hay_filtros($f)): ?>
+                <a class="propiedades__limpiar" href="/propiedades"><?= icono('cerrar', 'icono icono--mini') ?> Limpiar filtros</a>
+            <?php endif; ?>
             <div class="campo campo--orden">
                 <label for="f-orden">Ordenar por</label>
                 <select id="f-orden" name="orden" form="filtros-orden" data-orden>
@@ -144,9 +203,7 @@ require dirname(__DIR__) . '/includes/header.php';
         </div>
         <?php /* El orden viaja con los filtros actuales (formulario aparte para no mover el diseño) */ ?>
         <form id="filtros-orden" action="/propiedades" method="get" hidden>
-            <?php foreach (array_filter($f, fn($v, $k) => $k !== 'orden' && $v !== '' && $v !== null, ARRAY_FILTER_USE_BOTH) as $k => $v): ?>
-                <input type="hidden" name="<?= e($k) ?>" value="<?= e($v) ?>">
-            <?php endforeach; ?>
+            <?= $camposOcultos(consulta_filtros($f, ['orden'])) /* armado con e() */ ?>
             <noscript><button type="submit">Ordenar</button></noscript>
         </form>
 
