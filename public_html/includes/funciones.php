@@ -179,7 +179,7 @@ const ESQUEMAS = [
     // Banners promocionales de Propiedades destacadas. 'cond': campos obligatorios según el tipo.
     'vitrina' => [
         'req'   => ['id', 'tipo', 'nombre'],
-        'tipos' => ['tipo' => 'banner', 'imagen' => 'ruta?', 'boton1_url' => 'url?', 'boton2_url' => 'url?'],
+        'tipos' => ['tipo' => 'banner', 'operacion' => 'operacion?', 'imagen' => 'ruta?', 'boton1_url' => 'url?', 'boton2_url' => 'url?'],
         'cond'  => ['diseno' => ['titulo', 'imagen'], 'codigo' => ['codigo']],
     ],
     'blog' => [

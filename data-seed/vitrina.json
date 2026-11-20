@@ -4,6 +4,7 @@
     {
       "id": "torre-arbide",
       "tipo": "diseno",
+      "operacion": "venta",
       "nombre": "Torre Arbide",
       "etiqueta": "Últimas 7 unidades",
       "titulo": "Últimas unidades en Torre Arbide",

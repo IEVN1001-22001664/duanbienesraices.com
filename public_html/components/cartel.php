@@ -39,6 +39,9 @@ $textoCelular = (string) ($item['texto_celular'] ?? '');
 $encuadre = in_array($item['encuadre'] ?? '', ['arriba', 'abajo'], true) ? $item['encuadre'] : 'centro';
 ?>
 <aside class="cartel" aria-labelledby="<?= e($idTitulo) ?>">
+    <?php if (in_array($item['operacion'] ?? '', ['venta', 'renta'], true)): /* igual que en las tarjetas de destacados */ ?>
+        <span class="etiqueta etiqueta--<?= e($item['operacion']) ?> cartel__operacion"><?= $item['operacion'] === 'renta' ? 'RENTA' : 'VENTA' ?></span>
+    <?php endif; ?>
     <div class="cartel__texto">
         <?php if (!empty($item['etiqueta'])): ?>
             <p class="cartel__etiqueta"><?= e($item['etiqueta']) ?></p>
