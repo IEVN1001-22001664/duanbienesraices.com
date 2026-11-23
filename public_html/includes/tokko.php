@@ -927,6 +927,22 @@ function datos_clave(array $p, bool $largo = false): array
  * Datos clave abreviados para las tarjetas compactas: [icono, texto corto, texto completo].
  * Ej.: «2 rec.» con «2 recámaras» para el atributo title.
  */
+/**
+ * Id (11 caracteres) del primer video de YouTube de la propiedad, o null.
+ * Acepta watch?v=, youtu.be/, embed/ y shorts/, aunque Tokko traiga parámetros mal pegados
+ * (p. ej. «watch?v=ID?si=…»).
+ */
+function youtube_de(array $p): ?string
+{
+    foreach ($p['videos'] ?? [] as $v) {
+        if (($v['proveedor'] ?? '') === 'youtube'
+            && preg_match('~(?:[?&]v=|youtu\.be/|/embed/|/shorts/)([\w-]{11})~', (string) $v['url'], $m)) {
+            return $m[1];
+        }
+    }
+    return null;
+}
+
 function datos_clave_cortos(array $p, int $max = 4): array
 {
     $corto = [' constr.' => '', ' terreno' => ' terr.', ' recámaras' => ' rec.', ' recámara' => ' rec.',

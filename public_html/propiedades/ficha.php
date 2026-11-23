@@ -29,6 +29,9 @@ $galeria = array_merge($fotos, $planos);
 $portada = portada_propiedad($prop) ?? ($fotos[0]['url'] ?? null);
 $datos = datos_clave($prop, true);
 $parrafos = parrafos_descripcion($prop['descripcion']);
+// Video de YouTube cargado en Tokko (campo «Videos» de la propiedad)
+$youtube = youtube_de($prop);
+$urlYoutube = $youtube ? 'https://www.youtube.com/watch?v=' . $youtube : '';
 $esConstruccion = !in_array($prop['tipo'], ['Terreno', 'Campo', 'Quinta'], true);
 
 // Características secundarias (solo las que Tokko trae)
@@ -147,6 +150,11 @@ require dirname(__DIR__) . '/includes/header.php';
                     <button class="galeria__flecha galeria__flecha--der" type="button" aria-controls="galeria-ficha" aria-label="Foto siguiente" hidden><?= icono('flecha-der') ?></button>
                     <span class="galeria__contador" aria-hidden="true"><span data-actual>1</span>/<?= count($galeria) ?></span>
                 <?php endif; ?>
+                <?php if ($youtube): ?>
+                    <a class="ficha__ver-video" href="<?= e($urlYoutube) ?>" target="_blank" rel="noopener" data-abrir-video="<?= e($youtube) ?>" data-titulo="<?= e($prop['titulo']) ?>">
+                        <?= icono('play') ?> Ver video
+                    </a>
+                <?php endif; ?>
             </div>
             <?php if (count($galeria) > 1): ?>
                 <ul class="ficha__miniaturas" aria-label="Elegir foto" data-miniaturas>
@@ -248,8 +256,19 @@ require dirname(__DIR__) . '/includes/header.php';
                 <?php if ($prop['videos']): ?>
                     <section class="ficha__bloque" aria-labelledby="titulo-recorridos">
                         <h2 class="ficha__subtitulo" id="titulo-recorridos">Recorrido virtual y videos</h2>
+                        <?php if ($youtube): ?>
+                            <div class="ficha__video video__marco">
+                                <img class="video__miniatura" src="https://i.ytimg.com/vi/<?= e($youtube) ?>/hqdefault.jpg" alt=""
+                                     width="480" height="360" loading="lazy" decoding="async">
+                                <a class="video__play" href="<?= e($urlYoutube) ?>" target="_blank" rel="noopener" data-abrir-video="<?= e($youtube) ?>" data-titulo="<?= e($prop['titulo']) ?>">
+                                    <?= icono('play') ?><span class="sr-only">Reproducir el video de la propiedad</span>
+                                </a>
+                            </div>
+                        <?php endif; ?>
                         <ul class="ficha__videos">
-                            <?php foreach ($prop['videos'] as $v): ?>
+                            <?php foreach ($prop['videos'] as $v):
+                                // El video principal ya se ve arriba como miniatura
+                                if ($youtube && $v['proveedor'] === 'youtube' && str_contains($v['url'], $youtube)) continue; ?>
                                 <li><a class="boton boton--contorno" href="<?= e($v['url']) ?>" target="_blank" rel="noopener">
                                     <?= icono($v['proveedor'] === 'youtube' ? 'play' : 'externo') ?> <?= e($v['titulo'] ?: ($v['proveedor'] === 'matterport' ? 'Recorrido virtual 360°' : 'Ver video')) ?>
                                     <span class="sr-only">(abre en otra pestaña)</span></a></li>
@@ -279,6 +298,21 @@ require dirname(__DIR__) . '/includes/header.php';
         <p class="centrado"><a class="boton boton--contorno" href="/propiedades">Ver todas las propiedades</a></p>
     </div>
 </section>
+<?php endif; ?>
+
+<?php if ($youtube): ?>
+    <?php /* Aviso que aparece solo al entrar (una vez por visita a cada ficha) en lugar de abrir el video
+             encima de todo: en celular no tapa la ficha y se cierra con la ×. Lo maneja main.js. */ ?>
+    <aside class="video-aviso" data-video-aviso="<?= e((string) $prop['id']) ?>" aria-label="Video de la propiedad" hidden>
+        <a class="video-aviso__enlace" href="<?= e($urlYoutube) ?>" target="_blank" rel="noopener" data-abrir-video="<?= e($youtube) ?>" data-titulo="<?= e($prop['titulo']) ?>">
+            <span class="video-aviso__foto">
+                <img src="https://i.ytimg.com/vi/<?= e($youtube) ?>/mqdefault.jpg" alt="" width="320" height="180" loading="lazy" decoding="async">
+                <?= icono('play') ?>
+            </span>
+            <span class="video-aviso__texto"><strong>Mira el video</strong> <span>de esta propiedad</span></span>
+        </a>
+        <button class="video-aviso__cerrar" type="button" aria-label="Cerrar aviso del video"><?= icono('cerrar') ?></button>
+    </aside>
 <?php endif; ?>
 
 <?php require dirname(__DIR__) . '/includes/footer.php'; ?>

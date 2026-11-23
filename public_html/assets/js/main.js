@@ -445,6 +445,45 @@
         modalVideo.setAttribute('aria-label', iframe.title);
         modalVideo.showModal();
     };
+    // Botones y ligas con el id en data-abrir-video (ficha de propiedad)
+    $$('[data-abrir-video]').forEach(function (enlace) {
+        enlace.addEventListener('click', function (ev) {
+            var id = enlace.getAttribute('data-abrir-video');
+            if (!/^[\w-]{11}$/.test(id) || typeof HTMLDialogElement !== 'function') return; // sin <dialog>: abre YouTube
+            ev.preventDefault();
+            abrirVideo(id, enlace.getAttribute('data-titulo'));
+        });
+    });
+
+    // Aviso flotante del video en la ficha: aparece a los 2.5 s (después de la animación de entrada en
+    // celular), una vez por visita a cada propiedad; se quita al cerrarlo, al abrir el video o al llegar
+    // a la sección de videos.
+    var avisoVideo = $('[data-video-aviso]');
+    if (avisoVideo) {
+        var claveAviso = 'duan-video-' + avisoVideo.getAttribute('data-video-aviso');
+        var yaVisto = false;
+        try { yaVisto = sessionStorage.getItem(claveAviso) === '1'; } catch (err) {}
+        var quitarAviso = function () {
+            try { sessionStorage.setItem(claveAviso, '1'); } catch (err) {}
+            avisoVideo.classList.remove('es-visible');
+            setTimeout(function () { avisoVideo.hidden = true; }, 300);
+        };
+        if (!yaVisto) {
+            setTimeout(function () {
+                avisoVideo.hidden = false;
+                requestAnimationFrame(function () { requestAnimationFrame(function () { avisoVideo.classList.add('es-visible'); }); });
+            }, 2500);
+            $('.video-aviso__cerrar', avisoVideo).addEventListener('click', quitarAviso);
+            $('.video-aviso__enlace', avisoVideo).addEventListener('click', quitarAviso);
+            var seccionVideos = $('.ficha__video');
+            if (seccionVideos && 'IntersectionObserver' in window) {
+                new IntersectionObserver(function (e, obs) {
+                    if (e[0].isIntersecting) { obs.disconnect(); if (!avisoVideo.hidden) quitarAviso(); }
+                }).observe(seccionVideos);
+            }
+        }
+    }
+
     $$('[data-youtube]').forEach(function (marco) {
         var enlace = $('.video__play', marco);
         if (!enlace) return;
