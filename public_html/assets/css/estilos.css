@@ -1539,8 +1539,8 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
 .ficha__descripcion p { margin: 0 0 .9rem; }
 /* Texto largo plegado ([data-plegable="N"]): main.js lo corta a N líneas con un degradado y muestra
    «Ver más / Ver menos» solo si de verdad sobra texto. Sin JS se ve completo. */
-.es-plegado { position: relative; overflow: hidden; }
-.es-plegado::after {
+.plegable--cerrado { position: relative; overflow: hidden; }
+.plegable--cerrado::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3.2em; pointer-events: none;
     background: linear-gradient(rgba(255, 255, 255, 0), var(--blanco));
 }

@@ -581,7 +581,7 @@
         if (bloque.scrollHeight <= limite + alto * 2) return;
         var texto = $('[data-plegable-texto]', boton);
         var plegar = function (plegado) {
-            bloque.classList.toggle('es-plegado', plegado);
+            bloque.classList.toggle('plegable--cerrado', plegado);
             bloque.style.maxHeight = plegado ? limite + 'px' : '';
             boton.setAttribute('aria-expanded', plegado ? 'false' : 'true');
             if (texto) texto.textContent = plegado ? 'Ver más' : 'Ver menos';
@@ -589,7 +589,7 @@
         plegar(true);
         boton.hidden = false;
         boton.addEventListener('click', function () {
-            var plegado = !bloque.classList.contains('es-plegado');
+            var plegado = !bloque.classList.contains('plegable--cerrado');
             plegar(plegado);
             // Al cerrar, si el inicio del texto quedó arriba de la pantalla, volver a él
             if (plegado && bloque.getBoundingClientRect().top < 0) {
