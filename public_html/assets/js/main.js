@@ -718,6 +718,13 @@
         var revisarCambios = function () { filtros.classList.toggle('hay-cambios', estadoFiltros() !== estadoInicial); };
         filtros.addEventListener('change', revisarCambios);
         filtros.addEventListener('input', revisarCambios);
+        // Excepción: los chips Todas / Venta / Renta buscan en cuanto se tocan (con lo que haya en la barra).
+        // requestSubmit pasa por el manejador de «submit» que quita los campos vacíos de la URL.
+        $$('input[name="operacion"]', filtros).forEach(function (chip) {
+            chip.addEventListener('change', function () {
+                if (typeof filtros.requestSubmit === 'function') filtros.requestSubmit(); else filtros.submit();
+            });
+        });
         // Celular: tipo, ciudad, recámaras y precio se pliegan tras «Filtros».
         // En pantallas anchas el CSS los muestra siempre.
         var botonMas = $('[data-mas-filtros]', filtros);
