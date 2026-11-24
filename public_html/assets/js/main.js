@@ -725,7 +725,7 @@
                 if (typeof filtros.requestSubmit === 'function') filtros.requestSubmit(); else filtros.submit();
             });
         });
-        // Celular: tipo, ciudad, recámaras y precio se pliegan tras «Filtros».
+        // Celular: precio y «Más filtros» se pliegan tras «Filtros» (tipo queda fuera, siempre visible).
         // En pantallas anchas el CSS los muestra siempre.
         var botonMas = $('[data-mas-filtros]', filtros);
         if (botonMas) {
@@ -782,9 +782,15 @@
             marcador.setAttribute('aria-hidden', 'true');
             filtros.parentNode.insertBefore(marcador, filtros);
             var chips = $('.filtros-propiedades__operacion', filtros);
+            var campoTipo = $('.campo--tipo', filtros);
             var vigilar = function () {
                 var arriba = parseFloat(getComputedStyle(filtros).top) || 0;
-                if (chips && chips.offsetHeight) filtros.style.setProperty('--alto-chips', chips.offsetHeight + 'px');
+                // Al compactarse se esconden los chips y el tipo: se guarda lo que ocupan (con el espacio entre filas)
+                if (chips && chips.offsetHeight) {
+                    var hueco = chips.offsetHeight;
+                    if (campoTipo && campoTipo.offsetHeight) hueco += campoTipo.offsetHeight + (parseFloat(getComputedStyle(filtros).rowGap) || 0);
+                    filtros.parentNode.style.setProperty('--alto-chips', hueco + 'px'); // en el contenedor: el relleno va en el hermano de la barra
+                }
                 if (vigilar.obs) vigilar.obs.disconnect();
                 vigilar.obs = new IntersectionObserver(function (e) {
                     filtros.classList.toggle('es-compacta', !e[0].isIntersecting && e[0].boundingClientRect.top < arriba);

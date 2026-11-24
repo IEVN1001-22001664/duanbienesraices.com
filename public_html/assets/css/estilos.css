@@ -1259,15 +1259,16 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .filtros-propiedades__campos { display: contents; }
 .filtros-propiedades .campo { margin: 0; min-width: 0; }
 .filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .55rem .7rem; min-height: 44px; font-size: .95rem; }
-.campo--buscar { grid-row: 2; grid-column: 1; }
+.campo--tipo { grid-row: 2; grid-column: 1 / -1; }
+.campo--buscar { grid-row: 3; grid-column: 1; }
 /* Filtros extra: en celular se pliegan tras «Filtros» y se abren dentro de la barra con su propio scroll */
 .filtros-propiedades__extra {
-    grid-column: 1 / -1; grid-row: 3; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+    grid-column: 1 / -1; grid-row: 4; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
     max-height: calc(100svh - var(--alto-encabezado) - 12rem); overflow-y: auto;
 }
-.filtros-propiedades__extra .campo--precio, .filtros-propiedades__extra .campo:has(#f-tipo) { grid-column: 1 / -1; }
+.filtros-propiedades__extra .campo--precio { grid-column: 1 / -1; }
 .filtros-propiedades__mas {
-    grid-row: 2; grid-column: 2; display: flex; align-items: center; justify-content: center; gap: .5rem;
+    grid-row: 3; grid-column: 2; display: flex; align-items: center; justify-content: center; gap: .5rem;
     min-height: 44px; padding: .5rem .9rem; border: 2px solid var(--borde); border-radius: 999px;
     background: var(--blanco); color: var(--carbon); font: inherit; font-weight: 700; cursor: pointer;
 }
@@ -1288,7 +1289,7 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
     }
     /* Fija y cerrada: sin chips; un relleno debajo ocupa su lugar para que el contenido no se mueva.
        Al abrir «Filtros» los chips vuelven a la barra. */
-    .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__operacion { display: none; }
+    .filtros-propiedades.es-compacta.es-plegado :is(.filtros-propiedades__operacion, .campo--tipo) { display: none; }
     /* (relleno en la línea de resultados: un margen se fusionaría con el suyo) */
     .filtros-propiedades.es-compacta.es-plegado + .propiedades__barra { padding-top: calc(var(--alto-chips, 2.6rem) + .5rem); }
     .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__mas,
@@ -1296,7 +1297,7 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
     .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__acciones { grid-row: 1; }
 }
 .campo__par { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-.filtros-propiedades__acciones { grid-row: 2; grid-column: 3; display: flex; }
+.filtros-propiedades__acciones { grid-row: 3; grid-column: 3; display: flex; }
 .filtros-propiedades__acciones .boton { min-height: 44px; padding: .5em 1.1em; }
 /* --- Panel «Más filtros» (superficie, baños, estacionamientos, características, multimedia, fecha) --- */
 .filtros-propiedades:not(.con-js) { position: static; } /* sin JS el panel va abierto: la barra no se fija */
@@ -1366,13 +1367,14 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
     .filtros-propiedades__acciones { grid-row: 1; grid-column: 4; }
     .filtros-propiedades__mas { display: none !important; }
     .filtros-propiedades__extra, .filtros-propiedades.es-plegado .filtros-propiedades__extra {
-        display: grid; grid-row: 2; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); max-height: none; overflow: visible;
+        display: grid; grid-row: 2; grid-column: 2 / -1; grid-template-columns: minmax(0, 1fr); max-height: none; overflow: visible;
     }
-    .filtros-propiedades__extra .campo--precio, .filtros-propiedades__extra .campo:has(#f-tipo) { grid-column: auto; }
+    .campo--tipo { grid-row: 2; grid-column: 1; } /* debajo de los chips; el precio ocupa el resto de la fila */
+    .filtros-propiedades__extra .campo--precio { grid-column: auto; }
 }
 @media (min-width: 1280px) {
     .filtros-propiedades { grid-template-columns: auto minmax(0, 1.8fr) minmax(0, 1fr) minmax(0, 1.3fr) auto auto; }
-    .filtros-propiedades__operacion, .campo--buscar, .filtros-propiedades__abrir-mas, .filtros-propiedades__acciones { grid-row: auto; grid-column: auto; }
+    .filtros-propiedades__operacion, .campo--buscar, .campo--tipo, .filtros-propiedades__abrir-mas, .filtros-propiedades__acciones { grid-row: auto; grid-column: auto; }
     .filtros-propiedades__extra, .filtros-propiedades.es-plegado .filtros-propiedades__extra { display: contents; }
 }
 

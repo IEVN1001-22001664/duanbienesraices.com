@@ -89,15 +89,8 @@ require dirname(__DIR__) . '/includes/header.php';
                     <label class="sr-only" for="f-q">Buscar</label>
                     <input id="f-q" type="search" name="q" value="<?= e($f['q']) ?>" placeholder="Colonia, fraccionamiento o código" autocomplete="off">
                 </div>
-                <?php
-                // En celular los demás filtros se pliegan tras «Más filtros» (main.js); sin JS se ven todos.
-                $extrasActivos = count(array_filter([$f['tipo'], $f['min'] ?: $f['max']], fn($v) => $v !== '' && $v !== null)) + $masActivos;
-                ?>
-                <button class="filtros-propiedades__mas" type="button" aria-expanded="false" aria-controls="filtros-extra" data-mas-filtros="<?= $extrasActivos ?>" hidden>
-                    <?= icono('filtro') ?> <span data-mas-texto>Filtros</span><?php if ($extrasActivos): ?> <span class="filtros-propiedades__cuenta"><?= $extrasActivos ?></span><?php endif; ?>
-                </button>
-                <div class="filtros-propiedades__extra" id="filtros-extra">
-                <div class="campo">
+                <?php /* Tipo va fuera del desplegable: en celular se ve siempre, debajo de los chips */ ?>
+                <div class="campo campo--tipo">
                     <label class="sr-only" for="f-tipo">Tipo</label>
                     <select id="f-tipo" name="tipo">
                         <option value="">Tipo</option>
@@ -106,6 +99,14 @@ require dirname(__DIR__) . '/includes/header.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <?php
+                // En celular los demás filtros se pliegan tras «Más filtros» (main.js); sin JS se ven todos.
+                $extrasActivos = ($f['min'] || $f['max'] ? 1 : 0) + $masActivos;
+                ?>
+                <button class="filtros-propiedades__mas" type="button" aria-expanded="false" aria-controls="filtros-extra" data-mas-filtros="<?= $extrasActivos ?>" hidden>
+                    <?= icono('filtro') ?> <span data-mas-texto>Filtros</span><?php if ($extrasActivos): ?> <span class="filtros-propiedades__cuenta"><?= $extrasActivos ?></span><?php endif; ?>
+                </button>
+                <div class="filtros-propiedades__extra" id="filtros-extra">
                 <div class="campo campo--precio">
                     <span class="sr-only" id="f-precio">Precio (MXN)</span>
                     <div class="campo__par" role="group" aria-labelledby="f-precio">
