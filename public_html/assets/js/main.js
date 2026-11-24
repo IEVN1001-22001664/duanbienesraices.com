@@ -782,14 +782,18 @@
             marcador.setAttribute('aria-hidden', 'true');
             filtros.parentNode.insertBefore(marcador, filtros);
             var chips = $('.filtros-propiedades__operacion', filtros);
-            var campoTipo = $('.campo--tipo', filtros);
             var vigilar = function () {
                 var arriba = parseFloat(getComputedStyle(filtros).top) || 0;
-                // Al compactarse se esconden los chips y el tipo: se guarda lo que ocupan (con el espacio entre filas)
-                if (chips && chips.offsetHeight) {
-                    var hueco = chips.offsetHeight;
-                    if (campoTipo && campoTipo.offsetHeight) hueco += campoTipo.offsetHeight + (parseFloat(getComputedStyle(filtros).rowGap) || 0);
-                    filtros.parentNode.style.setProperty('--alto-chips', hueco + 'px'); // en el contenedor: el relleno va en el hermano de la barra
+                // Al compactarse se esconden los chips y el tipo: se mide cuánto se encoge la barra (con y sin
+                // la clase, sin pintar en medio) y se guarda en el contenedor, porque el relleno va en el hermano
+                if (chips && chips.offsetHeight !== undefined) {
+                    var tenia = filtros.classList.contains('es-compacta');
+                    filtros.classList.remove('es-compacta');
+                    var completa = filtros.offsetHeight;
+                    filtros.classList.add('es-compacta');
+                    var compacta = filtros.offsetHeight;
+                    filtros.classList.toggle('es-compacta', tenia);
+                    filtros.parentNode.style.setProperty('--alto-chips', Math.max(0, completa - compacta) + 'px');
                 }
                 if (vigilar.obs) vigilar.obs.disconnect();
                 vigilar.obs = new IntersectionObserver(function (e) {

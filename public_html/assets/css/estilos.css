@@ -1245,7 +1245,7 @@ html.sin-scroll { overflow: hidden; }
     background: var(--blanco); border: 1px solid var(--borde); border-radius: var(--radio);
     box-shadow: var(--sombra); padding: .65rem;
 }
-.filtros-propiedades__operacion { grid-column: 1 / -1; display: flex; gap: .4rem; }
+.filtros-propiedades__operacion { grid-row: 1; grid-column: 1; display: flex; gap: .4rem; min-width: 0; }
 label.chip { position: relative; cursor: pointer; padding: 0; border: 0; background: none; }
 label.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 label.chip span {
@@ -1259,16 +1259,17 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
 .filtros-propiedades__campos { display: contents; }
 .filtros-propiedades .campo { margin: 0; min-width: 0; }
 .filtros-propiedades .campo input, .filtros-propiedades .campo select { padding: .55rem .7rem; min-height: 44px; font-size: .95rem; }
-.campo--tipo { grid-row: 2; grid-column: 1 / -1; }
-.campo--buscar { grid-row: 3; grid-column: 1; }
+/* Celular: fila 1 = chips + «Filtros» + lupa; fila 2 = buscar + tipo */
+.campo--tipo { grid-row: 2; grid-column: 2 / -1; }
+.campo--buscar { grid-row: 2; grid-column: 1; }
 /* Filtros extra: en celular se pliegan tras «Filtros» y se abren dentro de la barra con su propio scroll */
 .filtros-propiedades__extra {
-    grid-column: 1 / -1; grid-row: 4; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
+    grid-column: 1 / -1; grid-row: 3; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem;
     max-height: calc(100svh - var(--alto-encabezado) - 12rem); overflow-y: auto;
 }
 .filtros-propiedades__extra .campo--precio { grid-column: 1 / -1; }
 .filtros-propiedades__mas {
-    grid-row: 3; grid-column: 2; display: flex; align-items: center; justify-content: center; gap: .5rem;
+    grid-row: 1; grid-column: 2; display: flex; align-items: center; justify-content: center; gap: .5rem;
     min-height: 44px; padding: .5rem .9rem; border: 2px solid var(--borde); border-radius: 999px;
     background: var(--blanco); color: var(--carbon); font: inherit; font-weight: 700; cursor: pointer;
 }
@@ -1291,13 +1292,13 @@ label.chip input:focus-visible + span { box-shadow: var(--foco); }
        Al abrir «Filtros» los chips vuelven a la barra. */
     .filtros-propiedades.es-compacta.es-plegado :is(.filtros-propiedades__operacion, .campo--tipo) { display: none; }
     /* (relleno en la línea de resultados: un margen se fusionaría con el suyo) */
-    .filtros-propiedades.es-compacta.es-plegado + .propiedades__barra { padding-top: calc(var(--alto-chips, 2.6rem) + .5rem); }
+    .filtros-propiedades.es-compacta.es-plegado + .propiedades__barra { padding-top: var(--alto-chips, 3.25rem); }
     .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__mas,
     .filtros-propiedades.es-compacta.es-plegado .campo--buscar,
     .filtros-propiedades.es-compacta.es-plegado .filtros-propiedades__acciones { grid-row: 1; }
 }
 .campo__par { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-.filtros-propiedades__acciones { grid-row: 3; grid-column: 3; display: flex; }
+.filtros-propiedades__acciones { grid-row: 1; grid-column: 3; display: flex; }
 .filtros-propiedades__acciones .boton { min-height: 44px; padding: .5em 1.1em; }
 /* --- Panel «Más filtros» (superficie, baños, estacionamientos, características, multimedia, fecha) --- */
 .filtros-propiedades:not(.con-js) { position: static; } /* sin JS el panel va abierto: la barra no se fija */
@@ -1358,6 +1359,23 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
     .filtros-propiedades__buscar .icono { flex: none; width: 20px; height: 20px; }
     .filtros-propiedades__buscar span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .filtros-propiedades__mas { padding-inline: .8rem; }
+    /* Chips más chicos para que quepan junto a «Filtros» y la lupa; se reparten el ancho */
+    .filtros-propiedades { gap: .5rem .4rem; }
+    .filtros-propiedades__operacion { gap: .3rem; }
+    .filtros-propiedades__operacion label.chip { flex: 1 1 auto; min-width: 0; }
+    .filtros-propiedades__operacion label.chip span {
+        display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: .35rem .4rem; font-size: .84rem;
+    }
+    .filtros-propiedades__mas { gap: .3rem; padding-inline: .5rem; font-size: .9rem; }
+    /* El tipo ocupa la columna de «Filtros» y la lupa: sin esto su opción más larga ensancharía esas columnas */
+    .campo--tipo { contain: inline-size; }
+}
+/* Pantallas muy angostas: «Filtros» solo con el ícono (el texto queda para lectores de pantalla) */
+@media (max-width: 359px) {
+    .filtros-propiedades__mas { width: 44px; padding: 0; }
+    .filtros-propiedades__mas [data-mas-texto] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .filtros-propiedades__mas .filtros-propiedades__cuenta { position: absolute; top: -.35rem; right: -.35rem; }
+    .filtros-propiedades__mas { position: relative; }
 }
 @media (min-width: 760px) {
     .filtros-propiedades { grid-template-columns: auto minmax(0, 1fr) auto auto; gap: .5rem .6rem; padding: .6rem .75rem; }
