@@ -38,7 +38,8 @@ $diapositivas = count($fotos) + count($extras) + ($verMas ? 1 : 0);
             <?php endforeach; ?>
             <?php if ($verMas): ?>
                 <li class="galeria__foto tarjeta-fotos__mas">
-                    <a href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>><?= icono('camara') ?> <span>Ver las <?= $totalFotos ?> fotos</span></a>
+                    <?php // #foto-N: la ficha abre la galería en la foto que sigue a las de la tarjeta ?>
+                    <a href="<?= e($ficha . ($externa ? '' : '#foto-' . (count($fotos) + count($extras) + 1))) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>><?= icono('camara') ?> <span>Ver las <?= $totalFotos ?> fotos</span></a>
                 </li>
             <?php endif; ?>
         </ul>

@@ -417,6 +417,14 @@
                 marcar();
             }, 120);
         }, { passive: true });
+        var enlace = pista.closest('a');
+        if (enlace) {
+            enlace.addEventListener('click', function () {
+                var diapositiva = pista.children[indice];
+                var base = enlace.href.split('#')[0];
+                enlace.href = diapositiva && diapositiva.classList.contains('tarjeta-fotos__mas') ? base + '#foto-' + (indice + 1) : base;
+            });
+        }
         if (!tarjeta || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         // El sprite de íconos con su ?v= (el mismo que ya usa la página)
         var usoIcono = $('use[href*="iconos.svg"]');
@@ -463,16 +471,20 @@
             puntos.forEach(function (p, i) { p.classList.toggle('es-actual', i === indice); });
             galeria.dispatchEvent(new CustomEvent('galeria:cambio', { detail: indice }));
         }
-        function ir(n) {
+        function ir(n, inmediato) {
             cargarDiferidas(galeria);
             indice = (n + fotos.length) % fotos.length;
-            pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+            pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento || inmediato ? 'auto' : 'smooth' });
             mostrar();
         }
         if (izq) izq.addEventListener('click', function () { ir(indice - 1); });
         if (der) der.addEventListener('click', function () { ir(indice + 1); });
         // Las miniaturas de la ficha piden ir a una foto con este evento
-        galeria.addEventListener('galeria:ir', function (ev) { ir(ev.detail); });
+        // (detail: el índice, o { indice, inmediato } para saltar sin animación)
+        galeria.addEventListener('galeria:ir', function (ev) {
+            var d = ev.detail;
+            if (d && typeof d === 'object') ir(d.indice, d.inmediato); else ir(d);
+        });
         pista.addEventListener('keydown', function (ev) {
             if (ev.key === 'ArrowLeft') { ev.preventDefault(); ir(indice - 1); }
             if (ev.key === 'ArrowRight') { ev.preventDefault(); ir(indice + 1); }
@@ -692,6 +704,17 @@
                 }
             });
         });
+    }
+
+    /* Ficha abierta desde «Ver las N fotos» de una tarjeta (#foto-N): la galería empieza en esa foto
+       y la dirección se limpia (para compartirla sin el #). */
+    var fotoInicial = /^#foto-(\d+)$/.exec(location.hash);
+    if (galeriaFicha && fotoInicial) {
+        var n = parseInt(fotoInicial[1], 10) - 1;
+        if (n > 0 && n < $$('.galeria__foto', galeriaFicha).length) {
+            galeriaFicha.dispatchEvent(new CustomEvent('galeria:ir', { detail: { indice: n, inmediato: true } }));
+        }
+        try { history.replaceState(history.state, '', location.pathname + location.search); } catch (err) {}
     }
 
     /* ---------------------------------------------------------------
