@@ -399,8 +399,10 @@
        enlace a la ficha. Puntos pequeños abajo; con mouse, flechas al pasar
        por encima (van fuera del <a>, sobre la foto).
        --------------------------------------------------------------- */
-    // Con mouse, las tarjetas marcadas .fotos-solo-tactil se quedan en la portada (FOTOS_TARJETA_ESCRITORIO).
-    var conMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    // PC: hay mouse o touchpad y la pantalla es ancha. Se usa any-hover/any-pointer porque en las laptops con
+    // pantalla táctil Chrome reporta el táctil como control principal (pointer: coarse) y antes no se detectaban.
+    // Ahí las tarjetas marcadas .fotos-solo-tactil se quedan en la portada (FOTOS_TARJETA_ESCRITORIO).
+    var conMouse = window.matchMedia('(any-hover: hover) and (any-pointer: fine) and (min-width: 768px)').matches;
     $$('[data-tarjeta-fotos]').forEach(function (pista) {
         var tarjeta = pista.closest('.propiedad-card');
         var marco = pista.parentNode;

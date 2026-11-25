@@ -1469,8 +1469,9 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
 @media (prefers-reduced-motion: reduce) { .tarjeta-fotos__puntos i { transition: none; } }
 /* En pantallas táctiles los destacados se deslizan con el dedo: sin flechas grandes encima de la foto */
 @media (hover: none) { .destacado .galeria__flecha { display: none; } }
-/* Con mouse, solo la portada (FOTOS_TARJETA_ESCRITORIO en tokko.php): no se puede deslizar ni hay puntos. */
-@media (hover: hover) and (pointer: fine) {
+/* En PC (mouse o touchpad y pantalla ancha; la misma condición que conMouse en main.js), solo la portada
+   (FOTOS_TARJETA_ESCRITORIO en tokko.php): no se puede deslizar ni hay puntos. */
+@media (any-hover: hover) and (any-pointer: fine) and (min-width: 768px) {
     .fotos-solo-tactil .tarjeta-fotos, .fotos-solo-tactil .galeria__pista { overflow: hidden; }
     .fotos-solo-tactil .tarjeta-fotos__puntos { display: none; }
 }
