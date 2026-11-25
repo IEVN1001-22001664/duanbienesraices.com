@@ -11,6 +11,14 @@ $operacion = $item['operacion'] === 'renta' ? 'Renta' : 'Venta';
 $idGaleria = 'galeria-' . preg_replace('/[^a-z0-9-]/', '', strtolower((string) $item['id']));
 $prop = !empty($item['tokko_id']) && function_exists('tokko_propiedad') ? tokko_propiedad((int) $item['tokko_id']) : null;
 $datos = $prop ? datos_clave_cortos($prop) : [];
+// Destacados de Tokko: después de su portada van las demás fotos de la tarjeta (fotos_tarjeta()), que
+// main.js descarga hasta que la persona desliza o toca una flecha (data-src). Al final, «Ver las N fotos».
+$extras = $prop && count($fotos) === 1 ? array_slice(fotos_tarjeta($prop), 1) : [];
+$totalFotos = $prop ? count($prop['fotos']) : count($fotos);
+$ficha = (string) ($item['url_ficha'] ?? '') ?: $item['url_tokko'];
+$externa = (bool) preg_match('#^https?://#i', $ficha);
+$verMas = $extras && $totalFotos > 1 + count($extras);
+$diapositivas = count($fotos) + count($extras) + ($verMas ? 1 : 0);
 ?>
 <article class="destacado">
     <div class="destacado__galeria galeria" data-galeria>
@@ -23,11 +31,28 @@ $datos = $prop ? datos_clave_cortos($prop) : [];
                          width="720" height="540" loading="lazy" decoding="async">
                 </li>
             <?php endforeach; ?>
+            <?php foreach ($extras as $i => $foto): ?>
+                <li class="galeria__foto">
+                    <img data-src="<?= e($foto) ?>" alt="<?= e($item['titulo'] . ' — foto ' . ($i + 2)) ?>" width="720" height="540" decoding="async">
+                </li>
+            <?php endforeach; ?>
+            <?php if ($verMas): ?>
+                <li class="galeria__foto tarjeta-fotos__mas">
+                    <a href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>><?= icono('camara') ?> <span>Ver las <?= $totalFotos ?> fotos</span></a>
+                </li>
+            <?php endif; ?>
         </ul>
-        <?php if (count($fotos) > 1): ?>
+        <?php if ($diapositivas > 1): ?>
             <button class="galeria__flecha galeria__flecha--izq" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto anterior" hidden><?= icono('flecha-izq') ?></button>
             <button class="galeria__flecha galeria__flecha--der" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto siguiente" hidden><?= icono('flecha-der') ?></button>
-            <span class="galeria__contador" aria-hidden="true"><span data-actual>1</span>/<?= count($fotos) ?></span>
+            <?php if ($extras): ?>
+                <span class="propiedad-card__fotos"><?= icono('camara', 'icono icono--mini') ?> <?= $totalFotos ?></span>
+                <span class="tarjeta-fotos__puntos" aria-hidden="true">
+                    <?php for ($i = 0; $i < $diapositivas; $i++): ?><i<?= $i === 0 ? ' class="es-actual"' : '' ?>></i><?php endfor; ?>
+                </span>
+            <?php else: ?>
+                <span class="galeria__contador" aria-hidden="true"><span data-actual>1</span>/<?= count($fotos) ?></span>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 
@@ -50,9 +75,7 @@ $datos = $prop ? datos_clave_cortos($prop) : [];
                 <?php endforeach; ?>
             </ul>
         <?php endif; ?>
-        <?php // Los destacados de Tokko abren la ficha propia; los manuales siguen enlazando a Tokko
-        $ficha = (string) ($item['url_ficha'] ?? '') ?: $item['url_tokko'];
-        $externa = (bool) preg_match('#^https?://#i', $ficha); ?>
+        <?php // Los destacados de Tokko abren la ficha propia ($ficha); los manuales siguen enlazando a Tokko ?>
         <a class="boton boton--contorno boton--bloque destacado__boton" href="<?= e($ficha) ?>"<?= $externa ? ' target="_blank" rel="noopener"' : '' ?>>
             Ver ficha<?php if ($externa): ?> <?= icono('externo', 'icono icono--mini') ?><?php endif; ?><span class="sr-only"> de <?= e($item['titulo']) ?><?= $externa ? ' (abre en otra pestaña)' : '' ?></span>
         </a>

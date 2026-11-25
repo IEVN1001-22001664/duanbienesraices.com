@@ -1431,6 +1431,48 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
     position: absolute; left: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .3rem;
     background: rgba(20, 22, 27, .7); color: var(--blanco); font-size: .8rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px;
 }
+/* Fotos que se deslizan en las tarjetas (/propiedades y destacados de Tokko; 25 nov 2026): hasta 5 copias
+   WebP con scroll-snap y una última diapositiva «Ver las N fotos». Solo la primera se descarga al cargar
+   (las demás llevan data-src; main.js las pide al deslizar). Puntos pequeños abajo al centro. */
+.propiedad-card { position: relative; }
+.tarjeta-fotos {
+    list-style: none; margin: 0; padding: 0; display: flex; height: 100%;
+    overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+}
+.tarjeta-fotos::-webkit-scrollbar { display: none; }
+.tarjeta-fotos__foto, .tarjeta-fotos__mas { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; }
+.tarjeta-fotos__foto img { width: 100%; height: 100%; object-fit: cover; }
+.tarjeta-fotos__mas, .tarjeta-fotos__mas > a {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
+    background: var(--carbon); color: var(--blanco); font-weight: 700; font-size: .95rem; text-decoration: none;
+}
+.tarjeta-fotos__mas > a { width: 100%; height: 100%; }
+.tarjeta-fotos__mas .icono { width: 32px; height: 32px; color: var(--rojo); }
+.tarjeta-fotos__mas span { text-decoration: underline; text-underline-offset: 3px; }
+.tarjeta-fotos__puntos {
+    position: absolute; left: 50%; bottom: .85rem; z-index: 2; transform: translateX(-50%);
+    display: flex; gap: 5px; pointer-events: none;
+}
+.tarjeta-fotos__puntos i {
+    width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, .55);
+    box-shadow: 0 0 3px rgba(0, 0, 0, .45); transition: background-color .2s, transform .2s;
+}
+.tarjeta-fotos__puntos i.es-actual { background: var(--blanco); transform: scale(1.35); }
+/* Flechas solo con mouse (main.js las crea fuera del enlace, encima de la foto) y al pasar por la tarjeta */
+.tarjeta-fotos__flechas { position: absolute; top: 0; left: 0; right: 0; z-index: 3; aspect-ratio: 3 / 2; pointer-events: none; }
+.tarjeta-fotos__flecha {
+    position: absolute; top: 50%; transform: translateY(-50%); pointer-events: auto; cursor: pointer;
+    width: 34px; height: 34px; border-radius: 50%; border: 0; display: grid; place-items: center;
+    background: rgba(255, 255, 255, .92); color: var(--carbon); box-shadow: var(--sombra); opacity: 0; transition: opacity .2s;
+}
+.tarjeta-fotos__flecha:hover { color: var(--rojo); }
+.tarjeta-fotos__flecha .icono { width: 18px; height: 18px; }
+.tarjeta-fotos__flecha--izq { left: .5rem; }
+.tarjeta-fotos__flecha--der { right: .5rem; }
+.propiedad-card:hover .tarjeta-fotos__flecha { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .tarjeta-fotos__puntos i { transition: none; } }
+/* En pantallas táctiles los destacados se deslizan con el dedo: sin flechas grandes encima de la foto */
+@media (hover: none) { .destacado .galeria__flecha { display: none; } }
 /* Tarjeta compacta: tipo y código, precio, título en 2 líneas como máximo, ubicación en 1 línea y datos clave
    abreviados en una fila (el texto completo queda en «title»). */
 .propiedad-card__cuerpo { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }

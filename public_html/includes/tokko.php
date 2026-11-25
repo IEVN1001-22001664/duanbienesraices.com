@@ -27,6 +27,10 @@ const TOKKO_FORMATO = 2;
 const TOKKO_FOTOS_DESTACADO = 1;           // en destacados solo la portada (la futura /propiedades usará todas)
 const TOKKO_TAMANOS_DESTACADO = ['card' => [720, 540, 'recortar'], 'full' => [1400, 1050, 'ajustar']];
 const TOKKO_TAMANO_PORTADA = ['card' => [720, 540, 'recortar']];   // portada de cada propiedad en /propiedades
+// Fotos que se pueden deslizar en las tarjetas (portada incluida; 25 nov 2026). Las que faltan se copian
+// poco a poco: como máximo TOKKO_FOTOS_POR_RONDA nuevas en cada sincronización, para no pasar del tiempo límite.
+const TOKKO_FOTOS_TARJETA = 5;
+const TOKKO_FOTOS_POR_RONDA = 150;    // ~0.6 s cada una: ~90 s por ronda (la sincronización tiene 300 s)
 
 /** Nombres de Tokko (en español de Argentina) → como se dicen en México. */
 const TOKKO_TRADUCCIONES = [
@@ -529,40 +533,73 @@ function tokko_actualizar_destacados(): int
 // =============================================================================
 
 /**
- * Copia la portada de cada propiedad a uploads/propiedades/ (WebP 720×540) y borra
- * las de propiedades que ya no están o cuya portada cambió. Solo baja las nuevas.
- * Devuelve [id => ruta] y lo guarda en data/tokko/portadas.json.
+ * Copia a uploads/propiedades/ (WebP 720×540) la portada de cada propiedad y las siguientes fotos
+ * hasta TOKKO_FOTOS_TARJETA (sin planos), y borra las que ya no se usan. Solo baja las nuevas: las
+ * portadas siempre, y las demás hasta TOKKO_FOTOS_POR_RONDA por sincronización.
+ * Guarda [id => ruta de la portada] en data/tokko/portadas.json y [id => [rutas]] en fotos-tarjeta.json.
  */
 function tokko_copiar_portadas(): array
 {
     $portadas = [];
+    $tarjetas = [];
     $usadas = [];
-    foreach (tokko_propiedades() as $prop) {
-        $foto = array_values(array_filter($prop['fotos'] ?? [], fn($f) => empty($f['plano'])))[0] ?? null;
-        if (!$foto) {
-            continue;
-        }
-        $base = 'tokko-' . (int) $prop['id'] . '-' . substr(md5((string) $foto['url']), 0, 10);
-        $ruta = 'uploads/propiedades/' . $base . '-card.webp';
-        if (!is_file(RAIZ_WEB . '/' . $ruta)) {
-            try {
-                $ruta = tokko_descargar_foto((string) $foto['url'], $base, 'propiedades', TOKKO_TAMANO_PORTADA)['card'];
-            } catch (Throwable $ex) {
-                error_log('[duan] Tokko: no se pudo copiar la portada de ' . $prop['id'] . ': ' . $ex->getMessage());
-                continue;
+    $nuevas = 0;
+    // Las más recientes primero: son las que se ven en la primera página del listado
+    $lista = tokko_propiedades();
+    usort($lista, fn($a, $b) => strcmp((string) ($b['creada'] ?? ''), (string) ($a['creada'] ?? '')));
+    foreach ($lista as $prop) {
+        $id = (int) $prop['id'];
+        $fotos = array_slice(array_values(array_filter($prop['fotos'] ?? [], fn($f) => empty($f['plano']))), 0, TOKKO_FOTOS_TARJETA);
+        foreach ($fotos as $n => $foto) {
+            $base = 'tokko-' . $id . '-' . substr(md5((string) $foto['url']), 0, 10);
+            $ruta = 'uploads/propiedades/' . $base . '-card.webp';
+            if (!is_file(RAIZ_WEB . '/' . $ruta)) {
+                if ($n > 0 && $nuevas >= TOKKO_FOTOS_POR_RONDA) {
+                    continue;   // la siguiente sincronización sigue con las que faltan (las ya copiadas se conservan)
+                }
+                try {
+                    $ruta = tokko_descargar_foto((string) $foto['url'], $base, 'propiedades', TOKKO_TAMANO_PORTADA)['card'];
+                    $nuevas++;
+                } catch (Throwable $ex) {
+                    error_log('[duan] Tokko: no se pudo copiar la foto ' . ($n + 1) . ' de ' . $id . ': ' . $ex->getMessage());
+                    if ($n === 0) {
+                        continue 2;
+                    }
+                    continue;
+                }
             }
+            if ($n === 0) {
+                $portadas[$id] = $ruta;
+            }
+            $tarjetas[$id][] = $ruta;
+            $usadas[basename($ruta)] = true;
         }
-        $portadas[(int) $prop['id']] = $ruta;
-        $usadas[basename($ruta)] = true;
     }
     foreach (glob(DIR_UPLOADS . '/propiedades/tokko-*.webp') ?: [] as $archivo) {
         if (!isset($usadas[basename($archivo)])) {
             @unlink($archivo);
         }
     }
-    $json = json_encode($portadas, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
-    file_put_contents(DIR_DATA . '/tokko/portadas.json', $json, LOCK_EX);
+    $opciones = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
+    file_put_contents(DIR_DATA . '/tokko/fotos-tarjeta.json', json_encode($tarjetas, $opciones) . "\n", LOCK_EX);
+    file_put_contents(DIR_DATA . '/tokko/portadas.json', json_encode($portadas, $opciones) . "\n", LOCK_EX);
     return $portadas;
+}
+
+/**
+ * URLs de las fotos para deslizar en la tarjeta (portada primero). Mientras no se copien las demás,
+ * solo trae la portada.
+ */
+function fotos_tarjeta(array $prop): array
+{
+    static $tarjetas = null;
+    $tarjetas ??= leer_json('tokko/fotos-tarjeta.json', []);
+    $rutas = $tarjetas[(int) $prop['id']] ?? [];
+    if (!is_array($rutas) || !$rutas) {
+        $portada = portada_propiedad($prop);
+        return $portada ? [$portada] : [];
+    }
+    return array_map('ruta_upload', array_filter($rutas, 'is_string'));
 }
 
 /** Ruta de la portada local de una propiedad (o null si aún no se copia). */

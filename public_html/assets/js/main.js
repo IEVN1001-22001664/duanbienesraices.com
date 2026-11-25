@@ -383,6 +383,65 @@
         requestAnimationFrame(cuadro);
     });
 
+    /* Fotos diferidas de las tarjetas (img[data-src]): se piden hasta que la persona desliza o toca
+       una flecha, así el listado pesa lo mismo que con una sola foto. */
+    function cargarDiferidas(contenedor) {
+        if (contenedor.dataset.fotosCargadas) return;
+        contenedor.dataset.fotosCargadas = '1';
+        $$('img[data-src]', contenedor).forEach(function (img) {
+            img.src = img.getAttribute('data-src');
+            img.removeAttribute('data-src');
+        });
+    }
+
+    /* ---------------------------------------------------------------
+       Tarjetas de /propiedades: fotos que se deslizan con el dedo dentro del
+       enlace a la ficha. Puntos pequeños abajo; con mouse, flechas al pasar
+       por encima (van fuera del <a>, sobre la foto).
+       --------------------------------------------------------------- */
+    $$('[data-tarjeta-fotos]').forEach(function (pista) {
+        var tarjeta = pista.closest('.propiedad-card');
+        var marco = pista.parentNode;
+        var puntos = $$('.tarjeta-fotos__puntos i', marco);
+        var total = pista.children.length;
+        var indice = 0;
+        function marcar() {
+            puntos.forEach(function (p, i) { p.classList.toggle('es-actual', i === indice); });
+        }
+        var espera;
+        pista.addEventListener('scroll', function () {
+            cargarDiferidas(pista);
+            clearTimeout(espera);
+            espera = setTimeout(function () {
+                indice = Math.round(pista.scrollLeft / pista.clientWidth);
+                marcar();
+            }, 120);
+        }, { passive: true });
+        if (!tarjeta || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        // El sprite de íconos con su ?v= (el mismo que ya usa la página)
+        var usoIcono = $('use[href*="iconos.svg"]');
+        var sprite = usoIcono ? usoIcono.getAttribute('href').split('#')[0] : '/assets/img/iconos.svg';
+        var flechas = document.createElement('div');
+        flechas.className = 'tarjeta-fotos__flechas';
+        [['izq', 'Foto anterior', -1], ['der', 'Foto siguiente', 1]].forEach(function (d) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'tarjeta-fotos__flecha tarjeta-fotos__flecha--' + d[0];
+            b.setAttribute('aria-label', d[1]);
+            b.tabIndex = -1;                      // con teclado se entra a la ficha, donde están todas
+            b.innerHTML = '<svg class="icono" aria-hidden="true"><use href="' + sprite + '#flecha-' + d[0] + '"></use></svg>';
+            b.addEventListener('click', function (ev) {
+                ev.preventDefault();
+                cargarDiferidas(pista);
+                indice = (indice + d[2] + total) % total;
+                pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
+                marcar();
+            });
+            flechas.appendChild(b);
+        });
+        tarjeta.appendChild(flechas);
+    });
+
     /* ---------------------------------------------------------------
        Galerías de fotos de los destacados
        --------------------------------------------------------------- */
@@ -392,6 +451,7 @@
         var izq = $('.galeria__flecha--izq', galeria);
         var der = $('.galeria__flecha--der', galeria);
         var contador = $('[data-actual]', galeria);
+        var puntos = $$('.tarjeta-fotos__puntos i', galeria);
         if (!pista || fotos.length < 2) return;
         if (izq) izq.hidden = false;
         if (der) der.hidden = false;
@@ -400,9 +460,11 @@
         var indice = 0;
         function mostrar() {
             if (contador) contador.textContent = String(indice + 1);
+            puntos.forEach(function (p, i) { p.classList.toggle('es-actual', i === indice); });
             galeria.dispatchEvent(new CustomEvent('galeria:cambio', { detail: indice }));
         }
         function ir(n) {
+            cargarDiferidas(galeria);
             indice = (n + fotos.length) % fotos.length;
             pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
             mostrar();
@@ -418,6 +480,7 @@
         // Si el usuario desliza con el dedo, sincroniza el índice cuando el scroll termina.
         var espera;
         pista.addEventListener('scroll', function () {
+            cargarDiferidas(galeria);
             clearTimeout(espera);
             espera = setTimeout(function () {
                 indice = Math.round(pista.scrollLeft / pista.clientWidth);
