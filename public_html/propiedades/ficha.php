@@ -280,7 +280,7 @@ require dirname(__DIR__) . '/includes/header.php';
                 <section class="ficha__bloque" aria-labelledby="titulo-zona">
                     <h2 class="ficha__subtitulo" id="titulo-zona">Zona</h2>
                     <p class="texto-suave">El mapa muestra la zona de la propiedad, no su dirección exacta. Con gusto le compartimos la ubicación al agendar una visita.</p>
-                    <?php componente('mapa-zona', ['zonaGeo' => $prop['zona_geo'] ?? null, 'zonaNombre' => $prop['ubicacion_completa']]); ?>
+                    <?php componente('mapa-zona', ['zonaGeo' => $prop['zona_geo'] ?? null, 'zonaPunto' => $prop['geo'] ?? null, 'zonaNombre' => $prop['ubicacion_completa']]); ?>
                 </section>
         </div>
     </div>

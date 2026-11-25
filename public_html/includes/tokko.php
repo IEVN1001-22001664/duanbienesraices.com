@@ -273,7 +273,8 @@ function tokko_normalizar(array $p): ?array
     $lat = (float) ($p['geo_lat'] ?? 0);
     $lng = (float) ($p['geo_long'] ?? 0);
     // Solo si parecen coordenadas válidas de México (Tokko a veces deja 0 o vacío)
-    $zonaGeo = ($lat > 14 && $lat < 33 && $lng < -86 && $lng > -119) ? [round($lat, 2), round($lng, 2)] : null;
+    $geoValida = $lat > 14 && $lat < 33 && $lng < -86 && $lng > -119;
+    $zonaGeo = $geoValida ? [round($lat, 2), round($lng, 2)] : null;
     $ubicacion = match (true) {
         count($partes) >= 3 => $partes[count($partes) - 1] . ', ' . $partes[count($partes) - 2],
         count($partes) === 2 => $partes[1] . ', ' . $partes[0],
@@ -315,9 +316,12 @@ function tokko_normalizar(array $p): ?array
         'ubicacion_completa' => implode(', ', array_reverse($partes)),
         'ciudad'         => count($partes) >= 2 ? $partes[1] : ($partes[0] ?? ''),
         'zona'           => count($partes) >= 3 ? $partes[count($partes) - 1] : '',
-        // Centro aproximado de la zona: coordenadas redondeadas a 2 decimales (~1 km).
-        // Nunca se guarda el punto exacto de Tokko.
+        // Centro aproximado de la zona: coordenadas redondeadas a 2 decimales (~1 km); es el centro del
+        // círculo del mapa de la ficha.
         'zona_geo'       => $zonaGeo,
+        // Punto registrado en Tokko (25 nov 2026, a pedido del cliente): solo para «Abrir en Maps».
+        // Siempre cae dentro del círculo (el redondeo mueve el centro ~760 m como máximo y el radio es 800 m).
+        'geo'            => $geoValida ? [round($lat, 6), round($lng, 6)] : null,
         'slug'           => tokko_slug($titulo) . '-' . $id,
         'descripcion'    => trim(str_replace("\r\n", "\n", (string) ($p['description'] ?? ''))),
         'recamaras'      => $numero($p['suite_amount'] ?? null) ?? $numero($p['room_amount'] ?? null),

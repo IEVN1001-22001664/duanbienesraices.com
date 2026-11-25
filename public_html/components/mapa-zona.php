@@ -3,7 +3,9 @@
  * Mapa de la zona de una propiedad (ficha de /propiedades y ficha de ejemplo de Tengo una propiedad).
  *
  * Variables:
- *   $zonaGeo    [lat, lng] ya redondeadas a 2 decimales (~1 km) o null. Nunca el punto exacto.
+ *   $zonaGeo    [lat, lng] ya redondeadas a 2 decimales (~1 km) o null: centro del círculo.
+ *   $zonaPunto  [lat, lng] del punto registrado en Tokko (opcional): solo lo usa «Abrir en Maps».
+ *               Sin él, el botón abre el centro de la zona.
  *   $zonaNombre colonia, ciudad y estado (texto de la etiqueta y respaldo para buscar en Google).
  *   $zonaClase  clases extra del marco (opcional).
  *
@@ -17,7 +19,8 @@ $zonaTitulo = 'Mapa de la zona: ' . $zonaNombre;
 if (!empty($zonaGeo)) {
     $zonaCoords = $zonaGeo[0] . ',' . $zonaGeo[1];
     $zonaGoogle = 'https://www.google.com/maps?ll=' . $zonaCoords . '&z=14&t=m&output=embed';
-    $zonaAbrir = 'https://www.google.com/maps/search/?api=1&query=' . $zonaCoords;
+    $zonaAbrir = 'https://www.google.com/maps/search/?api=1&query='
+        . (!empty($zonaPunto) ? $zonaPunto[0] . ',' . $zonaPunto[1] : $zonaCoords);
 } else {
     $zonaGoogle = 'https://www.google.com/maps?q=' . rawurlencode($zonaNombre . ', México') . '&z=14&output=embed';
     $zonaAbrir = null;
