@@ -21,7 +21,7 @@ $verMas = $extras && $totalFotos > 1 + count($extras);
 $diapositivas = count($fotos) + count($extras) + ($verMas ? 1 : 0);
 ?>
 <article class="destacado">
-    <div class="destacado__galeria galeria" data-galeria>
+    <div class="destacado__galeria galeria<?= $extras && !FOTOS_TARJETA_ESCRITORIO ? ' fotos-solo-tactil' : '' ?>" data-galeria>
         <span class="etiqueta etiqueta--<?= e($item['operacion']) ?>"><?= e(mb_strtoupper($operacion)) ?></span>
         <ul class="galeria__pista" id="<?= e($idGaleria) ?>" tabindex="0" aria-label="<?= e('Fotos de ' . $item['titulo']) ?>">
             <?php foreach ($fotos as $i => $foto): ?>

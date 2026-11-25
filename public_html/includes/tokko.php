@@ -30,6 +30,10 @@ const TOKKO_TAMANO_PORTADA = ['card' => [720, 540, 'recortar']];   // portada de
 // Fotos que se pueden deslizar en las tarjetas (portada incluida; 25 nov 2026). Las que faltan se copian
 // poco a poco: como máximo TOKKO_FOTOS_POR_RONDA nuevas en cada sincronización, para no pasar del tiempo límite.
 const TOKKO_FOTOS_TARJETA = 5;
+// En escritorio (mouse) las tarjetas muestran solo la portada (25 nov 2026, a pedido del cliente): las
+// fotos se siguen copiando y se pintan, pero la clase .fotos-solo-tactil hace que estilos.css y main.js
+// no dejen deslizarlas ni muestren flechas y puntos con mouse. Para volver a activarlas, poner true.
+const FOTOS_TARJETA_ESCRITORIO = false;
 const TOKKO_FOTOS_POR_RONDA = 150;    // ~0.6 s cada una: ~90 s por ronda (la sincronización tiene 300 s)
 
 /** Nombres de Tokko (en español de Argentina) → como se dicen en México. */

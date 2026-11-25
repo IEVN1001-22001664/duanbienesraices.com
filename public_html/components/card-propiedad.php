@@ -19,7 +19,7 @@ $datos = datos_clave_cortos($prop);
 ?>
 <article class="propiedad-card">
     <a class="propiedad-card__enlace" href="<?= e(url_propiedad($prop)) ?>">
-        <div class="propiedad-card__foto">
+        <div class="propiedad-card__foto<?= FOTOS_TARJETA_ESCRITORIO ? '' : ' fotos-solo-tactil' ?>">
             <?php if (count($fotosTarjeta) > 1): ?>
                 <ul class="tarjeta-fotos" data-tarjeta-fotos>
                     <?php foreach ($fotosTarjeta as $i => $foto): ?>

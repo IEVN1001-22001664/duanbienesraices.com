@@ -399,9 +399,12 @@
        enlace a la ficha. Puntos pequeños abajo; con mouse, flechas al pasar
        por encima (van fuera del <a>, sobre la foto).
        --------------------------------------------------------------- */
+    // Con mouse, las tarjetas marcadas .fotos-solo-tactil se quedan en la portada (FOTOS_TARJETA_ESCRITORIO).
+    var conMouse = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     $$('[data-tarjeta-fotos]').forEach(function (pista) {
         var tarjeta = pista.closest('.propiedad-card');
         var marco = pista.parentNode;
+        if (conMouse && marco.classList.contains('fotos-solo-tactil')) return;
         var puntos = $$('.tarjeta-fotos__puntos i', marco);
         var total = pista.children.length;
         var indice = 0;
@@ -425,7 +428,7 @@
                 enlace.href = diapositiva && diapositiva.classList.contains('tarjeta-fotos__mas') ? base + '#foto-' + (indice + 1) : base;
             });
         }
-        if (!tarjeta || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (!tarjeta || !conMouse) return;
         // El sprite de íconos con su ?v= (el mismo que ya usa la página)
         var usoIcono = $('use[href*="iconos.svg"]');
         var sprite = usoIcono ? usoIcono.getAttribute('href').split('#')[0] : '/assets/img/iconos.svg';
@@ -461,6 +464,7 @@
         var contador = $('[data-actual]', galeria);
         var puntos = $$('.tarjeta-fotos__puntos i', galeria);
         if (!pista || fotos.length < 2) return;
+        if (conMouse && galeria.classList.contains('fotos-solo-tactil')) return;
         if (izq) izq.hidden = false;
         if (der) der.hidden = false;
 

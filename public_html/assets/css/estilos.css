@@ -1469,6 +1469,11 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
 @media (prefers-reduced-motion: reduce) { .tarjeta-fotos__puntos i { transition: none; } }
 /* En pantallas táctiles los destacados se deslizan con el dedo: sin flechas grandes encima de la foto */
 @media (hover: none) { .destacado .galeria__flecha { display: none; } }
+/* Con mouse, solo la portada (FOTOS_TARJETA_ESCRITORIO en tokko.php): no se puede deslizar ni hay puntos. */
+@media (hover: hover) and (pointer: fine) {
+    .fotos-solo-tactil .tarjeta-fotos, .fotos-solo-tactil .galeria__pista { overflow: hidden; }
+    .fotos-solo-tactil .tarjeta-fotos__puntos { display: none; }
+}
 /* Tarjeta compacta: tipo y código, precio, título en 2 líneas como máximo, ubicación en 1 línea y datos clave
    abreviados en una fila (el texto completo queda en «title»). */
 .propiedad-card__cuerpo { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; flex: 1; }
