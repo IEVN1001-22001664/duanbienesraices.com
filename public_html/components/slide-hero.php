@@ -14,7 +14,7 @@ $tieneMovil = !empty($item['video_movil']);
 $pesoMovil = $tieneMovil ? (int) @filesize(RAIZ_WEB . '/' . ltrim((string) $item['video_movil'], '/')) : 0;
 $movilLigero = $pesoMovil > 0 && $pesoMovil < VIDEO_HERO_LIGERO;
 ?>
-<li class="hero__slide<?= $esPrimera ? ' es-activa' : '' ?>" data-slide
+<li class="hero__slide<?= $esPrimera ? ' es-activa' : '' ?><?= empty($item['titulo']) ? ' hero__slide--sin-texto' : '' ?>" data-slide
     role="group" aria-roledescription="diapositiva" aria-label="<?= e(($indice + 1) . ' de ' . $total) ?>"
     <?= $esPrimera ? '' : 'aria-hidden="true"' ?>>
     <img class="hero__fondo" src="<?= e(ruta_upload($item['imagen'])) ?>" alt="<?= e($item['alt'] ?? '') ?>"

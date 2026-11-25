@@ -333,6 +333,8 @@ html:not(.js) .menu-boton { display: none; }
     content: ""; position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(20, 22, 27, .72) 100%);
 }
+/* Sin texto encima (p. ej. la intro con el logo) no hace falta el degradado: la imagen queda limpia */
+.hero__slide--sin-texto::after { content: none; }
 .hero__texto { position: absolute; inset: auto 0 3.5rem; z-index: 2; color: var(--blanco); }
 .hero__titulo {
     font-family: var(--fuente-titulos); font-weight: 800; line-height: 1.1;
@@ -345,11 +347,14 @@ html:not(.js) .menu-boton { display: none; }
     position: absolute; top: 50%; z-index: 3; transform: translateY(-50%);
     width: 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center;
     background: rgba(255, 255, 255, .85); color: var(--carbon); transition: background-color .2s;
+    box-shadow: 0 2px 10px rgba(20, 22, 27, .18);   /* se distingue también sobre la intro blanca */
 }
 .hero__flecha:hover { background: var(--blanco); color: var(--rojo); }
 .hero__flecha--izq { left: .75rem; }
 .hero__flecha--der { right: .75rem; }
 .hero .puntos { position: absolute; bottom: 1.25rem; left: 0; right: 0; z-index: 3; }
+/* Sombra suave para que los puntos blancos se vean también sobre fondos claros (diapositivas sin degradado) */
+.hero .puntos button:not([aria-current="true"]) { box-shadow: 0 0 0 1px rgba(40, 45, 53, .35), 0 1px 4px rgba(0, 0, 0, .25); }
 
 .puntos { display: flex; justify-content: center; gap: .5rem; }
 .puntos button {
