@@ -81,8 +81,16 @@
         var pantallaGrande = window.matchMedia('(min-width: 768px)').matches;
         // Video en escritorio; en celular solo los ligeros (data-ligero, menos de 1 MB). Nunca con
         // «reducir movimiento» ni con ahorro de datos.
+        // En celular, si la diapositiva trae versión vertical (data-src-movil), esa reemplaza a la horizontal
+        // y cuenta su propio peso (data-ligero-movil).
+        if (!pantallaGrande) {
+            $$('video[data-src-movil]', hero).forEach(function (v) {
+                v.setAttribute('data-src', v.getAttribute('data-src-movil'));
+                v.toggleAttribute('data-ligero', v.hasAttribute('data-ligero-movil'));
+            });
+        }
         function usarVideo(v) {
-            return !!v && !reducirMovimiento && !ahorroDatos && (pantallaGrande || v.hasAttribute('data-ligero'));
+            return !!v && !!v.getAttribute('data-src') && !reducirMovimiento && !ahorroDatos && (pantallaGrande || v.hasAttribute('data-ligero'));
         }
         var automatico = !reducirMovimiento && slides.length > 1;
 

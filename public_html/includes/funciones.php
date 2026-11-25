@@ -146,7 +146,7 @@ function extracto(string $texto, int $largo = 160): string
 const ESQUEMAS = [
     'hero' => [
         'req'   => ['id', 'imagen'],
-        'tipos' => ['imagen' => 'ruta', 'video' => 'ruta?', 'enlace' => 'url?'],
+        'tipos' => ['imagen' => 'ruta', 'video' => 'ruta?', 'video_movil' => 'ruta?', 'enlace' => 'url?'],
     ],
     'destacados' => [
         'req'   => ['id', 'operacion', 'titulo', 'precio', 'url_tokko', 'fotos'],

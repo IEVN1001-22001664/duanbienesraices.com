@@ -9,14 +9,19 @@ $esPrimera = ($indice ?? 0) === 0;
 $tieneVideo = !empty($item['video']);
 $pesoVideo = $tieneVideo ? (int) @filesize(RAIZ_WEB . '/' . ltrim((string) $item['video'], '/')) : 0;
 $videoLigero = $pesoVideo > 0 && $pesoVideo < VIDEO_HERO_LIGERO;
+// Versión vertical para celular (opcional): main.js la usa en lugar de la horizontal a menos de 768 px
+$tieneMovil = !empty($item['video_movil']);
+$pesoMovil = $tieneMovil ? (int) @filesize(RAIZ_WEB . '/' . ltrim((string) $item['video_movil'], '/')) : 0;
+$movilLigero = $pesoMovil > 0 && $pesoMovil < VIDEO_HERO_LIGERO;
 ?>
 <li class="hero__slide<?= $esPrimera ? ' es-activa' : '' ?>" data-slide
     role="group" aria-roledescription="diapositiva" aria-label="<?= e(($indice + 1) . ' de ' . $total) ?>"
     <?= $esPrimera ? '' : 'aria-hidden="true"' ?>>
     <img class="hero__fondo" src="<?= e(ruta_upload($item['imagen'])) ?>" alt="<?= e($item['alt'] ?? '') ?>"
          width="1920" height="1080" <?= $esPrimera ? 'fetchpriority="high"' : 'loading="lazy"' ?> decoding="async">
-    <?php if ($tieneVideo): ?>
-        <video class="hero__video" data-src="<?= e(ruta_upload($item['video'])) ?>" muted playsinline preload="none" aria-hidden="true"<?= $videoLigero ? ' data-ligero' : '' ?>></video>
+    <?php if ($tieneVideo || $tieneMovil): ?>
+        <video class="hero__video" data-src="<?= $tieneVideo ? e(ruta_upload($item['video'])) : '' ?>" muted playsinline preload="none" aria-hidden="true"<?= $videoLigero ? ' data-ligero' : '' ?>
+            <?php if ($tieneMovil): ?> data-src-movil="<?= e(ruta_upload($item['video_movil'])) ?>"<?= $movilLigero ? ' data-ligero-movil' : '' ?><?php endif; ?>></video>
     <?php endif; ?>
 
     <?php if (!empty($item['titulo'])): ?>

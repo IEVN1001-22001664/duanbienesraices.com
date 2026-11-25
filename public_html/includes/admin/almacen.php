@@ -180,8 +180,13 @@ const SECCIONES_ADMIN = [
                             'ayuda' => 'Horizontal, de preferencia 1920 × 1080. También se muestra en celulares y mientras carga el video.'],
             'alt'       => ['tipo' => 'texto', 'etiqueta' => 'Descripción de la imagen', 'req' => true, 'max' => 150,
                             'ayuda' => 'Qué se ve en la imagen (lo leen Google y los lectores de pantalla).'],
-            'video'     => ['tipo' => 'video', 'etiqueta' => 'Video de fondo (opcional)',
-                            'ayuda' => 'MP4, máximo 40 MB. Solo se reproduce en pantallas grandes.'],
+            'video'     => ['tipo' => 'video', 'etiqueta' => 'Video de fondo horizontal (opcional)',
+                            'ayuda' => 'MP4 horizontal (1920 × 1080), máximo 40 MB. Se reproduce en computadoras y tabletas; '
+                                     . 'en celular solo si pesa menos de 1 MB y no hay video vertical.'],
+            'video_movil' => ['tipo' => 'video', 'etiqueta' => 'Video de fondo vertical para celular (opcional)',
+                            'ayuda' => 'MP4 vertical (por ejemplo 1080 × 1920). Reemplaza al horizontal en celulares. '
+                                     . 'Para que se reproduzca debe pesar menos de 1 MB (cuida los datos de quien visita); '
+                                     . 'en celular se ve recortado arriba y abajo, así que deja el logo y los textos al centro.'],
             'titulo'    => ['tipo' => 'texto', 'etiqueta' => 'Texto principal (opcional)', 'max' => 90],
             'subtitulo' => ['tipo' => 'texto', 'etiqueta' => 'Texto secundario (opcional)', 'max' => 160],
             'texto_boton' => ['tipo' => 'texto', 'etiqueta' => 'Texto del botón (opcional)', 'max' => 40],
