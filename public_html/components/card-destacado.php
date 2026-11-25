@@ -44,8 +44,7 @@ $diapositivas = count($fotos) + count($extras) + ($verMas ? 1 : 0);
             <?php endif; ?>
         </ul>
         <?php if ($diapositivas > 1): ?>
-            <button class="galeria__flecha galeria__flecha--izq" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto anterior" hidden><?= icono('flecha-izq') ?></button>
-            <button class="galeria__flecha galeria__flecha--der" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto siguiente" hidden><?= icono('flecha-der') ?></button>
+            <?php // Sin flechas (25 nov 2026, a pedido del cliente): en las tarjetas las fotos solo se deslizan ?>
             <?php if ($extras): ?>
                 <span class="tarjeta-fotos__puntos" aria-hidden="true">
                     <?php for ($i = 0; $i < $diapositivas; $i++): ?><i<?= $i === 0 ? ' class="es-actual"' : '' ?>></i><?php endfor; ?>

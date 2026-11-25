@@ -1454,21 +1454,7 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
     box-shadow: 0 0 3px rgba(0, 0, 0, .45); transition: background-color .2s, transform .2s;
 }
 .tarjeta-fotos__puntos i.es-actual { background: var(--blanco); transform: scale(1.35); }
-/* Flechas solo con mouse (main.js las crea fuera del enlace, encima de la foto) y al pasar por la tarjeta */
-.tarjeta-fotos__flechas { position: absolute; top: 0; left: 0; right: 0; z-index: 3; aspect-ratio: 3 / 2; pointer-events: none; }
-.tarjeta-fotos__flecha {
-    position: absolute; top: 50%; transform: translateY(-50%); pointer-events: auto; cursor: pointer;
-    width: 34px; height: 34px; border-radius: 50%; border: 0; display: grid; place-items: center;
-    background: rgba(255, 255, 255, .92); color: var(--carbon); box-shadow: var(--sombra); opacity: 0; transition: opacity .2s;
-}
-.tarjeta-fotos__flecha:hover { color: var(--rojo); }
-.tarjeta-fotos__flecha .icono { width: 18px; height: 18px; }
-.tarjeta-fotos__flecha--izq { left: .5rem; }
-.tarjeta-fotos__flecha--der { right: .5rem; }
-.propiedad-card:hover .tarjeta-fotos__flecha { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .tarjeta-fotos__puntos i { transition: none; } }
-/* En pantallas táctiles los destacados se deslizan con el dedo: sin flechas grandes encima de la foto */
-@media (hover: none) { .destacado .galeria__flecha { display: none; } }
 /* En PC (mouse o touchpad y pantalla ancha; la misma condición que conMouse en main.js), solo la portada
    (FOTOS_TARJETA_ESCRITORIO en tokko.php): no se puede deslizar ni hay puntos. */
 @media (any-hover: hover) and (any-pointer: fine) and (min-width: 768px) {

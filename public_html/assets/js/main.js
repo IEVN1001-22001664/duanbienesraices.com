@@ -396,19 +396,17 @@
 
     /* ---------------------------------------------------------------
        Tarjetas de /propiedades: fotos que se deslizan con el dedo dentro del
-       enlace a la ficha. Puntos pequeños abajo; con mouse, flechas al pasar
-       por encima (van fuera del <a>, sobre la foto).
+       enlace a la ficha. Puntos pequeños abajo; sin flechas (las tarjetas no
+       las llevan desde el 25 nov 2026; solo la ficha).
        --------------------------------------------------------------- */
     // PC: hay mouse o touchpad y la pantalla es ancha. Se usa any-hover/any-pointer porque en las laptops con
     // pantalla táctil Chrome reporta el táctil como control principal (pointer: coarse) y antes no se detectaban.
     // Ahí las tarjetas marcadas .fotos-solo-tactil se quedan en la portada (FOTOS_TARJETA_ESCRITORIO).
     var conMouse = window.matchMedia('(any-hover: hover) and (any-pointer: fine) and (min-width: 768px)').matches;
     $$('[data-tarjeta-fotos]').forEach(function (pista) {
-        var tarjeta = pista.closest('.propiedad-card');
         var marco = pista.parentNode;
         if (conMouse && marco.classList.contains('fotos-solo-tactil')) return;
         var puntos = $$('.tarjeta-fotos__puntos i', marco);
-        var total = pista.children.length;
         var indice = 0;
         function marcar() {
             puntos.forEach(function (p, i) { p.classList.toggle('es-actual', i === indice); });
@@ -430,29 +428,6 @@
                 enlace.href = diapositiva && diapositiva.classList.contains('tarjeta-fotos__mas') ? base + '#foto-' + (indice + 1) : base;
             });
         }
-        if (!tarjeta || !conMouse) return;
-        // El sprite de íconos con su ?v= (el mismo que ya usa la página)
-        var usoIcono = $('use[href*="iconos.svg"]');
-        var sprite = usoIcono ? usoIcono.getAttribute('href').split('#')[0] : '/assets/img/iconos.svg';
-        var flechas = document.createElement('div');
-        flechas.className = 'tarjeta-fotos__flechas';
-        [['izq', 'Foto anterior', -1], ['der', 'Foto siguiente', 1]].forEach(function (d) {
-            var b = document.createElement('button');
-            b.type = 'button';
-            b.className = 'tarjeta-fotos__flecha tarjeta-fotos__flecha--' + d[0];
-            b.setAttribute('aria-label', d[1]);
-            b.tabIndex = -1;                      // con teclado se entra a la ficha, donde están todas
-            b.innerHTML = '<svg class="icono" aria-hidden="true"><use href="' + sprite + '#flecha-' + d[0] + '"></use></svg>';
-            b.addEventListener('click', function (ev) {
-                ev.preventDefault();
-                cargarDiferidas(pista);
-                indice = (indice + d[2] + total) % total;
-                pista.scrollTo({ left: indice * pista.clientWidth, behavior: reducirMovimiento ? 'auto' : 'smooth' });
-                marcar();
-            });
-            flechas.appendChild(b);
-        });
-        tarjeta.appendChild(flechas);
     });
 
     /* ---------------------------------------------------------------
