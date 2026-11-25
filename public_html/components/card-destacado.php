@@ -47,7 +47,6 @@ $diapositivas = count($fotos) + count($extras) + ($verMas ? 1 : 0);
             <button class="galeria__flecha galeria__flecha--izq" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto anterior" hidden><?= icono('flecha-izq') ?></button>
             <button class="galeria__flecha galeria__flecha--der" type="button" aria-controls="<?= e($idGaleria) ?>" aria-label="Foto siguiente" hidden><?= icono('flecha-der') ?></button>
             <?php if ($extras): ?>
-                <span class="propiedad-card__fotos"><?= icono('camara', 'icono icono--mini') ?> <?= $totalFotos ?></span>
                 <span class="tarjeta-fotos__puntos" aria-hidden="true">
                     <?php for ($i = 0; $i < $diapositivas; $i++): ?><i<?= $i === 0 ? ' class="es-actual"' : '' ?>></i><?php endfor; ?>
                 </span>

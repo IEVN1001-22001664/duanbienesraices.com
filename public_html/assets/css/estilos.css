@@ -1427,10 +1427,6 @@ label.chip span small { font-size: .8em; font-weight: 600; opacity: .75; }
 .propiedad-card:hover .propiedad-card__foto img { transform: scale(1.04); }
 .propiedad-card__sin-foto { display: grid; place-items: center; height: 100%; color: var(--gris); }
 .propiedad-card__sin-foto .icono { width: 48px; height: 48px; }
-.propiedad-card__fotos {
-    position: absolute; left: .75rem; bottom: .75rem; display: inline-flex; align-items: center; gap: .3rem;
-    background: rgba(20, 22, 27, .7); color: var(--blanco); font-size: .8rem; font-weight: 700; padding: .2rem .6rem; border-radius: 999px;
-}
 /* Fotos que se deslizan en las tarjetas (/propiedades y destacados de Tokko; 25 nov 2026): hasta 5 copias
    WebP con scroll-snap y una última diapositiva «Ver las N fotos». Solo la primera se descarga al cargar
    (las demás llevan data-src; main.js las pide al deslizar). Puntos pequeños abajo al centro. */

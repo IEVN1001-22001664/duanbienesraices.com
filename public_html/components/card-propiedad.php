@@ -44,9 +44,6 @@ $datos = datos_clave_cortos($prop);
                 <span class="propiedad-card__sin-foto"><?= icono('camara') ?></span>
             <?php endif; ?>
             <span class="etiqueta etiqueta--<?= e($op['tipo']) ?>"><?= $op['tipo'] === 'renta' ? 'RENTA' : 'VENTA' ?></span>
-            <?php if (count($prop['fotos']) > 1): ?>
-                <span class="propiedad-card__fotos"><?= icono('camara', 'icono icono--mini') ?> <?= count($prop['fotos']) ?></span>
-            <?php endif; ?>
         </div>
         <div class="propiedad-card__cuerpo">
             <p class="propiedad-card__chips"><span><?= e($prop['tipo']) ?></span><span class="propiedad-card__codigo"><?= e($prop['codigo']) ?></span></p>
